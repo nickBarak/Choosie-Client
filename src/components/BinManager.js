@@ -16,6 +16,7 @@ function BinManager({ movies }) {
     async function manageBins(e, method, bin, callback, errorhandler = _=> console.log(e)) {
         e.persist();
         e.preventDefault();
+        callback();
         const formData = new FormData();
         formData.append('bin', typeof bin === 'string' ? bin : JSON.stringify(bin));
         try {
@@ -24,7 +25,7 @@ function BinManager({ movies }) {
                 body: formData
             });
             response.ok
-                ? callback && callback()
+                ? callback && 0 && callback()
                 : errorhandler()
         } catch (e) { errorhandler() }
     }

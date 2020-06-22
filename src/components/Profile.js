@@ -28,12 +28,12 @@ function Profile() {
                 country: children[4].value,
                 email: children[5].value
         };
-        dispatch( makeRequest(`users/${user.username}`, null, null, {
+        dispatch( makeRequest(`users/${user.username}`, '', {
             method: 'PATCH',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(editedInfo)
         }) )
-        queueMicrotask(_=> error
+        setTimeout(_=> error
             ? setUser({
                 ...user,
                 name: editedInfo.name,
@@ -43,7 +43,7 @@ function Profile() {
                 country: editedInfo.country,
                 email: editedInfo.email
             })
-            : setEditInfoError('Error editing info')
+            : setEditInfoError('Error editing info'), 100
         );
     }
 
@@ -58,7 +58,7 @@ function Profile() {
         if (currentPassword !== user.password) { setChangePasswordError('Entry for current password was incorrect'); return }
         if (newPassword !== repeatedNewPassword) { setChangePasswordError('New passwords must match'); return };
         if (newPassword.match(/some regex/)) { setChangePasswordError('New password invalid'); return };
-        dispatch( makeRequest(`users/${user.username}`, null, null, {
+        dispatch( makeRequest(`users/${user.username}`, null, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({

@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useContext } from 'react';
-import PrevNextNav from './PrevNextNav';
 import HistoryContext from '../store/contexts/History.context';
 
 const sections = [
@@ -33,7 +32,8 @@ function Help() {
                     </section>
                 )}
             </article>
-            <PrevNextNav history={history} link={{'url': '/help', 'prompt': state.more ? 'Previous' : 'More'}} callback={_=> setState({...state, more: !state.more})}/>
+            <button onClick={_=> history.push('/')}>Back to Home</button>
+            <button onClick={_=> { setState({...state, more: !state.more}); history.push('/help') }}>{state.more ? 'Previous' : 'More'}</button>
         </>
     )
 }

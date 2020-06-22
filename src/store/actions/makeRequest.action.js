@@ -5,10 +5,10 @@ export const createMakeRequestLaunch = _=> ({ type: MAKE_REQUEST_LAUNCH }),
     createMakeRequestSuccess = payload => ({ type: MAKE_REQUEST_SUCCESS, payload }),
     createMakeRequestFailure = payload => ({ type: MAKE_REQUEST_FAILURE, payload });
 
-export const makeRequest = (route, key, value, options={}) => {
+export const makeRequest = (route, querystring, options={}) => {
     return dispatch => {
         dispatch(createMakeRequestLaunch())
-        fetch(server+`${route}${key && value ? `?${key}=${value}` : ''}`, options)
+        fetch(server+`${route}${querystring}`, options)
             .then(res => res.json())
             .then(res => {
                 dispatch( createMakeRequestSuccess(res) );

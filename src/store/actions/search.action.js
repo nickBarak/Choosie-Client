@@ -5,10 +5,10 @@ export const createSearchLaunch = payload => ({ type: SEARCH_LAUNCH, payload }),
     createSearchSuccess = payload => ({ type: SEARCH_SUCCESS, payload }),
     createSearchFailure = payload => ({ type: SEARCH_FAILURE, payload });
 
-export const search = (username, query) => {
+export const search = (username, query, page) => {
     return dispatch => {
         dispatch(createSearchLaunch(query))
-        fetch(server+`search?user=${username}&search=${query}`)
+        fetch(server+`search?user=${username}&search=${query}&page=${page}`)
             .then(res => res.json())
             .then(res => {
                 dispatch( createSearchSuccess(res) );

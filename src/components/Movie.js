@@ -20,7 +20,7 @@ function Movie() {
 
     function saveMovie() {
         setSaving(true);
-        fetch(server + `users/${user.username}/movies`, {
+        fetch(server + `movies?user=${user.username}`, {
             method: user.save_history.includes(movie.id) ? 'PUT' : 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ movieID: movie.id })
@@ -42,7 +42,7 @@ function Movie() {
 
     function unsaveMovie() {
         setUnsaving(true);
-        fetch(server + `users/${user.username}/movies`, {
+        fetch(server + `movies?user=${user.username}`, {
             method: 'DELETE',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ movieID: movie.id })
@@ -59,7 +59,7 @@ function Movie() {
             .catch(e => setSaveError('Error unsaving movie'));
     }
 
-    useEffect(_=> dispatch( makeRequest('movies', 'id', location.pathname.split('/')[2]) ), [])
+    useEffect(_=> dispatch( makeRequest('movies', '?id=' + location.pathname.split('/movies/')[1]) ), [])
 
     if (!movie) return <div>Error loading movie</div>
 

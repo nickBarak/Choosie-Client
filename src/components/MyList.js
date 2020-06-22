@@ -19,20 +19,20 @@ export default function MyList() {
 
     const [user] = useContext(UserContext);
 
-    useEffect(_=> { user && dispatch( makeRequest('movies/list', 'movies', user.currently_saved) ) }, []);
+    useEffect(_=> { user && dispatch( makeRequest('movies/list', '?movies=' + user.currently_saved) ) }, []);
 
     return loading ? <div>Loading...</div> : error ? <div>Error loading movies</div> : (
         <>
             <Nav />
             {user
-                ? <MovieList movies={result} heading={heading.startsWith('This')
+                ? <MovieList withFilter movies={result} heading={heading.startsWith('This')
                     ? result.length ? heading : 'This bin was empty :('
                     : result.length ? 'Here\'s your complete list of movies' : 'Save movies by going to their page'
                 }/>
                 : <h2><Link to="/register">Log in</Link> to see your saved movies</h2>
             }
             {user && <div onClick={e => {
-                    dispatch( makeRequest('movies/list', 'movies', user.currently_saved) );
+                    dispatch( makeRequest('movies/list', '?movies=' + user.currently_saved) );
                     setHeading('Here\'s your complete list of movies');
                 }}>Currently Saved</div>
             }
@@ -43,7 +43,7 @@ export default function MyList() {
                             <label onClick={_=> setShowBins(!showBins)}>Your Bins</label>
                             {showBins
                                 ? <ul>{Object.keys(user.bins).map((bin, i) => <li key={i} onClick={e => {
-                                    dispatch( makeRequest('movies/list', 'movies', user.bins[bin]) );
+                                    dispatch( makeRequest('movies/list', '?movies=' + user.bins[bin]) );
                                     setHeading(`This is what was in "${bin}"`);
                                 }}>{bin}</li>)}</ul>
                                 : ''

@@ -16,7 +16,7 @@ function Home() {
         e.persist();
         e.preventDefault();
         try { 
-            dispatch( search(user ? user.username : null, e.target.children[0].value) );
+            dispatch( search(user ? user.username : null, e.target.children[0].value, 1) );
             e.target.reset();
             history.push('/search')
         } catch (e) { console.log(e) }

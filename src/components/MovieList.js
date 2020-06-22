@@ -1,144 +1,220 @@
 import React, { useState, useReducer, useRef } from 'react';
 import { Link } from 'react-router-dom';
 
-const ageRatings = ['G', 'PG-13', 'TV-14', 'R/TV-MA', 'NR'],
+const ageRatings = ['G', 'PG', 'PG-13', 'TV-14', 'R/TV-MA', 'NR'],
       durations = ['30min', '1h', '1h 30min', '2h', '2h 30min', '3h'],
-      genres = ['Action', 'Comedy', 'Drama', 'Thriller'],
+      genres = ['Action', 'Comedy', 'Drama', 'Thriller', 'Family', 'Fantasy', 'Animation'],
       saveDates = ['2 days ago', '1 week ago', '2 weeks ago', '3 weeks ago', '1 month ago', '2 months ago', '3 months ago', '6 months ago', '1 year ago'],
-      releaseDates = ['1920', '1930', '1940', '1950', '1960', '1970', '1980', '1990', '2000', '2010', '2020'];
+      releaseDates = ['1920', '1930', '1940', '1950', '1960', '1970', '1980', '1990', '2000', '2010', '2020'],
+      filterOptionsInit = [ [ [ 'init', 'init', 'higher' ], [ ...ageRatings ] ] ];
 
-function MovieList({ movies, heading }) {
+function MovieList({ movies, heading, withFilter }) {
     const [showDescription, setShowDescription] = useState(false);
     const [displayList, dispatchDisplayList] = useReducer(displayListReducer, movies);
-    const [filterOptions, dispatchFilterOptions] = useReducer(filterOptionsReducer, [ [ ...genres ] ]);
-    const [selectID, setSelectID] = useState(0);
+    const [filterOptions, dispatchFilterOptions] = useReducer(filterOptionsReducer, JSON.parse( JSON.stringify(filterOptionsInit) ) );
+    const [filterID, setFilterID] = useState(0);
     
-    const [filters, setFilters] = useState([
-        <>
-            <select onChange={e => dispatchFilterOptions({ type: e.target.options[e.target.selectedIndex].text, payload: selectID })}>
-                <option key={0}>Age Rating</option>
-                <option key={1}>Duration</option>
-                <option key={2}>Genre</option>
-                <option key={3}>Date Saved</option>
-                <option key={4}>Release Date</option>
+    const makeFilter = id => (
+        <span>
+            <select defaultValue={filterOptions[id][0][0]}
+                onChange={e => {
+                    dispatchFilterOptions({
+                    type: e.target.options[e.target.selectedIndex].text,
+                    payload: { id, select: 0 }
+                });
+                dispatchFilterOptions({
+                    type: filterOptions[id][1][0],
+                    payload: { id, select: 1 }
+                });
+                e.target.parentNode.children.length > 1 && dispatchDisplayList( deriveFilterValues(e.target.parentNode.parentNode.parentNode) );
+            }}>
+                <option key="-1" value="init" disabled>-- select an option --</option>
+                <option key="0" value="Age Rating">Age Rating</option>
+                <option key="1" value="Duration">Duration</option>
+                <option key="2" value="Genre">Genre</option>
+                <option key="3" value="Date Saved">Date Saved</option>
+                <option key="4" value="Release Date">Release Date</option>
             </select>
-            <select>
-                {(_=> { console.log(filterOptions, selectID); return filterOptions[selectID].map((option, i) => <option key={i}>{option}</option>) })()}
-            </select>
-            <label><input type="radio" name="filterByRadio" value="higher" />higher/later</label>
-            <label><input type="radio" name="filterByRadio" value="lower" />lower/earlier</label>
-        </>
-    ]);
+            {filterOptions[id][0][0] !== 'init' && (
+            <>
+                <select defaultValue={filterOptions[id][0][1]}
+                    onChange={e => {
+                        dispatchFilterOptions({
+                        type: e.target.options[e.target.selectedIndex].text,
+                        payload: { id, select: 1 }
+                    });
+                    dispatchDisplayList( deriveFilterValues(e.target.parentNode.parentNode.parentNode) );
+                }}>
+                    {filterOptions[id][1].map((option, i) => <option key={i} value={option}>{option}</option>)}
+                </select>
+                <span>
+                    <label><input type="radio" name={`filterByRadio_${id}`} value="higher" defaultChecked={filterOptions[id][0][2] === 'higher' ? true : false} onChange={e => {
+                        dispatchFilterOptions({ type: 'higher', payload: { id, select: 2 }});
+                        dispatchDisplayList( deriveFilterValues(e.target.parentNode.parentNode.parentNode.parentNode.parentNode) );
+                    }} />higher/later</label>
+                    <label><input type="radio" name={`filterByRadio_${id}`} value="lower" defaultChecked={filterOptions[id][0][2] === 'lower' ? true : false} onChange={e => {
+                        dispatchFilterOptions({ type: 'lower', payload: { id, select: 2 }});
+                        dispatchDisplayList( deriveFilterValues(e.target.parentNode.parentNode.parentNode.parentNode.parentNode) );
+                    }} />lower/earlier</label>
+                    <label><input type="radio" name={`filterByRadio_${id}`} value="exact" defaultChecked={filterOptions[id][0][2] === 'exact' ? true : false} onChange={e => {
+                        dispatchFilterOptions({ type: 'exact', payload: { id, select: 2 }});
+                        dispatchDisplayList( deriveFilterValues(e.target.parentNode.parentNode.parentNode.parentNode.parentNode) );
+                    }} />exact</label>
+                </span>
+            </>
+            )}
+        </span>
+    );
 
-    function filterOptionsReducer(state=[], { type, payload }) {
-        const newState = [ ...state ];
+    function filterOptionsReducer(state, { type, payload }) {
+        let newState = [ ...state ];
+        if (type === 'Clear Filters') return JSON.parse( JSON.stringify(filterOptionsInit) );
+        if (type !== 'New Filter') newState[payload.id][0].splice(payload.select, 1, type);
+
         switch (type) {
-            default: return state;
+            default: break;
             case 'Age Rating':
-                newState[payload].splice(0, state.length, ...ageRatings);
+                newState[payload.id][1].splice(0, state[payload.id][1].length, ...ageRatings);
                 break;
             case 'Duration':
-                newState[payload].splice(0, state.length, ...durations);
+                newState[payload.id][1].splice(0, state[payload.id][1].length, ...durations);
                 break;
             case 'Genre':
-                newState[payload].splice(0, state.length, ...genres);
+                newState[payload.id][1].splice(0, state[payload.id][1].length, ...genres);
                 break;
             case 'Date Saved':
-                newState[payload].splice(0, state.length, ...saveDates);
+                newState[payload.id][1].splice(0, state[payload.id][1].length, ...saveDates);
                 break;
             case 'Release Date':
-                newState[payload].splice(0, state.length, ...releaseDates);
+                newState[payload.id][1].splice(0, state[payload.id][1].length, ...releaseDates);
+                break;
+            case 'New Filter':
+                newState.push(JSON.parse( JSON.stringify(filterOptionsInit[0]) ));
                 break;
         }
         return newState;
     }
 
-    function displayListReducer(state=null, { type, payload: { value, higher } }) {
-        let ratings, duration;
-        switch (type) {
-            default: return state;
-            case 'Age Rating':
-                switch (value) {
-                    default: return state;
-                    case 'G':
-                        ratings = higher ? ['G', 'PG-13', 'TV-14', 'R', 'TV-MA', 'NR'] : ['G']; break;
-                    case 'PG-13':
-                        ratings = higher ? ['PG-13', 'TV-14', 'R', 'TV-MA', 'NR'] : ['G', 'PG-13']; break;
-                    case 'TV-14':
-                        ratings = higher ? ['TV-14', 'R', 'TV-MA', 'NR'] : ['G', 'PG-13', 'TV-14']; break;
-                    case 'R/TV-MA':
-                        ratings = higher ? ['R', 'TV-MA', 'NR'] : ['G', 'PG-13', 'TV-14', 'R', 'TV-MA']; break;
-                    case 'NR':
-                        ratings = higher ? ['NR'] : ['G', 'PG-13', 'TV-14', 'R', 'TV-MA', 'NR']; break;
-                }
-                return movies.filter(movie => ratings.includes(movie.mpaa_rating));
-            case 'Duration':
-                switch (value) {
-                    default: return state;
-                    case '30min': duration = 30; break;
-                    case '1h': duration = 60; break;
-                    case '1h 30min': duration = 90; break;
-                    case '2h': duration = 120; break;
-                    case '2h 30min': duration = 150; break;
-                    case '3h': duration = 180; break;
-                }
-                return movies.filter(movie => higher ? movie.duration_in_mins - duration >= 0 : movie.duration_in_mins - duration <= 0);
-            case 'Genre':
-                return 
-            case 'Date Saved':
-                return 
-            case 'Release Date':
-                return movies.filter(movie => {
-                    const year = Number(movie.release_date.slice(0, 4));
-                    return higher ? year >= Number(value) : year <= Number(value);
-                });
+    function displayListReducer(state, filters) {
+        const newState = [ ...movies ];
+        if (!filters) return newState;
+        for (let { type, payload: { value, range } } of filters) {
+            let ratings, duration;
+            switch (type) {
+                default: break;
+                case 'Age Rating':
+                    if (range === 'exact') {
+                        newState.splice(0, newState.length, ...newState.filter(movie => movie.mpaa_rating === value));
+                        break;
+                    }
+                    switch (value) {
+                        default: return state;
+                        case 'G':
+                            ratings = range === 'higher' ? null : ['G'];
+                            break;
+                        case 'PG':
+                            ratings = range === 'higher' ? ['PG', 'TV-14', 'R', 'TV-MA', 'NR'] : ['G', 'PG'];
+                            break;
+                        case 'PG-13':
+                            ratings = range === 'higher' ? ['PG-13', 'TV-14', 'R', 'TV-MA', 'NR'] : ['G', 'PG', 'PG-13'];
+                            break;
+                        case 'TV-14':
+                            ratings = range === 'higher' ? ['TV-14', 'R', 'TV-MA', 'NR'] : ['G', 'PG', 'PG-13', 'TV-14'];
+                            break;
+                        case 'R/TV-MA':
+                            ratings = range === 'higher' ? ['R', 'TV-MA', 'NR'] : ['G', 'PG', 'PG-13', 'TV-14', 'R', 'TV-MA'];
+                            break;
+                        case 'NR':
+                            ratings = range === 'higher' ? ['NR'] : null;
+                            break;
+                    }
+                    newState.splice(0, newState.length, ...newState.filter(movie => ratings ? ratings.includes(movie.mpaa_rating) : movies));
+                    break;
+                case 'Duration':
+                    switch (value) {
+                        default: break;
+                        case '30min': duration = 30; break;
+                        case '1h': duration = 60; break;
+                        case '1h 30min': duration = 90; break;
+                        case '2h': duration = 120; break;
+                        case '2h 30min': duration = 150; break;
+                        case '3h': duration = 180; break;
+                    }
+                    if (range === 'exact') {
+                        newState.splice(0, newState.length, ...newState.filter(movie => movie.duration_in_mins === duration));
+                        break;
+                    }
+                    newState.splice(0, newState.length, ...newState.filter(movie => range === 'higher' ? movie.duration_in_mins - duration >= 0 : movie.duration_in_mins - duration <= 0));
+                    break;
+                case 'Genre':
+                    newState.splice(0, newState.length, ...newState.filter(movie => movie.genres.filter(genre => value.includes(genre)).length));
+                    break;
+                case 'Date Saved':
+                    break;
+                case 'Release Date':
+                    if (range === 'exact') {
+                        newState.splice(0, newState.length, ...newState.filter(movie => Number(value) === Number(movie.release_date.slice(0, 4))));
+                        break;
+                    }
+                    newState.splice(0, newState.length, ...newState.filter(movie => {
+                        const year = Number(movie.release_date.slice(0, 4));
+                        return range === 'higher' ? year >= Number(value) : year <= Number(value);
+                    }));
+                    break;
+            }
         }
+        return newState;
     }
+
+    const deriveFilterValues = ul => Array.from(ul.children, li => {
+        const children = li.children[0].children,
+            type = children[0].options[children[0].selectedIndex].text,
+            payload = {
+                value: children[1].options[children[1].selectedIndex].text,
+                range: Array.from(children[2].children).find(child => child.children[0].checked).children[0].value
+            };
+        return ({ type, payload });
+    });
 
     return (
         <>
             <h2>{heading}</h2>
+            {withFilter &&
             <form onSubmit={e => {
                 e.persist();
                 e.preventDefault();
-                const children = e.target.children[1].children,
-                      type = children[0].options[children[0].selectedIndex].text,
-                      payload = {
-                          value: children[1].options[children[1].selectedIndex].text,
-                          higher: children[2].children[0].checked
-                      };
-                dispatchDisplayList({ type, payload });
+                dispatchFilterOptions({ type: 'Clear Filters' });
+                dispatchDisplayList(null);
+                setFilterID(0);
+                e.target.reset();
             }}>
                 <label>Filter by: </label>
-                <span>{filters[0]}</span>
-                <span>
-                    {filters.length === 1 && <button type="button" onClick={_=> {
-                            setSelectID(selectID + 1);
-                            setFilters([ ...filters, <div key={filters.length}>{filters[0]}</div> ]);
-                        }}> + </button>
+                <ul>
+                    <li key="0">
+                        {makeFilter(0)}
+                        {filterID === 0 && filterOptions[0][0][0] !== 'init' && <button type="button" onClick={e => {
+                            dispatchFilterOptions({ type: 'New Filter' });
+                            setFilterID(filterID + 1);
+                        }}> + </button>}
+                    </li>
+                    {filterID > 1 && new Array(filterID-1).fill(null).map((filter, i) => <li key={i+1}>{makeFilter(i+1)}</li>)}
+                    {filterID > 0 &&
+                        <li key={filterID}>
+                            {makeFilter(filterID)}
+                            {filterOptions[filterID][0][0] !== 'init' && <button type="button" onClick={e => {
+                                dispatchFilterOptions({ type: 'New Filter' });
+                                setFilterID(filterID + 1);
+                            }}> + </button>}
+                        </li>
                     }
-                </span>
-                {filters.slice(1, filters.length-1)}
-                {filters.length > 1 &&
-                    <div style={{ display: 'flex' }}>
-                        {filters.slice(filters.length-1, filters.length)}
-                        <button type="button" onClick={_=> {
-                            setSelectID(selectID + 1);
-                            setFilters([ ...filters, <div key={filters.length}>{filters[0]}</div> ]);
-                        }}> + </button>
-                    </div>
-                }
-                <br />
-                <label>Sort by: </label>
-                <label><input type="radio" name="sortByRadio" value="higher" />higher/later</label>
-                <label><input type="radio" name="sortByRadio" value="lower" />lower/earlier</label>
-                <button>Submit</button>
-            </form>
+                </ul>
+                <button>Reset</button>
+            </form>}
             <ul style={{ display: 'flex' }} >
                 {displayList.map((movie, i) =>
-                    <li key={i} style={{ marginLeft: '2rem' }}>
+                    <li key={i} style={{ marginLeft: '3.5rem' }}>
                         <Link to={`movies/${movie.id}`} onMouseOver={e => setShowDescription(movie.id)} onMouseOut={e => setShowDescription(false)}>
-                            <img src={movie.cover_file} alt="not available" />
+                            <img src={movie.cover_file} alt="not available" style={{ borderRadius: '11.5px', boxShadow: '-16px -12px rgb(100,50,50,.9), 12px -22px rgb(50,50,100,.9)' }} />
                             <br />
                             <label>{movie.title}</label>
                         </Link>

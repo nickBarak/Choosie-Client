@@ -1,7 +1,9 @@
 import React, { useState, useContext } from 'react';
 import { server } from '../APIs';
-import UserContext from '../store/contexts/User.context';
+import { useDispatch } from 'react-redux';
+// import UserContext from '../store/contexts/User.context';
 import HistoryContext from '../store/contexts/History.context';
+import { updateUser } from '../store/actions/updateUser.action';
 
 function Register() {
     const history = useContext(HistoryContext);
@@ -10,7 +12,8 @@ function Register() {
     const [generalError, setGeneralError] = useState(null);
     const [registrationError, setRegistrationError] = useState(null);
     const [loginError, setLoginError] = useState(null);
-    const [, setUser] = useContext(UserContext);
+    // const [, setUser] = useContext(UserContext);
+    const dispatch = useDispatch();
 
     function submitMainInfo(e) {
         setRegistrationError(null);
@@ -54,7 +57,7 @@ function Register() {
         })
             .then(res => res.json())
             .then(json => {
-                setUser(json);
+                dispatch( updateUser(json.username) );
                 history.push('/');
             })
             .catch(e => setGeneralError('Something went wrong'));
@@ -73,7 +76,7 @@ function Register() {
             json = await response.json();
             if (!json[0]) { setLoginError('Invalid login'); return }
             if (String(json[0].password) === password) {
-                setUser(json[0]);
+                dispatch( updateUser(json[0].username) );
                 history.push('/');
             } else setLoginError(`Invalid login`);
         } catch (e) { setGeneralError('Something went wrong') }

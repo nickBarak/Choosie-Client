@@ -1,11 +1,15 @@
 import React, { useState, useContext } from 'react';
 import { server } from '../APIs';
-import UserContext from '../store/contexts/User.context';
+// import UserContext from '../store/contexts/User.context';
 import HistoryContext from '../store/contexts/History.context';
+import { updateUser } from '../store/actions/updateUser.action';
+import { useDispatch, useSelector } from 'react-redux';
 
 function Login() {
+    const dispatch = useDispatch();
+    const user = useSelector(store => store.user.result);
     const history = useContext(HistoryContext);
-    const [user, setUser] = useContext(UserContext);
+    // const [user, setUser] = useContext(UserContext);
     const [open, setOpen] = useState(false);
     const [error, setError] = useState(null);
 
@@ -21,9 +25,8 @@ function Login() {
         try {
             const response = await fetch(server+`users/${username}`),
             json = await response.json();
-            console.log(json);
             if (!json[0]) { setError('Invalid login'); return }
-            String(json[0].password) === password ? setUser(json[0]) : setError(`Invalid login`);
+            String(json[0].password) === password ? dispatch( updateUser(username) ) : setError(`Invalid login`);
         } catch (e) { console.log(e) }
     }
     
@@ -38,7 +41,7 @@ function Login() {
             ? (
                 <>
                     <div>Welcome, {user.name || user.username}</div>
-                    <button onClick={_=> { setUser(null); setOpen(false) }}>Log out</button>
+                    <button onClick={_=> { dispatch( updateUser(null) ); setOpen(false) }}>Log out</button>
                     <button onClick={_=> history.push(`profile/${user.username}`)}>View profile</button>
                 </>
             )

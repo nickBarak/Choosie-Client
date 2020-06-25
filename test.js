@@ -1,4 +1,7 @@
-// new Array(4).forEach((i, j) => console.log({i, j}));
-// let arr = new Array(3);
-// console.log(arr);
-new Array(4).fill(null).forEach((i, j) => console.log({ i, j }))
+let o1 = {a: 1, b: 2};
+
+let o2 = { ...o1, b: undefined };
+
+let o3 = Object.entries(o1).reduce((acc, [key, val]) => key !== 'b' ? [ ...acc, ...val ]  : acc, []);
+
+console.log(o1, o2, o3)

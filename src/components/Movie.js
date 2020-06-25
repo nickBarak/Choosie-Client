@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import UserContext from '../store/contexts/User.context';
+// import UserContext from '../store/contexts/User.context';
 import { makeRequest } from '../store/actions/makeRequest.action';
 import Nav from './Nav';
 import { server } from '../APIs';
 import HistoryContext from '../store/contexts/History.context';
+import { updateUser } from '../store/actions/updateUser.action';
 
 function Movie() {
     const history = useContext(HistoryContext);
@@ -13,53 +14,63 @@ function Movie() {
     const dispatch = useDispatch();
     const movie = useSelector(store => store.makeRequest.result[0]);
     const { loading, error } = useSelector(store => store.makeRequest);
-    const [user, setUser] = useContext(UserContext);
+    // const [user, setUser] = useContext(UserContext);
     const [saving, setSaving] = useState(false);
     const [unsaving, setUnsaving] = useState(false);
     const [saveError, setSaveError] = useState(null);
+    const user = useSelector(store => store.user.result);
 
     function saveMovie() {
         setSaving(true);
         fetch(server + `movies?user=${user.username}`, {
             method: user.save_history.includes(movie.id) ? 'PUT' : 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ movieID: movie.id })
+            body: JSON.stringify({ movieID: movie.id, inRecent: user.recent_save_history.includes(movie.id) })
         })
             .then(res => {
                 if (res.ok) {
                     setSaving(false);
-                    setUser({
-                        ...user,
-                        currently_saved: [ ...user.currently_saved, movie.id ],
-                        save_history: user.save_history.includes(movie.id)
-                            ? user.save_history
-                            : [ ...user.save_history, movie.id ]
-                    })
+                    dispatch( updateUser(user.username) );
                 } else setSaveError('Error saving movie')
             })
             .catch(e => setSaveError('Error saving movie'));
     }
 
-    function unsaveMovie() {
-        setUnsaving(true);
-        fetch(server + `movies?user=${user.username}`, {
-            method: 'DELETE',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ movieID: movie.id })
-        })
-            .then(res => {
-                if (res.ok) {
-                    setUnsaving(false);
-                    setUser({
-                        ...user,
-                        currently_saved: user.currently_saved.filter(el => el !== movie.id)
-                    })
-                } else setSaveError('Error unsaving movie')
-            })
-            .catch(e => setSaveError('Error unsaving movie'));
-    }
+    useEffect(_=> dispatch( makeRequest('movies', '?id=' + location.pathname.split('/movies/')[1]) ), []);
 
-    useEffect(_=> dispatch( makeRequest('movies', '?id=' + location.pathname.split('/movies/')[1]) ), [])
+    useEffect(_=> {
+        const controller = new AbortController(),
+              { signal } = controller;
+        unsaving && (async _=> {
+            try {
+                let res;
+                res = await fetch(server + `movies?user=${user.username}`, {
+                    signal,
+                    method: 'DELETE',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ movieID: unsaving })
+                });
+                !res.ok && setSaveError('Error unsaving movie');
+        
+                let binsWithMovie = Object.entries(user.bins)
+                    .filter(bin => bin[1].includes(String(unsaving)));
+                for (let binWithMovie of binsWithMovie) {
+                    res = await fetch(server + `users/${user.username}/bins`, {
+                        signal,
+                        method: 'PATCH',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ bin: { [binWithMovie[0]]: binWithMovie[1].filter(id => id !== String(unsaving)) } })
+                    });
+                    !res.ok && setSaveError('Error unsaving movie');
+                }
+        
+                dispatch( updateUser(user.username) );
+                setUnsaving(false);
+            } catch (e) { e.name === 'AbortError' && console.log('Unsave aborted') }
+        })();
+
+        return _=> controller.abort();
+    }, [unsaving])
 
     if (!movie) return <div>Error loading movie</div>
 
@@ -69,7 +80,11 @@ function Movie() {
             <img src={movie.cover_file} alt="not available" />
             {user
                 ? user.currently_saved.includes(movie.id)
-                    ? <button onClick={unsaveMovie}>{unsaving ? 'Unsaving movie...' : 'Unsave Movie'}</button>
+                    ? <button onClick={_=> {
+                        let confirmed = true;
+                        if (Object.values(user.bins).reduce((acc, cur) => [...acc, ...cur], []).includes(String(movie.id))) confirmed = window.confirm('This will remove the movie from all bins. Do you still want to unsave it?');
+                        confirmed && setUnsaving(movie.id)
+                    }}>{unsaving ? 'Unsaving movie...' : 'Unsave Movie'}</button>
                     : <button onClick={saveMovie}>{saving ? 'Saving movie...' : 'Save to My List'}</button>
                 : <button onClick={_=> history.push('/register')}>Sign in to save this movie</button>}
             <br />

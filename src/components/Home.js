@@ -35,16 +35,18 @@ function Home() {
     
     return (
         <>
-            <h1>Choosie</h1>
             <Login history={history} />
-            <form onSubmit={onSearch}>
-                <input type="text" placeholder="Search actors, genres, directors" />
-            </form>
-            <ul>
-                <li><button onClick={_=> onClick('my_list', '/my-list')}>My List</button></li>
-                <li><button onClick={_=> onClick('start', '/query')}>Start</button></li>
-                <li><button onClick={_=> onClick('popular', '/popular')}>Popular</button></li>
-            </ul>
+            <div className="frame">
+                <h1 className="logo" style={{ fontSize: 45}}>Choosie</h1>
+                <form onSubmit={onSearch}>
+                    <input className="search" type="text" placeholder="Search actors, genres, directors" style={{ margin: '1.5rem 1.5rem'}} />
+                </form>
+                <ul className="button-wrapper">
+                    <li><button className="button" onClick={_=> onClick('my_list', '/my-list')}>My List</button></li>
+                    <li><button className="button" onClick={_=> onClick('start', '/query')}>Start</button></li>
+                    <li><button className="button" onClick={_=> onClick('popular', '/popular')}>Popular</button></li>
+                </ul>
+            </div>
             <Footer />
         </>
     )

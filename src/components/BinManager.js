@@ -94,9 +94,9 @@ function BinManager({ movies, displaying, setDisplaying }) {
     }
 
     return (
-        <>
+        <div className="bin-manager">
             {error && <div style={{ color: 'maroon' }}>{error}</div>}
-            <label>Bin Manager</label>
+            <label style={{ fontWeight: 600 }}>Bin Manager</label>
             <form onSubmit={createBin}>
                 <label>Create a new bin</label>
                 <input type="text" placeholder="Enter bin name" autoComplete="off" />
@@ -160,7 +160,7 @@ function BinManager({ movies, displaying, setDisplaying }) {
             </>
             }
             {Object.keys(user.bins).length > 0 && <button onClick={_=> setBinManagerOpen(false)}>Close</button>}
-        </>
+        </div>
     )
 }
 

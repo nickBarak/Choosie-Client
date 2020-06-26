@@ -17,12 +17,12 @@ function Help() {
     useEffect(_=> setState({...state, sections: sections[state.more ? 1 : 0]}), [state.more]);
 
     return (
-        <>
-            <h2>What is <span>Choosie</span>?</h2>
+        <div className="help frame">
+            <h2>What is <span className="logo">Choosie</span>?</h2>
             <br />
             <article>
                 <br />
-                <div>{slogan}</div>
+                <div style={{ fontWeight: 'bold' }}>{slogan}</div>
                 <br />
                 {state.sections.map((section, i) =>
                     <section key={i}>
@@ -32,9 +32,11 @@ function Help() {
                     </section>
                 )}
             </article>
-            <button onClick={_=> history.push('/')}>Back to Home</button>
-            <button onClick={_=> { setState({...state, more: !state.more}); history.push('/help') }}>{state.more ? 'Previous' : 'More'}</button>
-        </>
+            <div style={{ position: 'relative', display: 'flex', width: '100%'}}>
+                <button className="link-help-to"  onClick={_=> history.push('/')}>Back to Home</button>
+                <button style={{ right: 0, left: 'auto'}} className="link-help-to" onClick={_=> { setState({...state, more: !state.more}); history.push('/help') }}>{state.more ? 'Previous' : 'More'}</button>
+            </div>
+        </div>
     )
 }
 

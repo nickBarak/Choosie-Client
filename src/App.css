@@ -1,38 +1,201 @@
-.App {
-  text-align: center;
+:root {
+  --bg-color-dark: hsl(200, 100%, 10%);
+  --bg-color-light: hsl(10, 100%, 20%);
+  --color-offset: hsl(200, 100%, 85%);
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+body {
+  background: linear-gradient(to right, var(--bg-color-dark), var(--bg-color-light));
+  color: red
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+li {
+  list-style: none;
+}
+
+a {
+  text-decoration: none;
+}
+
+nav ul {
+  /* position: fixed; */
+  top: 2rem;
+  left: 1.5rem;
+  font-size: 1.2rem;
+  font-weight: bold;
+  list-style: none;
+}
+
+nav ul li a{
+  margin: .25rem 0;
+  color: var(--color-offset);
+  transition: color 200ms, margin-left 200ms;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+nav ul li a:hover {
+  text-decoration: none;
+  color: lighten(var(--bg-color-light, 12%));
+  margin-left: .6rem;
+}
+
+.frame {
+  margin: 38vh 38vw;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
+}
+
+.logo {
+  color: aqua;
+  font-weight: 400;
+}
+
+.search {
+    border-radius: 4px;
+    width: 50vw;
+    height: 6vh;
+    font-size: .95rem;
+    padding: .6rem .6rem;
+    transition: box-shadow 125ms;
+    /* margin: 1.65rem auto 1.5rem auto; */
+}
+
+.search:focus {
+  box-shadow: 0 0 1.75px 2.5px #223898;
+}
+
+.button-wrapper {
+  display: flex;
+  justify-content: center;
+  color: var(--bg-color-dark);
+}
+
+.button {
+  border: 0;
+  border-top-color: transparent;
+  width: 6.5rem;
+  height: 2.3rem;
+  margin: .5rem 1.5rem;
+  border-radius: 13.5px;
+  background-color: var(--color-offset);
+  transition-property: background-color, color;
+  transition-duration: 150ms;
+  transition-timing-function: ease-in;
+}
+
+button:hover {
+  background-color: var(--bg-color-dark);
+  color: var(--color-offset);
+  cursor: pointer;
+}
+
+button:focus {
+  outline: none;
+  background-color: var(--bg-color-dark);
+  color: var(--color-offset);
+}
+
+button:active {
+  background-color: darken(var(--bg-color-dark, 12%));
+}
+
+.link-help {
+  position: absolute;
+  left: 1rem;
+  bottom: 1rem;
+  color: var(--color-offset) !important;
+  font-weight: 600;
+  cursor: pointer;
+  user-select: none;
+  padding: 0 4px;
+  transition: display, opacity 2000ms ease-in-out;
+}
+
+.link-help:hover {
+  outline: 1.5px solid white;
+}
+
+.link-help:active {
+  outline: 2.5px solid white;
+}
+
+.link-help span {
+  margin: auto 1.5px auto 0;
+}
+
+.help {
+  color: var(--color-offset);
+  width: 50vw;
+  margin-top: 11rem;
+  align-items: flex-start;
+}
+
+.help section {
+  display: flex;
+  text-align: justify;
+}
+
+.help section div {
+  margin: 2px auto 1rem 1rem;
+}
+
+.help section label {
+  font-size: 1.05rem;
+  font-weight: bold;
+  white-space: nowrap;
+}
+
+.link-help-to {
+  font-weight: bold;
+  font-size: 1.2rem;
+  transition: color 200ms ease-in;
+  margin-top: 1rem;
+  cursor: pointer;
+  position: absolute;
+  left: 0;
+}
+
+.link-help-to:hover {
   color: white;
 }
 
-.App-link {
-  color: #61dafb;
+.bin-manager {
+  border-radius: 15px;
+  background-color: rgba(30, 30, 30, .75);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: white;
+  width: 45%;
+  position: fixed;
+  bottom: 50%;
+  left: 25%;
+  padding: 1.25rem 1.25rem;
+  /* opacity: .6; */
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.query-prompt {
+  margin-bottom: 1.5rem;
+}
+
+.query-next {
+  background-color: var(--bg-color-dark);
+  color: var(--color-offset);
+}
+
+.query-next:hover {
+  background-color: darken(var(--bg-color-dark, 2%))
+}
+
+.query-next:active {
+  background-color: darken(var(--bg-color-dark, 80%));
 }

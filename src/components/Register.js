@@ -84,43 +84,44 @@ function Register() {
 
     return !continued
         ? (
-        <>
+        <div className="container" style={{ flexDirection: 'column' }}>
             {registrationError && <div style={{color: 'red'}}>{registrationError}</div>}
-            <form onSubmit={submitMainInfo} style={{backgroundColor: 'white', display: 'inline-block'}}>
-                <div>Please enter a username and password or sign in with another platform</div>
-                <input type="text" placeholder="username" key="username" />
+            <form className="register-1" onSubmit={submitMainInfo}>
+                <div className="prompt-register">Please enter a username and password or sign in with another platform</div>
+                <input className="input-register" type="text" placeholder="username" key="username" />
                 <br />
-                <input type="password" placeholder="password" key="password" />
+                <input className="input-register" type="password" placeholder="password" key="password" />
                 <br />
-                <input type="password" placeholder="repeat password" />
+                <input className="input-register" type="password" placeholder="repeat password" />
                 <br />
-                <button>Continue</button>
-                <button onClick={_=> history.push('/')}>Cancel</button>
+                <div>
+                    <button className="button-register">Continue</button>
+                    <button onClick={_=> history.push('/')} className="button-register">Cancel</button>
+                </div>
             </form>
             {loginError
                 ? <div style={{color: 'red'}}>{loginError}</div>
                 : generalError && <div style={{ color: 'maroon' }}>{generalError}</div>
             }
-            <form onSubmit={onLogin} style={{backgroundColor: 'white', display: 'inline-block'}}>
-                <div>Already have an account? Log in</div>
-                <input type="text" placeholder="username" />
+            <form className="register-1" onSubmit={onLogin}>
+                <div className="prompt-register">Already have an account? Log in</div>
+                <input className="input-register" type="text" placeholder="username" />
                 <br />
-                <input type="password" placeholder="password" />
+                <input className="input-register" type="password" placeholder="password" />
                 <br />
-                <button>Log in</button>
+                <button className="button-register">Log in</button>
             </form>
-        </>)
-        : (
-        <>
+        </div>)
+        : <div className="container" style={{ flexDirection: 'column' }}>
             {registrationError
                 ? <div style={{color: 'red'}}>{registrationError}</div>
                 : generalError && <div style={{ color: 'maroon' }}>{generalError}</div>
             }
-            <form onSubmit={createUser} style={{backgroundColor: 'white', display: 'inline-block'}}>
-                <div>You can enter more information here for a better experience</div>
-                <input type="text" placeholder="first name" key="name" />
+            <form className="register-1" onSubmit={createUser}>
+                <div className="prompt-register">You can enter more information here for a better experience</div>
+                <input className="input-register" type="text" placeholder="first name" key="name" />
                 <br />
-                <input type="text" placeholder="age" key="age" />
+                <input className="input-register" type="text" placeholder="age" key="age" />
                 <br />
                 <div>
                     <label>sex: </label>
@@ -133,14 +134,15 @@ function Register() {
                     {['English', 'Spanish', 'French', 'Mandarin', 'Cantonese', 'Hindi', 'German', 'Italian', 'Dutch', 'Portuguese', 'Russian', 'Standard Arabic', 'Punjabi', 'Bengali', 'Polish', 'Czech', 'Ukranian', 'Indonesian', 'Japanese', 'Swahili', 'Telugu', 'Tamil', 'Turkish','Korean', 'Hungarian', 'Thai', 'Vietnamese', 'Sundanese', 'Filipino', 'Tagalog', 'Malay', 'Burmese', 'Romanian', 'Swedish', 'Afrikaans'].map((language, i) => i === 0 ? <option key={i} value="default">{language}</option> : <option key={i} >{language}</option>)}
                 </select>
                 <br />
-                <input type="text" placeholder="email" />
+                <input className="input-register" type="text" placeholder="email" />
                 <br />
-                <div>You can also edit these fields later</div>
-                <button>Sign up</button>
-                <button onClick={_=> history.push('/')}>Cancel</button>
+                <div className="prompt-register" style={{ margin: '.5rem' }}>You can also edit these fields later</div>
+                <div>
+                    <button className="button-register" >Sign up</button>
+                    <button className="button-register" onClick={_=> history.push('/')}>Cancel</button>
+                </div>
             </form>
-        </>
-    )
+    </div>
 }
 
 export default Register

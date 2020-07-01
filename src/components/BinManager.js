@@ -98,15 +98,15 @@ function BinManager({ movies, displaying, setDisplaying }) {
             {error && <div style={{ color: 'maroon' }}>{error}</div>}
             <label style={{ fontWeight: 600 }}>Bin Manager</label>
             <form onSubmit={createBin}>
-                <label>Create a new bin</label>
-                <input type="text" placeholder="Enter bin name" autoComplete="off" />
-                <button>Create Bin</button>
+                <label className="label-bin-manager">Create a new bin</label>
+                <input style={{ padding: '.25rem', height: '1.3rem' }} type="text" placeholder="Enter bin name" autoComplete="off" />
+                <button className="button-register">Create Bin</button>
             </form>
             {Object.keys(user.bins).length > 0 &&
             <>
                 <form onSubmit={updateBin}>
-                    <label>Add movies to a bin or remove them</label>
-                    <select>
+                    <label className="label-bin-manager">Add movies to a bin or remove them</label>
+                    <select style={{ marginRight: '.5rem' }}>
                         {user.currently_saved.length
                             ? updateBinClicked
                                 ? addMovie
@@ -130,36 +130,38 @@ function BinManager({ movies, displaying, setDisplaying }) {
                     {!updateBinClicked && user.currently_saved.length > 0 &&
                     (<>
                         <label><input type="radio" name="addOrRemoveMovie" value="Add" defaultChecked onChange={e => setAddMovie(!addMovie)}/>Add</label>
-                        <label><input type="radio" name="addOrRemoveMovie" value="Remove" onChange={e => setAddMovie(!addMovie)} />Remove</label>
+                        <label style={{ marginLeft: '.35rem' }}><input type="radio" name="addOrRemoveMovie" value="Remove" onChange={e => setAddMovie(!addMovie)} />Remove</label>
                     </>)}
                     {Object.entries(user.bins)
                         .filter(([, val]) => addMovie
                             ? val.length < user.currently_saved.length
                             : val.length > 0).length > 0
-                            && <button>{updateBinClicked ? 'Update Bin' : addMovie ? 'Add To' : 'Remove From'}</button>
+                            && <button className="button-register">{updateBinClicked ? 'Update Bin' : addMovie ? 'Add To' : 'Remove From'}</button>
                     }
                 </form>
                 <form onSubmit={deleteOrEmptyBin}>
-                    <label>Delete or empty a bin</label>
-                    <select>
+                    <label className="label-bin-manager">Delete or empty a bin</label>
+                    <select style={{ marginRight: '.5rem' }}>
                         {Object.entries(user.bins)
                             .filter(([, val]) => deleteBin || val.length)
                             .map((bin, i) => <option key={i}>{bin}</option>).length
-                                ? Object.keys(user.bins).map((bin, i) => <option key={i}>{bin}</option>)
+                                ? Object.entries(user.bins)
+                                    .filter(([, val]) => deleteBin || val.length)
+                                    .map(([key], i) => <option key={i}>{key}</option>)
                                 : <option key="-1">All bins are empty</option>
                         }
                     </select>
                     <label><input type="radio" name="deleteOrEmptyBin" value="Delete" defaultChecked onChange={e => setDeleteBin(!deleteBin)}/>Delete</label>
-                    <label><input type="radio" name="deleteOrEmptyBin" value="Empty" onChange={e => setDeleteBin(!deleteBin)} />Empty </label>
+                    <label style={{ marginLeft: '.35rem' }}><input type="radio" name="deleteOrEmptyBin" value="Empty" onChange={e => setDeleteBin(!deleteBin)} />Empty </label>
                     {Object.entries(user.bins)
                         .filter(([, val]) => deleteBin || val.length)
                         .map((bin, i) => <option key={i}>{bin}</option>).length > 0 &&
-                            <button>{deleteBin ? 'Delete' : 'Empty'} Bin</button>
+                            <button className="button-register">{deleteBin ? 'Delete' : 'Empty'} Bin</button>
                     }
                 </form>
             </>
             }
-            {Object.keys(user.bins).length > 0 && <button onClick={_=> setBinManagerOpen(false)}>Close</button>}
+            {Object.keys(user.bins).length > 0 && <button className="button-register" onClick={_=> setBinManagerOpen(false)}>Close</button>}
         </div>
     )
 }

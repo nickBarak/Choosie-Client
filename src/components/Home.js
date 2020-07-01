@@ -36,16 +36,18 @@ function Home() {
     return (
         <>
             <Login history={history} />
-            <div className="frame">
-                <h1 className="logo" style={{ fontSize: 45}}>Choosie</h1>
-                <form onSubmit={onSearch}>
-                    <input className="search" type="text" placeholder="Search actors, genres, directors" style={{ margin: '1.5rem 1.5rem'}} />
-                </form>
-                <ul className="button-wrapper">
-                    <li><button className="button" onClick={_=> onClick('my_list', '/my-list')}>My List</button></li>
-                    <li><button className="button" onClick={_=> onClick('start', '/query')}>Start</button></li>
-                    <li><button className="button" onClick={_=> onClick('popular', '/popular')}>Popular</button></li>
-                </ul>
+            <div className="container">
+                <div className="frame">
+                    <h1 className="logo" style={{ userSelect: 'none', fontSize: 45}}>Choosie</h1>
+                    <form onSubmit={onSearch}>
+                        <input className="search" type="text" placeholder="Search actors, genres, directors" style={{ margin: '1.5rem 1.5rem'}} />
+                    </form>
+                    <ul className="button-wrapper">
+                        <li><button className="button" onClick={_=> onClick('my_list', '/my-list')}>My List</button></li>
+                        <li><button className="button" onClick={_=> onClick('start', '/query')}>Start</button></li>
+                        <li><button className="button" onClick={_=> onClick('popular', '/popular')}>Popular</button></li>
+                    </ul>
+                </div>
             </div>
             <Footer />
         </>

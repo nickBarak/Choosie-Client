@@ -1,7 +1,5 @@
-let o1 = {a: 1, b: 2};
+const ary = [1,undefined,3];
 
-let o2 = { ...o1, b: undefined };
+const ary2 = Array.from(ary, i => i);
 
-let o3 = Object.entries(o1).reduce((acc, [key, val]) => key !== 'b' ? [ ...acc, ...val ]  : acc, []);
-
-console.log(o1, o2, o3)
+console.log(ary, ary2)

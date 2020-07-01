@@ -80,13 +80,13 @@ function Movie() {
             <img src={movie.cover_file} alt="not available" />
             {user
                 ? user.currently_saved.includes(movie.id)
-                    ? <button onClick={_=> {
+                    ? <button className="button-manage-movie" onClick={_=> {
                         let confirmed = true;
                         if (Object.values(user.bins).reduce((acc, cur) => [...acc, ...cur], []).includes(String(movie.id))) confirmed = window.confirm('This will remove the movie from all bins. Do you still want to unsave it?');
                         confirmed && setUnsaving(movie.id)
                     }}>{unsaving ? 'Unsaving movie...' : 'Unsave Movie'}</button>
-                    : <button onClick={saveMovie}>{saving ? 'Saving movie...' : 'Save to My List'}</button>
-                : <button onClick={_=> history.push('/register')}>Sign in to save this movie</button>}
+                    : <button className="button-manage-movie" onClick={saveMovie}>{saving ? 'Saving movie...' : 'Save to My List'}</button>
+                : <button className="button-manage-movie" onClick={_=> history.push('/register')}>Sign in to save this movie</button>}
             <br />
             <label style={{ fontWeight: 'bold' }}>{movie.title}</label><br /><br />
             {movie.description && <div>{movie.description === 'Not available' ? 'Description not available' : movie.description}</div>}<br />

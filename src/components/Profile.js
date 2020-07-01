@@ -5,6 +5,7 @@ import { useLocation } from 'react-router-dom';
 import { makeRequest } from '../store/actions/makeRequest.action';
 import HistoryContext from '../store/contexts/History.context';
 import { updateUser } from '../store/actions/updateUser.action';
+import Toggler from './Toggler';
 
 
 let mounted;
@@ -22,6 +23,7 @@ function Profile() {
     const user = useSelector(store => store.user.result);
     const [clearing, setClearing] = useState(false);
     const [showSaveHistory, setShowSaveHistory] = useState(user && user.show_save_history);
+    const [showDescriptionOnHover, setShowDescriptionOnHover] = useState(user && user.show_description_on_hover);
 
     function editInfo(e, signal) {
         if (e) {
@@ -37,6 +39,7 @@ function Profile() {
                 country: e ? children[4].value : user.country,
                 email: e ? children[5].value : user.email,
                 show_save_history: showSaveHistory,
+                show_description_on_hover: showDescriptionOnHover,
                 recent_save_history: clearing ? [] : user.recent_save_history
         };
         new Promise(resolve => dispatch( makeRequest(`users/${user.username}`, '', {
@@ -57,7 +60,7 @@ function Profile() {
               { signal } = controller;
         editInfo(null, signal);
         return _=> controller.abort();
-    }, [clearing, showSaveHistory])
+    }, [clearing, showSaveHistory, showDescriptionOnHover])
 
     function changePassword(e) {
         e.persist();
@@ -87,55 +90,95 @@ function Profile() {
 
     return (
         user && user.username === location.pathname.split('/profile/')[1]
-        ? <>
-            <label>Your info</label>
-            <ul>
-                <li>Name: {user.name}</li>
-                <li>Username: {user.username}</li>
-                <li>Sex: {user.sex}</li>
-                <li>Age: {user.age}</li>
-                <li>Languages: {user.languages}</li>
-                <li>Country: {user.country}</li>
-                <li>Email: {user.email}</li>
-            </ul>
-            <button onClick={_=> setEditingInfo(!editingInfo)}>Edit Info</button>
-            <div className="error-msg" style={{ color: 'maroon' }}>{editInfoError}</div>
-            {editingInfo &&
-                <form onSubmit={editInfo} style={{ display: 'flex', flexDirection: 'column' }}>
-                    <input placeholder="name" />
-                    <input placeholder="sex" />
-                    <input placeholder="age" />
-                    <input placeholder="languages" />
-                    <input placeholder="country" />
-                    <input placeholder="email" />
-                    <button>Submit</button>
-                </form>
-            }
-            <div>
-                <span>Show Save History? </span>
-                <label><input type="radio" name="showSaveHistoryRadio" value="Yes" onClick={_=> setShowSaveHistory(true)} defaultChecked={user.show_save_history? true : false} />Yes</label>
-                <label><input type="radio" name="showSaveHistoryRadio" value="No" onClick={_=> setShowSaveHistory(false)} defaultChecked={user.show_save_history ? false : true} />No</label>
+        ? <div className="container" style={{ flexDirection: 'column' }}>
+            <div className="register-1">
+                <label className="prompt-register">Your info</label>
+                <ul className="info-list">
+                    <li>
+                        <label>Name: </label>
+                        <span>{user.name || 'Not specified'}</span>
+                    </li>
+                    <li>
+                        <label>Username: </label>
+                        <span>{user.username}</span>
+                    </li>
+                    <li>
+                        <label>Sex: </label>
+                        <span>{user.sex || 'Not specified'}</span>
+                    </li>
+                    <li>
+                        <label>Age: </label>
+                        <span>{user.age || 'Not specified'}</span>
+                    </li>
+                    <li>
+                        <label>Languages: </label>
+                        <span style={{ whiteSpace: 'normal' }}>{user.languages[0].length ? user.languages : 'Not specified'}</span>
+                    </li>
+                    <li>
+                        <label>Country: </label>
+                        <span>{user.country || 'Not specified'}</span>
+                    </li>
+                    <li>
+                        <label>Email: </label>
+                        <span>{user.email || 'Not specified'}</span>
+                    </li>
+                </ul>
             </div>
-            <button onClick={_=> user.recent_save_history.length && setClearing(true)}>
-                {user.recent_save_history.length
-                    ? clearing
-                        ? 'Clearing...'
-                        : 'Clear Save History'
-                    : 'History Cleared'
-                }
-            </button>
-            <button onClick={_=> setChangingPassword(!changingPassword)}>Change Password</button>
-            <div className="error-msg" style={{ color: 'maroon' }}>{changePasswordError}</div>
-            {changingPassword &&
-                <form onSubmit={changePassword} style={{ display: 'flex', flexDirection: 'column' }}>
-                    <input type="password" placeholder="Enter current password" />
-                    <input type="password" placeholder="Enter new password" />
-                    <input type="password" placeholder="Repeat new password" />
-                    <button>Submit</button>
-                </form>
-            }
-            <button onClick={_=> history.push('/')}>Back to Home</button>
-        </>
+            <div style={{ display: 'flex' }}>
+                <div style={{ padding: '1rem' }} className="register-1">
+                    <button className="button-register" onClick={_=> setEditingInfo(!editingInfo)}>Edit Info</button>
+                    <div className="error-msg" style={{ color: 'maroon' }}>{editInfoError}</div>
+                    {editingInfo &&
+                        <form onSubmit={editInfo} style={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
+                            <input style={{ width: '80%' }} className="input-register" placeholder="name" />
+                            <input style={{ width: '80%' }} className="input-register" placeholder="sex" />
+                            <input style={{ width: '80%' }} className="input-register" placeholder="age" />
+                            <input style={{ width: '80%' }} className="input-register" placeholder="languages" />
+                            <input style={{ width: '80%' }} className="input-register" placeholder="country" />
+                            <input style={{ width: '80%' }} className="input-register" placeholder="email" />
+                            <button className="button-register">Submit</button>
+                        </form>
+                    }
+                </div>
+                <div style={{ padding: '1rem', fontSize: '1rem', minWidth: '50%' }} className="register-1">
+                    <Toggler prompt="Show description on hover?" defaultChecked={showDescriptionOnHover} onCheck={_=> setShowDescriptionOnHover(true)} onUncheck={_=> setShowDescriptionOnHover(false)} />
+                    <Toggler className="toggler-profile" prompt="Show Save History?" defaultChecked={showSaveHistory} onCheck={_=> setShowSaveHistory(true)} onUncheck={_=> setShowSaveHistory(false)} />
+                    <button className="button-register" onClick={_=> user.recent_save_history.length && setClearing(true)}>
+                        {user.recent_save_history.length
+                            ? clearing
+                                ? 'Clearing...'
+                                : 'Clear Save History'
+                            : 'History Cleared'
+                        }
+                    </button>
+                </div>
+                <div style={{ padding: '1rem'}} className="register-1">
+                    <button className="button-register" onClick={_=> setChangingPassword(!changingPassword)}>Change Password</button>
+                    <div className="error-msg" style={{ color: 'maroon' }}>{changePasswordError}</div>
+                    {changingPassword &&
+                        <form onSubmit={changePassword} style={{ display: 'flex', flexDirection: 'column' }}>
+                            <input style={{ width: '80%' }} className="input-register" type="password" placeholder="Enter current password" />
+                            <input style={{ width: '80%' }} className="input-register" type="password" placeholder="Enter new password" />
+                            <input style={{ width: '80%' }} className="input-register" type="password" placeholder="Repeat new password" />
+                            <button className="button-register">Submit</button>
+                        </form>
+                    }
+                </div>
+            </div>
+            <button style={{ margin: '1rem', backgroundColor: 'var(--bg-color-dark)', color: 'var(--color-offset)' }} onMouseOver={e => {
+                e.target.style.backgroundColor = 'var(--color-offset)';
+                e.target.style.color = 'var(--bg-color-light)';
+            }} onFocus={e => {
+                e.target.style.backgroundColor = 'var(--color-offset)';
+                e.target.style.color = 'var(--bg-color-light)';
+            }} onMouseOut={e => {
+                e.target.style.backgroundColor = 'var(--bg-color-dark)';
+                e.target.style.color = 'var(--color-offset)';
+            }} onBlur={e => {
+                e.target.style.backgroundColor = 'var(--color-offset)';
+                e.target.style.color = 'var(--color-offset)';
+            }} className="button" onClick={_=> history.push('/')}>Back to Home</button>
+        </div>
         : (
             <>
                 <div>You must be logged in as "{location.pathname.split('/profile/')[1]}" to view this page</div>

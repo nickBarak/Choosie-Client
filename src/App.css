@@ -12,7 +12,7 @@
 
 body {
   background: linear-gradient(to right, var(--bg-color-dark), var(--bg-color-light));
-  color: red
+  color: white;
 }
 
 li {
@@ -23,8 +23,12 @@ a {
   text-decoration: none;
 }
 
+nav {
+  margin: 1rem 0 3.5rem 1rem;
+}
+
 nav ul {
-  /* position: fixed; */
+  /* position: absolute; */
   top: 2rem;
   left: 1.5rem;
   font-size: 1.2rem;
@@ -41,17 +45,62 @@ nav ul li a{
 }
 
 nav ul li a:hover {
-  text-decoration: none;
-  color: lighten(var(--bg-color-light, 12%));
+  color: red;
   margin-left: .6rem;
 }
 
+nav ul li a:focus {
+  outline:none;
+  color: red;
+  margin-left: .6rem;
+}
+
+.sidebar {
+  width: 190px;
+  flex: 1;
+  color: red;
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin: 0 0 1rem 1rem;
+  white-space: nowrap;
+}
+
+.sidebar li {
+  margin-bottom: .25rem;
+}
+
+.sidebar-li-hover:hover, .sidebar-li-hover:focus {
+  color: var(--color-offset);
+  cursor: pointer;
+}
+
+.sidebar-li:active {
+  color: lightslategray;
+}
+
+.container {
+  width: 100vw;
+  height: 90vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 .frame {
-  margin: 38vh 38vw;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+}
+
+.frame-temp2 {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  grid-template-areas:
+    'label content content content content',
+    'label content content content content',
+    'label content content content content',
+    'label content content content content';
 }
 
 .logo {
@@ -62,7 +111,9 @@ nav ul li a:hover {
 .search {
     border-radius: 4px;
     width: 50vw;
-    height: 6vh;
+    min-width: 30rem;
+    max-width: 50rem;
+    height: 2.75rem;
     font-size: .95rem;
     padding: .6rem .6rem;
     transition: box-shadow 125ms;
@@ -77,6 +128,7 @@ nav ul li a:hover {
   display: flex;
   justify-content: center;
   color: var(--bg-color-dark);
+  margin-bottom: .75rem;
 }
 
 .button {
@@ -88,24 +140,24 @@ nav ul li a:hover {
   border-radius: 13.5px;
   background-color: var(--color-offset);
   transition-property: background-color, color;
-  transition-duration: 150ms;
+  transition-duration: 135ms;
   transition-timing-function: ease-in;
 }
 
-button:hover {
+.button:active {
+  background-color: var(--bg-color-dark);
+}
+
+.button:focus {
+  outline: none !important;
+  background-color: var(--bg-color-dark);
+  color: var(--color-offset);
+}
+
+.button:hover {
   background-color: var(--bg-color-dark);
   color: var(--color-offset);
   cursor: pointer;
-}
-
-button:focus {
-  outline: none;
-  background-color: var(--bg-color-dark);
-  color: var(--color-offset);
-}
-
-button:active {
-  background-color: darken(var(--bg-color-dark, 12%));
 }
 
 .link-help {
@@ -134,27 +186,30 @@ button:active {
 
 .help {
   color: var(--color-offset);
-  width: 50vw;
-  margin-top: 11rem;
-  align-items: flex-start;
+  width: 50%;
 }
 
 .help section {
   display: flex;
-  text-align: justify;
 }
 
 .help section div {
   margin: 2px auto 1rem 1rem;
+  text-align: justify;
 }
 
 .help section label {
   font-size: 1.05rem;
   font-weight: bold;
   white-space: nowrap;
+  flex: 0 0 75.5px;
+  text-align: end;
 }
 
-.link-help-to {
+.button-v2 {
+  background-color: transparent;
+  border: none;
+  color: var(--color-offset);
   font-weight: bold;
   font-size: 1.2rem;
   transition: color 200ms ease-in;
@@ -164,13 +219,18 @@ button:active {
   left: 0;
 }
 
-.link-help-to:hover {
+.button-v2:hover, .button-v2:focus {
   color: white;
 }
 
+.button-v2:active {
+  color: red;
+}
+
 .bin-manager {
+  z-index: 5;
   border-radius: 15px;
-  background-color: rgba(30, 30, 30, .75);
+  background-color: rgba(30, 30, 30, .9);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -180,7 +240,10 @@ button:active {
   bottom: 50%;
   left: 25%;
   padding: 1.25rem 1.25rem;
-  /* opacity: .6; */
+}
+
+.label-bin-manager {
+  margin-right: .5rem;
 }
 
 .query-prompt {
@@ -192,10 +255,259 @@ button:active {
   color: var(--color-offset);
 }
 
-.query-next:hover {
-  background-color: darken(var(--bg-color-dark, 2%))
+.query-next:hover, .query-next:focus {
+  background-color: var(--bg-color-dark);
 }
 
 .query-next:active {
-  background-color: darken(var(--bg-color-dark, 80%));
+  background-color: var(--bg-color-dark);
+}
+
+.display-row {
+  margin: 3rem;
+  display: grid;
+  gap: 3rem;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+}
+
+.display-row li {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.display-row li div {
+  margin-top: 1rem;
+  z-index: 2;
+}
+
+.display-row label {
+  color: white;
+  transition: color 100ms ease-in;
+}
+
+.display-row li label:hover {
+  cursor: pointer;
+  color: lightgray;
+}
+
+.display-row img {
+  width: 210px;
+  border-radius: 11.5px;
+  box-shadow: 1.75vw 1.75vw 1.75rem 1rem rgb(20, 20, 20, .5);
+  transition: transform 120ms ease-out;
+}
+
+.display-row li a {
+  text-align: center;
+}
+
+.display-row li a img:hover, .display-row li a:focus img {
+  transform: scale(1.05);
+}
+
+.movie-description {
+  top: 100%;
+  right: -30%;
+  width: 200%;
+  position: absolute;
+  font-size: 1.3rem;
+  padding: .5rem;
+  background-color: rgb(120, 120, 120, .9);
+  border-radius: 15px;
+  z-index: 1;
+  color: black;
+  transform: scale(0);
+  transition: transform 120ms ease-in-out;
+}
+
+.display-row li a:hover + div + .movie-description, .display-row li a:focus + div + .movie-description {
+  visibility: visible;
+  transform: scale(1);
+}
+
+.toggler {
+  position: relative;
+  display: inline-block;
+  width: 36px;
+  height: 21px;
+}
+
+.toggler input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.toggler span {
+  border-radius: 22.5px;
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background-color: #aaa;
+  transition: 400ms;
+  --toggler-translation: 0;
+}
+
+.toggler span::before {
+  border-radius: 50%;
+  position: absolute;
+  content: "";
+  height: 17px;
+  width: 17px;
+  left: 3px;
+  bottom: 2px;
+  background-color: white;
+  transition: 400ms;
+  transform: translateX(var(--toggler-translation));
+}
+
+.button-manage-movie {
+  background-color: transparent;
+  color: lightskyblue;
+  border: none;
+  padding: .1rem;
+}
+
+.button-manage-movie:hover, .button-manage-movie:focus {
+  background-color: var(--color-offset);
+  color: darkslategray;
+  box-shadow: 0 0 .25rem .05rem var(--color-offset);
+  cursor: pointer;
+}
+
+.button-login {
+  margin: 1rem;
+  color: white;
+  cursor: pointer;
+  font-size: 1.2rem;
+  box-shadow: 0 0 .2rem, .2rem var(--color-offset);
+  background-color: transparent;
+  border: none;
+  transition: color 500ms ease-out;
+}
+
+.button-login:focus {
+  color: red;
+}
+
+.register-1 {
+  background-color: rgb(30, 25, 35, .75);
+  color: white;
+  border-radius: 15px;
+  box-shadow: .9rem .9rem .25rem rgb(10, 10, 10, .25);
+  width: 50%;
+  font-size: 1.15rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  margin: 1.5rem;
+}
+
+.input-register {
+  height: 1.35rem;
+  padding: .25rem;
+  background-color: #ccc;
+  border: none;
+  margin: .25rem;
+  width: 50%;
+}
+
+.prompt-register {
+  margin: 1rem 1rem .85rem 1rem;
+}
+
+.button-register {
+  background-color: white;
+  border: none;
+  transition: 150ms;
+  border-radius: 2.5px;
+  margin: .5rem;
+  padding: .2rem;
+  color: rgb(30, 25, 35);
+  cursor: pointer;
+}
+
+.button-register:focus, .button-register:hover {
+  color: white;
+  background-color: black;
+}
+
+.button-filter {
+  text-align: center;
+  cursor: pointer;
+  padding: 2px 2.5px;
+  background-color: var(--bg-color-dark);border: 1px solid #bbb;
+  color: var(--color-offset);
+  width: 1rem;
+  margin-left: .5rem;
+  font-weight: bold;
+}
+
+.info-list {
+  margin-bottom: 1rem;
+}
+
+.info-list li {
+  display: flex;
+  margin-Bottom: 3.5px;
+}
+
+.info-list label {
+  flex: 0 0 100px;
+  text-align: end;
+}
+
+.info-list span {
+  margin: 0 1rem 0 1rem;
+  text-align: justify;
+  white-space: nowrap;
+}
+
+select {
+  padding: 2px 4px;
+  border-radius: 3px;
+  border: 2px solid #ddd
+}
+
+.filter li {
+  margin: .7rem 0;
+}
+
+@media (max-width: 1200px) {
+  .movie-description {
+    width: 150%;
+    right: -20%;
+    font-size: 1.15rem;
+  }
+
+  .display-row {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr))
+  }
+
+  .display-row img {
+    width: 150px;
+  }
+}
+
+@media (max-width: 1500px) {
+  .movie-description {
+    width: 175%;
+    right: -25%;
+  }
+}
+
+@media (max-width: 1800px) {
+  .display-row {
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  }
+
+  .display-row img {
+    width: 180px;
+  }
 }

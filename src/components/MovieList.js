@@ -1,13 +1,13 @@
-import React, { useState, useReducer, useEffect } from 'react';
+import React, { useState, useReducer, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { server } from '../APIs';
 import { updateUser } from '../store/actions/updateUser.action';
 import { makeRequest } from '../store/actions/makeRequest.action';
 import Filter from './Filter';
+import imageAlt from '../img/image-alt.png';
 
-function MovieList({ movies, heading, withFilter, displaying }) {
-    const [showDescription, setShowDescription] = useState(false);
+function MovieList({ movies, heading, headingMargin, withFilter, displaying }) {
     const [displayList, dispatchDisplayList] = useReducer(displayListReducer, movies);
     const [unsaving, setUnsaving] = useState(false);
     const [saveError, setSaveError] = useState(null);
@@ -17,6 +17,7 @@ function MovieList({ movies, heading, withFilter, displaying }) {
     const [removingFromBinError, setRemovingFromBinError] = useState(null);
     const user = useSelector(store => store.user.result);
     const dispatch = useDispatch();
+        
 
     useEffect(_=> {
         const controller = new AbortController(),
@@ -171,50 +172,57 @@ function MovieList({ movies, heading, withFilter, displaying }) {
     }
 
     return (
-        <>
-            <h2>{heading}</h2>
+        <div style={{ flex: 4, margin: '3rem 3rem 11rem 3rem' }}>
+            <h2 style={{ textAlign: 'center', marginBottom: headingMargin }}>{heading}</h2>
             {withFilter && <Filter displayList={displayList} dispatchDisplayList={dispatchDisplayList} />}
-            <ul style={{ display: 'flex' }} >
+            <ul className="display-row">
                 {displayList.map((movie, i) =>
-                    <li key={i} style={{ marginLeft: '3.5rem' }}>
-                        <Link to={`movies/${movie.id}`} onMouseOver={e => setShowDescription(movie.id)} onMouseOut={e => setShowDescription(false)}>
-                            <img src={movie.cover_file} alt="not available" style={{ borderRadius: '11.5px', boxShadow: '-16px -12px rgb(100,50,50,.9), 12px -22px rgb(50,50,100,.9)',
-                            width: '170px', height: '240px', transition: 'height 120ms ease-out, width 120ms ease-out' }} onMouseOver={({target:{style, style:{ width, height }}}) => {
-                                style.width = `${1.05 * Number(width.split('px')[0])}px`;
-                                style.height = `${1.05 * Number(height.split('px')[0])}px`;
-                            }} onMouseOut={({target:{style, style:{ width, height }}}) => {
-                                style.width = `${Number(width.split('px')[0]) / 1.05}px`;
-                                style.height = `${Number(height.split('px')[0]) / 1.05}px`;
-                            }} onDrag={e => {
+                    <li key={i}>
+                        <Link to={`movies/${movie.id}`}>
+                            <img src={movie.cover_file} onError={e => {
+                                e.target.src = imageAlt;
+                                e.target.style.width = '200px';
+                                e.target.style.height = '267.5px';
+                                e.target.style.boxShadow = 'none';
+                            }} alt="Not available" onDrag={e => {
                                 e.preventDefault();
                                 e.dataTransfer.setData('text/plain', movie.id);
                             }} />
-                            <br />
-                            <label>{movie.title}</label>
                         </Link>
-                        {displaying === 'Save History'
-                            ? <button onClick={_=> setRemovingFromHistory(movie.id)}>{removingFromHistory ? 'Removing...' : 'Remove'}</button>
-                            : displaying !== 'Popular'
-                                ? displaying === 'Currently Saved'
-                                    ? <button onClick={_=> {
-                                        let confirmed = true;
-                                        if (Object.values(user.bins).reduce((acc, cur) => [...acc, ...cur], []).includes(String(movie.id))) confirmed = window.confirm('This will remove the movie from all bins. Do you still want to unsave it?');
-                                        confirmed && setUnsaving(movie.id)
-                                    }}>{unsaving ? 'Unsaving...' : 'Unsave'}</button>
-                                    : (<>
-                                        <button onClick={_=> {
+                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                            <Link to={`movies/${movie.id}`} tabIndex="-1">
+                                <label>{movie.title}</label>
+                            </Link>
+                            {displaying === 'Save History'
+                                ? <button className="button-manage-movie" onClick={_=> setRemovingFromHistory(movie.id)}>{removingFromHistory ? 'Removing...' : 'Remove'}</button>
+                                : displaying !== 'Popular'
+                                    ? displaying === 'Currently Saved'
+                                        ? <button className="button-manage-movie" onClick={_=> {
                                             let confirmed = true;
-                                            if (Object.entries(user.bins).reduce((acc, [key, val]) => key !== displaying ? [ ...acc, ...val ]  : acc, []).includes(String(movie.id))) confirmed = window.confirm('This will remove the movie from other bins. Do you still want to unsave it?');
-                                            confirmed && setUnsaving(movie.id);
+                                            if (Object.values(user.bins).reduce((acc, cur) => [...acc, ...cur], []).includes(String(movie.id))) confirmed = window.confirm('This will remove the movie from all bins. Do you still want to unsave it?');
+                                            confirmed && setUnsaving(movie.id)
                                         }}>{unsaving ? 'Unsaving...' : 'Unsave'}</button>
-                                        <button onClick={_=> setRemovingFromBin(movie.id)}>Take Out</button>
-                                    </>)
-                                : null
-                        }
-                        {showDescription === movie.id && movie.description && <div>{movie.description === 'Not available' ? 'Description not available' : movie.description}</div>}
+                                        : <span>
+                                            <button className="button-manage-movie" onClick={_=> {
+                                                let confirmed = true;
+                                                if (Object.entries(user.bins).reduce((acc, [key, val]) => key !== displaying ? [ ...acc, ...val ]  : acc, []).includes(String(movie.id))) confirmed = window.confirm('This will remove the movie from other bins. Do you still want to unsave it?');
+                                                confirmed && setUnsaving(movie.id);
+                                            }}>{unsaving ? 'Unsaving...' : 'Unsave'}</button>
+                                            <button className="button-manage-movie" onClick={_=> setRemovingFromBin(movie.id)} style={{ marginLeft: '.25rem' }}>Take Out</button>
+                                        </span>
+                                    : null
+                            }
+                        </div>
+                        {(!user || user.show_description_on_hover) && <div className="movie-description">
+                            {(!movie.description || movie.description === 'Not available')
+                                ? 'Description not available'
+                                : movie.description.length > 200
+                                    ? movie.description.slice(0, 200) + '...'
+                                    : movie.description}
+                        </div>}
                     </li>)}
             </ul>
-        </>
+        </div>
     )
 }
 

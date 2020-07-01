@@ -2,18 +2,16 @@ import React, { useState, useEffect, useContext } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { search } from '../store/actions/search.action';
 import Nav from './Nav';
-import { server } from '../APIs';
-import UserContext from '../store/contexts/User.context';
 import { Link } from 'react-router-dom';
 import HistoryContext from '../store/contexts/History.context';
+import StarRater from './StarRater';
 
 function Search() {
     const history = useContext(HistoryContext);
     const { loading, searchValue, result } = useSelector(store => store.search);
     const dispatch = useDispatch();
     const [page, setPage] = useState(1);
-    const [user] = useContext(UserContext);
-    const [searchRating, setSearchRating] = useState(0);
+    const user = useSelector(store => store.user.result);
 
     useEffect(_=> dispatch( search(user ? user.username : null, searchValue, page) ), [page]);
 
@@ -25,17 +23,6 @@ function Search() {
         e.target.reset();
     }
 
-    function rateSearch(rating) {
-        setSearchRating(rating);
-        try {
-            fetch(server + 'search', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ rating, username: user ? user.username : null })
-            })
-        } catch (e) { console.log(e) }
-    }
-
     return (
         <>
             <Nav />
@@ -43,15 +30,7 @@ function Search() {
                 <input type="text" placeholder="Search actors, genres, directors" />
                 <label> Results for: "{searchValue}"</label>
             </form>
-            <div>
-                <label>How would you rate our suggestions?</label>
-                <div>
-                    {[1,2,3,4,5].map(el => searchRating >= el
-                        ? <i key={el} className="fas fa-star" onClick={_=> rateSearch(el)} style={{ cursor: 'pointer' }} />
-                        : <i key={el} className="far fa-star" onClick={_=> rateSearch(el)} style={{ cursor: 'pointer' }} />
-                    )}
-                </div>
-            </div>
+            <StarRater />
             {loading
                 ? <div>Loading...</div>
                 : !result

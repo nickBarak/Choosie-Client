@@ -17,24 +17,24 @@ function Help() {
     useEffect(_=> setState({...state, sections: sections[state.more ? 1 : 0]}), [state.more]);
 
     return (
-        <div className="help frame">
-            <h2>What is <span className="logo">Choosie</span>?</h2>
-            <br />
-            <article>
-                <br />
-                <div style={{ fontWeight: 'bold' }}>{slogan}</div>
-                <br />
-                {state.sections.map((section, i) =>
-                    <section key={i}>
-                        <label>{section.label}</label>
-                        <div>{section.content}</div>
-                        <br />
-                    </section>
-                )}
-            </article>
-            <div style={{ position: 'relative', display: 'flex', width: '100%'}}>
-                <button className="link-help-to"  onClick={_=> history.push('/')}>Back to Home</button>
-                <button style={{ right: 0, left: 'auto'}} className="link-help-to" onClick={_=> { setState({...state, more: !state.more}); history.push('/help') }}>{state.more ? 'Previous' : 'More'}</button>
+        <div className="container">
+            <div className="help">
+                <h2>What is <span style={{ fontWeight: 600 }} className="logo">Choosie</span>?</h2>
+                <article style={{ width: '100%' }}>
+                    <br />
+                    <div style={{ fontWeight: 'bold' }}>{slogan}</div>
+                    <br />
+                    {state.sections.map((section, i) =>
+                        <section key={i}>
+                            <label>{section.label}</label>
+                            <div>{section.content}</div>
+                        </section>
+                    )}
+                </article>
+                <div style={{ position: 'relative', display: 'flex', width: '100%' }}>
+                    <button className="button-v2"  onClick={_=> history.push('/')}>Back to Home</button>
+                    <button style={{ right: 0, left: 'auto'}} className="button-v2" onClick={_=> { setState({...state, more: !state.more}); history.push('/help') }}>{state.more ? 'Previous' : 'More'}</button>
+                </div>
             </div>
         </div>
     )

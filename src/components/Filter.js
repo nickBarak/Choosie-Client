@@ -28,7 +28,7 @@ function Filter({ displayList, dispatchDisplayList }) {
                     e.target.parentNode.children[2].children[0].children[0].checked = true;
                 }
             }}>
-                <option key="-1" value="init" disabled>-- select an option --</option>
+                <option key="-1" value="init" disabled>Select an option</option>
                 <option key="0" value="Age Rating">Age Rating</option>
                 <option key="1" value="Duration">Duration</option>
                 <option key="2" value="Genre">Genre</option>
@@ -37,7 +37,7 @@ function Filter({ displayList, dispatchDisplayList }) {
             </select>
             {filterOptions[id][0][0] !== 'init' && (
             <>
-                <select defaultValue={filterOptions[id][0][1]}
+                <select style={{ marginLeft: '.35rem' }} defaultValue={filterOptions[id][0][1]}
                     onChange={e => {
                         dispatchFilterOptions({
                         type: e.target.options[e.target.selectedIndex].text,
@@ -45,19 +45,19 @@ function Filter({ displayList, dispatchDisplayList }) {
                     });
                     dispatchDisplayList( deriveFilterValues(e.target.parentNode.parentNode.parentNode) );
                 }}>
-                    <option key="-1" value="init" disabled>-- select an option --</option>
+                    <option key="-1" value="init" disabled>Select an option</option>
                     {filterOptions[id][1].map((option, i) => <option key={i} value={option}>{option}</option>)}
                 </select>
                 <span>
-                    <label><input type="radio" name={`filterByRadio_${id}`} value="higher" defaultChecked={filterOptions[id][0][2] === 'higher' ? true : false} onChange={e => {
+                    <label style={{ marginLeft: '.35rem' }}><input style={{ margin: '.5' }} type="radio" name={`filterByRadio_${id}`} value="higher" defaultChecked={filterOptions[id][0][2] === 'higher' ? true : false} onChange={e => {
                         dispatchFilterOptions({ type: 'higher', payload: { id, select: 2 }});
                         dispatchDisplayList( deriveFilterValues(e.target.parentNode.parentNode.parentNode.parentNode.parentNode) );
                     }} />higher/later</label>
-                    <label><input type="radio" name={`filterByRadio_${id}`} value="lower" defaultChecked={filterOptions[id][0][2] === 'lower' ? true : false} onChange={e => {
+                    <label style={{ marginLeft: '.35rem' }}><input style={{ margin: '.5' }} type="radio" name={`filterByRadio_${id}`} value="lower" defaultChecked={filterOptions[id][0][2] === 'lower' ? true : false} onChange={e => {
                         dispatchFilterOptions({ type: 'lower', payload: { id, select: 2 }});
                         dispatchDisplayList( deriveFilterValues(e.target.parentNode.parentNode.parentNode.parentNode.parentNode) );
                     }} />lower/earlier</label>
-                    <label><input type="radio" name={`filterByRadio_${id}`} value="exact" defaultChecked={filterOptions[id][0][2] === 'exact' ? true : false} onChange={e => {
+                    <label style={{ marginLeft: '.35rem' }}><input style={{ margin: '.5' }} type="radio" name={`filterByRadio_${id}`} value="exact" defaultChecked={filterOptions[id][0][2] === 'exact' ? true : false} onChange={e => {
                         dispatchFilterOptions({ type: 'exact', payload: { id, select: 2 }});
                         dispatchDisplayList( deriveFilterValues(e.target.parentNode.parentNode.parentNode.parentNode.parentNode) );
                     }} />exact</label>
@@ -97,45 +97,49 @@ function Filter({ displayList, dispatchDisplayList }) {
     }
 
     const deriveFilterValues = ul => Array.from(ul.children, li => {
-        const children = li.children[0].children,
-            type = children[0].options[children[0].selectedIndex].text,
+        const children = li.children[0].children;
+        if (!children[1]) return null;
+        const type = children[0].options[children[0].selectedIndex].text,
             payload = {
                 value: children[1].options[children[1].selectedIndex].text,
                 range: Array.from(children[2].children).find(child => child.children[0].checked).children[0].value
             };
         return ({ type, payload });
-    });
+    }).filter(filter => filter);
 
     return (
-        <form onSubmit={e => {
+        <form className="filter" onSubmit={e => {
             e.persist();
             e.preventDefault();
             dispatchFilterOptions({ type: 'Clear Filters' });
             dispatchDisplayList(null);
             setFilterID(0);
             e.target.reset();
-        }}>
+        }} style={{ marginBottom: '2rem' }}>
             <label>Filter by: </label>
-            <ul>
+            <ul style={{ margin: '.7rem 1.5rem' }}>
                 <li key="0">
                     {makeFilter(0)}
-                    {filterID === 0 && filterOptions[0][0][0] !== 'init' && <button type="button" onClick={e => {
+                    {filterID === 0 && filterOptions[0][0][0] !== 'init' && <button className="button-filter" type="button" onClick={e => {
                         dispatchFilterOptions({ type: 'New Filter' });
                         setFilterID(filterID + 1);
-                    }}> + </button>}
+                    }}>+</button>}
                 </li>
                 {filterID > 1 && new Array(filterID-1).fill(null).map((filter, i) => <li key={i+1}>{makeFilter(i+1)}</li>)}
                 {filterID > 0 &&
                     <li key={filterID}>
                         {makeFilter(filterID)}
-                        {filterOptions[filterID][0][0] !== 'init' && <button type="button" onClick={e => {
+                        {filterOptions[filterID][0][0] !== 'init' && <button className="button-filter" type="button" onClick={e => {
                             dispatchFilterOptions({ type: 'New Filter' });
                             setFilterID(filterID + 1);
                         }}> + </button>}
                     </li>
                 }
             </ul>
-            <button>Reset</button>
+            <button style={{ backgroundColor: 'transparent', border: 'none', color: 'white' }} onMouseOver={e => {
+                e.target.style.color = 'red';
+                e.target.style.cursor = 'pointer';
+            }} onMouseOut={e => e.target.style.color = 'white'}>Reset</button>
         </form>
     )
 }

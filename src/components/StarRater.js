@@ -19,13 +19,13 @@ function StarRater() {
 
     return (
         <div>
-            <label>How would you rate our suggestions?</label>
-            <div>
+            <label style={{ marginRight: '.5rem', fontSize: '1rem' }}>How would you rate these suggestions?</label>
+            <span>
                 {[1,2,3,4,5].map(el => starRating >= el
                     ? <i key={el} className="fas fa-star" onClick={_=> rate(el)} style={{ cursor: 'pointer' }} />
                     : <i key={el} className="far fa-star" onClick={_=> rate(el)} style={{ cursor: 'pointer' }} />
                 )}
-            </div>
+            </span>
         </div>
     )
 }

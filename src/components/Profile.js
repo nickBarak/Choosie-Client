@@ -167,10 +167,10 @@ function Profile() {
             </div>
             <button style={{ margin: '1rem', backgroundColor: 'var(--bg-color-dark)', color: 'var(--color-offset)' }} onMouseOver={e => {
                 e.target.style.backgroundColor = 'var(--color-offset)';
-                e.target.style.color = 'var(--bg-color-light)';
+                e.target.style.color = 'var(--bg-color-dark)';
             }} onFocus={e => {
                 e.target.style.backgroundColor = 'var(--color-offset)';
-                e.target.style.color = 'var(--bg-color-light)';
+                e.target.style.color = 'var(--bg-color-dark)';
             }} onMouseOut={e => {
                 e.target.style.backgroundColor = 'var(--bg-color-dark)';
                 e.target.style.color = 'var(--color-offset)';
@@ -182,7 +182,19 @@ function Profile() {
         : (
             <>
                 <div>You must be logged in as "{location.pathname.split('/profile/')[1]}" to view this page</div>
-                <button onClick={_=> history.push('/')}>Back to Home</button>
+                <button style={{ marginTop: '.5rem' }} onMouseOver={e => {
+                    e.target.style.backgroundColor = 'var(--bg-color-light)';
+                    e.target.style.color = 'var(--color-offset)';
+                }} onFocus={e => {
+                    e.target.style.backgroundColor = 'var(--bg-color-light)';
+                    e.target.style.color = 'var(--color-offset)';
+                }} onMouseOut={e => {
+                    e.target.style.backgroundColor = 'var(--color-offset)';
+                    e.target.style.color = 'var(--bg-color-dark)'
+                }} onBlur={e => {
+                    e.target.style.backgroundColor = 'var(--color-offset)';
+                    e.target.style.color = 'var(--bg-color-dark)'
+                }} className="button" onClick={_=> history.push('/')}>Back to Home</button>
             </>
         )
     )

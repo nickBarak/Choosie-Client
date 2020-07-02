@@ -51,8 +51,10 @@ function Query(props) {
                 </ul>)}
             </div>
             : <>
-            <MovieList movies={result || []} heading="Here are some movies you might be interested in" displaying="Query"/>
-            <StarRater />
+            <MovieList movies={result || []} heading="Here are some movies you might be interested in" displaying="Query" lowerMargin="4rem"/>
+            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '8rem' }}>
+                <StarRater />
+            </div>
             </>}
         </>
     )

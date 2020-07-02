@@ -25,7 +25,7 @@ function Popular() {
                         <li tabIndex="0" onKeyDown={e => e.keyCode === 13 && setColumn('times_saved')} className="sidebar-li-hover" key="3" onClick={_=> setColumn('times_saved')}>Most Saved All Time</li>
                         <li style={{ marginTop: '2.5rem', height: '23px', width: '100%' }}>
                             <div style={{ posiiton: 'relative', display: 'flex', justifyContent: 'space-between', width: '100%', height: '100%' }}>
-                                {<button className="button-v2" style={{ pointerEvents: 'none', opacity: 0, left: '1rem', transition: 'opacity 550ms ease-in-out' }} onClick={e => {
+                                <button className="button-v2" style={{ pointerEvents: 'none', opacity: 0, left: '1rem', transition: 'opacity 550ms ease-in-out' }} onClick={e => {
                                     if (set === 2) {
                                         e.target.style.opacity = 0;
                                         e.target.parentElement.children[1].style.transform = 'translateX(0)';
@@ -33,7 +33,7 @@ function Popular() {
                                     }
                                     e.target.blur();
                                     setSet(set - 1)
-                                }}>Previous</button>}
+                                }}>Previous</button>
                                 <button style={{ left: '1rem', transition: 'transform 550ms ease-in-out' }} className="button-v2" onClick={e => {
                                     if (set === 1) {
                                         e.target.style.transform = 'translateX(calc(190px - 1rem))';

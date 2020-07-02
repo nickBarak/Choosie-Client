@@ -99,7 +99,7 @@ function BinManager({ movies, displaying, setDisplaying }) {
             <label style={{ fontWeight: 600 }}>Bin Manager</label>
             <form onSubmit={createBin}>
                 <label className="label-bin-manager">Create a new bin</label>
-                <input style={{ padding: '.25rem', height: '1.3rem' }} type="text" placeholder="Enter bin name" autoComplete="off" />
+                <input style={{ borderRadius: '2px', padding: '.25rem', height: '1.35rem' }} type="text" placeholder="Enter bin name" autoComplete="off" />
                 <button className="button-register">Create Bin</button>
             </form>
             {Object.keys(user.bins).length > 0 &&

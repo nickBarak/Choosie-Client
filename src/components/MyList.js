@@ -98,6 +98,7 @@ export default function MyList() {
             style.transform = 'scaleY(1)';
         }
         setShowBins(!showBins);
+        setCreatingBinError(null);
     }
 
 return loading ? <div>Loading...</div> : error ? <div>Error loading movies</div> : (
@@ -121,8 +122,7 @@ return loading ? <div>Loading...</div> : error ? <div>Error loading movies</div>
                                     ? 
                                     <div>
                                         <label onFocus={e => e.target.style.color = showBins ? 'white' : 'var(--color-offset)'} onBlur={e => e.target.style.color = showBins ? 'var(--color-offset)' : 'red'} tabIndex="0" style={{ outline: 'none', cursor: 'pointer' }} onClick={onClickYourBins} onKeyDown={e => e.keyCode === 13 && onClickYourBins(e)} onMouseOver={e => e.target.style.color = showBins ? 'white' : 'var(--color-offset)'} onMouseOut={e => e.target.style.color = showBins ? 'var(--color-offset)' : 'red'}>Your Bins</label>
-                                        {creatingBinError && <div style={{ color: 'maroon' }}>{creatingBinError}</div>}
-                                        <ul style={{ maxHeight: 0, transform: 'scaleY(0)', transformOrigin: 'top', transition: 'max-height 150ms ease-out, transform 150ms ease-out' }}>
+                                        <ul style={{ maxHeight: 0, transform: 'scaleY(0)', transformOrigin: 'top', transition: 'max-height 175ms ease-out, transform 175ms ease-out' }}>
                                             {Object.keys(user.bins).map((bin, i) =>
                                                 <li onFocus={e => e.target.style.color = 'var(--color-offset)'} onBlur={e => e.target.style.color = 'red'} tabIndex={showBins ? 0 : '-1'} onMouseOver={e => {
                                                     e.target.style.color = 'var(--color-offset)';
@@ -131,11 +131,15 @@ return loading ? <div>Loading...</div> : error ? <div>Error loading movies</div>
                                                     e.preventDefault();
                                                     dispatch( makeRequest('movies/list', '?movies=' + user.bins[bin]) );
                                                     setDisplaying(bin);
+                                                    setShowBins(!showBins);
+                                                    setCreatingBinError(null);
                                                 }} onKeyDown={e => {
                                                     e.preventDefault();
                                                     if (e.keyCode === 13) {
                                                         dispatch( makeRequest('movies/list', '?movies=' + user.bins[bin]) );
                                                         setDisplaying(bin);
+                                                        setShowBins(!showBins);
+                                                        setCreatingBinError(null);
                                                     }
                                                 }} onDrop={e => {
                                                     e.preventDefault();
@@ -150,7 +154,10 @@ return loading ? <div>Loading...</div> : error ? <div>Error loading movies</div>
                                             <li style={{ marginLeft: '1.25rem' }}>
                                                 {creatingBin
                                                     ? <form onSubmit={createBin}>
-                                                        <input style={{ height: '1.3rem', width: '125px' }} type="text" placeholder="Enter bin name" />
+                                                        <input style={{
+                                                            borderRadius: '2px',
+                                                            padding: '.25rem',
+                                                            height: '1.3rem', width: '110px' }} type="text" placeholder="Enter bin name" />
                                                     </form>
                                                     : <button tabIndex="0" onClick={_=> setCreatingBin(true)} onFocus={e => e.target.style.transform = 'scale(1.15)'} onBlur={e => e.target.style.transform = 'scale(1)'} onKeyDown={e => e.keyCode === 13 && setCreatingBin(true)} style={{ backgroundColor: 'transparent', border: 'none', color: 'red', fontWeight: 'bold',
                                                     fontSize: '1.1rem',
@@ -160,6 +167,7 @@ return loading ? <div>Loading...</div> : error ? <div>Error loading movies</div>
                                                 }} onMouseOut={e => e.target.style.transform = 'scale(1)'}>+</button>
                                                 }
                                             </li>
+                                            {creatingBinError && <div style={{ color: 'maroon' }}>{creatingBinError}</div>}
                                         </ul>
                                     </div>
                                     : 'Use the bin manager to organize your movies'

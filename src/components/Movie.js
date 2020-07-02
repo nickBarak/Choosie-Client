@@ -77,33 +77,65 @@ function Movie() {
     return loading ? <div>Loading...</div> : error ? <div>Error loading movie</div> : (
         <>
             <Nav />
-            <img src={movie.cover_file} alt="not available" />
-            {user
-                ? user.currently_saved.includes(movie.id)
-                    ? <button className="button-manage-movie" onClick={_=> {
-                        let confirmed = true;
-                        if (Object.values(user.bins).reduce((acc, cur) => [...acc, ...cur], []).includes(String(movie.id))) confirmed = window.confirm('This will remove the movie from all bins. Do you still want to unsave it?');
-                        confirmed && setUnsaving(movie.id)
-                    }}>{unsaving ? 'Unsaving movie...' : 'Unsave Movie'}</button>
-                    : <button className="button-manage-movie" onClick={saveMovie}>{saving ? 'Saving movie...' : 'Save to My List'}</button>
-                : <button className="button-manage-movie" onClick={_=> history.push('/register')}>Sign in to save this movie</button>}
-            <br />
-            <label style={{ fontWeight: 'bold' }}>{movie.title}</label><br /><br />
-            {movie.description && <div>{movie.description === 'Not available' ? 'Description not available' : movie.description}</div>}<br />
-            {movie.genres && <div>Genres: {movie.genres.join(', ')}</div>}<br />
-            {movie.mpaa_rating && <div>Rating: {movie.mpaa_rating}</div>}<br />
-            {movie.duration_in_mins ? movie.duration_in_mins % 60
-                ? movie.duration_in_mins >= 60
-                    ? <div>Duration: {Math.floor(movie.duration_in_mins / 60)}h {movie.duration_in_mins % 60}min</div>
-                    : <div>Duration: {movie.duration_in_mins} min</div>
-                : <div>Duration: {movie.duration_in_mins % 60}h</div>
-            : null}<br />
-            {movie.release_date && <div>Release Date: {movie.release_date.slice(0, 4)}</div>}<br />
-            {movie.writers && <div>Writers: {movie.writers.join(', ')}</div>}<br />
-            {movie.directors && <div>Directors: {movie.directors.join(', ')}</div>}<br />
-            {movie.actors && <div>Actors: {movie.actors.join(', ')}</div>}<br />
-            {movie.languages && <div>Languages: {movie.languages.join(', ')}</div>}<br />
-            {movie.countries && <div>Countries: {movie.countries.join(', ')}</div>}<br />            
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', transform: 'translateY(-3.5rem)' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '60vw' }}><img className="image-movie" src={movie.cover_file} alt="not available" />
+                <label style={{ fontWeight: 'bold', margin: '1rem 0 .2rem 0' }}>{movie.title}</label>
+                {user
+                    ? user.currently_saved.includes(movie.id)
+                        ? <button className="button-manage-movie" onClick={_=> {
+                            let confirmed = true;
+                            if (Object.values(user.bins).reduce((acc, cur) => [...acc, ...cur], []).includes(String(movie.id))) confirmed = window.confirm('This will remove the movie from all bins. Do you still want to unsave it?');
+                            confirmed && setUnsaving(movie.id)
+                        }}>{unsaving ? 'Unsaving movie...' : 'Unsave Movie'}</button>
+                        : <button className="button-manage-movie" onClick={saveMovie}>{saving ? 'Saving movie...' : 'Save to My List'}</button>
+                    : <button className="button-manage-movie" onClick={_=> history.push('/register')}>Sign in to save this movie</button>}
+                    {movie.description && <div style={{ margin: '2.5rem 0 3rem 0', textAlign: 'justify'}}>{movie.description === 'Not available' ? 'Description not available' : movie.description}</div>}
+                </div>
+                <ul className="info-movie">
+                    <li>
+                        <label>Genres: </label>
+                        {movie.genres && <span>{movie.genres.join(', ') || 'Not available'}</span>}
+                    </li>
+                    <li>
+                        <label>Rating: </label>
+                        {movie.mpaa_rating && <span>{movie.mpaa_rating || 'Not available'}</span>}
+                    </li>
+                    <li>
+                        <label>Duration: </label>
+                        {movie.duration_in_mins
+                            ? movie.duration_in_mins % 60
+                                ? movie.duration_in_mins >= 60
+                                    ? <span>{Math.floor(movie.duration_in_mins / 60)}h {movie.duration_in_mins % 60}min</span>
+                                    : <span>{movie.duration_in_mins} min</span>
+                                : <span>{movie.duration_in_mins % 60}h</span>
+                            : 'Not available'}
+                    </li>
+                    <li>
+                        <label>Release Date: </label>
+                        {movie.release_date && <span>{movie.release_date.slice(0, 4) || 'Not available'}</span>}
+                    </li>
+                    <li>
+                        <label>Writers: </label>
+                        {movie.writers && <span>{movie.writers.join(', ') || 'Not available'}</span>}
+                    </li>
+                    <li>
+                        <label>Directors: </label>
+                        {movie.directors && <span>{movie.directors.join(', ') || 'Not available'}</span>}
+                    </li>
+                    <li>
+                        <label>Actors: </label>
+                        {movie.actors && <span>{movie.actors.join(', ') || 'Not available'}</span>}
+                    </li>
+                    <li>
+                        <label>Languages: </label>
+                        {movie.languages && <span>{movie.languages.join(', ') || 'Not available'}</span>}
+                    </li>
+                    <li>
+                        <label>Countries: </label>
+                        {movie.countries && <span>{movie.countries.join(', ') || 'Not available'}</span>}
+                    </li>
+                </ul>
+            </div>
         </>
     )
 }

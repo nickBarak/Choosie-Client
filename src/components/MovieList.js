@@ -7,7 +7,7 @@ import { makeRequest } from '../store/actions/makeRequest.action';
 import Filter from './Filter';
 import imageAlt from '../img/image-alt.png';
 
-function MovieList({ movies, heading, headingMargin, withFilter, displaying }) {
+function MovieList({ movies, heading, headingMargin, withFilter, displaying, lowerMargin }) {
     const [displayList, dispatchDisplayList] = useReducer(displayListReducer, movies);
     const [unsaving, setUnsaving] = useState(false);
     const [saveError, setSaveError] = useState(null);
@@ -172,7 +172,7 @@ function MovieList({ movies, heading, headingMargin, withFilter, displaying }) {
     }
 
     return (
-        <div style={{ flex: 4, margin: '3rem 3rem 11rem 3rem' }}>
+        <div style={{ flex: 4, margin: `3rem 3rem ${lowerMargin || '11rem'} 3rem` }}>
             <h2 style={{ textAlign: 'center', marginBottom: headingMargin }}>{heading}</h2>
             {withFilter && <Filter displayList={displayList} dispatchDisplayList={dispatchDisplayList} />}
             <ul className="display-row">

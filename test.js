@@ -1,5 +1,1 @@
-const ary = [1,undefined,3];
-
-const ary2 = Array.from(ary, i => i);
-
-console.log(ary, ary2)
+console.log(['English', 'Spanish', 'French', 'Mandarin', 'Cantonese', 'Hindi', 'German', 'Italian', 'Dutch', 'Portuguese', 'Russian', 'Standard Arabic', 'Punjabi', 'Bengali', 'Polish', 'Czech', 'Ukranian', 'Indonesian', 'Japanese', 'Swahili', 'Telugu', 'Tamil', 'Turkish','Korean', 'Hungarian', 'Thai', 'Vietnamese', 'Sundanese', 'Filipino', 'Tagalog', 'Malay', 'Burmese', 'Romanian', 'Swedish', 'Afrikaans'].sort());

@@ -6,7 +6,9 @@ import { Link } from 'react-router-dom';
 import HistoryContext from '../store/contexts/History.context';
 import StarRater from './StarRater';
 
-function Search() {
+let mounted;
+
+function Search({ location }) {
     const history = useContext(HistoryContext);
     const { loading, searchValue, result } = useSelector(store => store.search);
     const dispatch = useDispatch();
@@ -18,7 +20,10 @@ function Search() {
           previousButton1 = useRef(null),
           previousButton2 = useRef(null);
 
-    useEffect(_=> dispatch( search(user ? user.username : null, searchValue, page) ), [page]);
+    useEffect(_=> {
+        dispatch( search(user ? user.username : null, location.searchValue ? mounted ? searchValue : location.searchValue : searchValue, page) );
+        mounted = true;
+    }, [page]);
 
     useEffect(_=> {
         if (result && (result.length < 11) && nextButton1.current) {
@@ -63,25 +68,18 @@ function Search() {
             
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
                 <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', width: '60vw', marginBottom: !loading && result ? '1.5rem' : '2rem' }}>
-
-                    {/* <div style={{ display: 'flex', justifyContent: 'space-between' }}> */}
                     <label style={{ margin: '.4rem 0', fontSize: '1.3rem' }}>"{searchValue}"</label>
                     <StarRater />
-                    {/* </div> */}
-
                     <form onSubmit={onSearch}>
                         <input style={{ marginTop: '.8rem' }} className="search" type="text" placeholder="Search actors, genres, directors" />
                     </form>
-                    
                 </div>
-
                 {loading
                     ? <div>Loading...</div>
                     : !result
                         ? <div>No results found</div>
                         : null
                 }
-
                 <div style={{ display: result ? 'block' : 'none', width: '60vw' }}>
                     <div style={{ posiiton: 'relative', display: 'flex', justifyContent: 'space-between', width: '100%', height: '100%' }}>
                         <button ref={previousButton1} className="button-v2" style={{ pointerEvents: 'none', opacity: 0, left: '20vw', transition: 'opacity 550ms ease-in-out' }} onClick={e => {
@@ -96,12 +94,18 @@ function Search() {
                     {result && <ul className="search-results">
                         {result.slice(0, 10).map((result, i) =>
                             <li key={i}>
-                                <Link to={`movies/${result.id}`}>
+                                <Link to={{
+                                    pathname: `movies/${result.id}`,
+                                    searchValue
+                                }}>
                                     <img src={result.cover_file} alt="not available" />
                                 </Link>
-                                <span style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                                    <Link to={`movies/${result.id}`}>
-                                        <span style={{ marginLeft: '1.5rem', fontSize: '1.3rem' }}>
+                                <span className="search-results-info">
+                                    <Link to={{
+                                        pathname: `movies/${result.id}`,
+                                    searchValue
+                                    }}>
+                                        <span style={{ fontSize: '1.3rem', color: 'white', position: 'relative', zIndex: '5' }}>
                                             <label>{result.title}</label>
                                             <span> | {result.genres.join(', ')}</span>
                                             <span> | {result.mpaa_rating}</span>

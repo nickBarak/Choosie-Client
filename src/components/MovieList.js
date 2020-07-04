@@ -202,7 +202,9 @@ function MovieList({ movies, heading, headingMargin, withFilter, displaying, low
                                             if (Object.values(user.bins).reduce((acc, cur) => [...acc, ...cur], []).includes(String(movie.id))) confirmed = window.confirm('This will remove the movie from all bins. Do you still want to unsave it?');
                                             confirmed && setUnsaving(movie.id)
                                         }}>{unsaving ? 'Unsaving...' : 'Unsave'}</button>
-                                        : <span>
+                                        : displaying === 'Query'
+                                            ? null
+                                            : <span>
                                             <button className="button-manage-movie" onClick={_=> {
                                                 let confirmed = true;
                                                 if (Object.entries(user.bins).reduce((acc, [key, val]) => key !== displaying ? [ ...acc, ...val ]  : acc, []).includes(String(movie.id))) confirmed = window.confirm('This will remove the movie from other bins. Do you still want to unsave it?');

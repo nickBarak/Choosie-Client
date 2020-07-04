@@ -206,7 +206,7 @@ return loading ? <div>Loading...</div> : error ? <div>Error loading movies</div>
                                     : 'Save movies by going to their page';
                         }
                     })()}/>
-                    : <h2 style={{ flex: 4, margin: '2rem' }}><Link to="/register">Log in</Link> to see your saved movies</h2>
+                    : <h2 style={{ flex: 4, position: 'absolute', margin: '7rem 0 0 2.5rem' }}><Link to="/register">Log in</Link> to see your saved movies</h2>
                 }
             </div>
 

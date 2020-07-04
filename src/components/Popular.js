@@ -9,9 +9,26 @@ function Popular() {
     const { loading, error, result } = useSelector(store => store.makeRequest);
     const [heading, setHeading] = useState('Here\'s what movies are currently trending');
     const [set, setSet] = useState(1);
-    const [column, setColumn] = useState('release_date');
+    const [column, setColumn] = useState('trending');
 
-    useEffect(_=> dispatch( makeRequest(`popular`, `?column=${column}&set=${set}`)), [column, set]);
+    useEffect(_=> {
+        dispatch( makeRequest(`popular`, `?column=${column === 'trending' ? 'release_date' : column}&set=${set}`));
+        switch (column) {
+            default: break;
+            case 'trending':
+                setHeading('Here\'s what movies are currently trending');
+                break;
+            case 'release_date':
+                setHeading('Here are the newest movies on record');
+                break;
+            case 'times_saved_this_month':
+                setHeading('Here are the most popular movies this month');
+                break;
+            case 'times_saved':
+                setHeading('Here are the most saved movies to date');
+                break;
+        }
+    }, [column, set]);
 
     return (
         <>
@@ -19,7 +36,7 @@ function Popular() {
                 <div style={{ display: 'flex', height: '100vh', flexDirection: 'column' }}>
                     <Nav />
                     <ul className="sidebar">
-                        <li tabIndex="0" onKeyDown={e => e.keyCode === 13 && setColumn('release_date')} className="sidebar-li-hover" key="0" onClick={_=> setColumn('release_date')}>Trending</li>
+                        <li tabIndex="0" onKeyDown={e => e.keyCode === 13 && setColumn('trending')} className="sidebar-li-hover" key="0" onClick={_=> setColumn('trending')}>Trending</li>
                         <li tabIndex="0" onKeyDown={e => e.keyCode === 13 && setColumn('release_date')} className="sidebar-li-hover" key="1" onClick={_=> setColumn('release_date')}>Recent Releases</li>
                         <li tabIndex="0" onKeyDown={e => e.keyCode === 13 && setColumn('times_saved_this_month')} className="sidebar-li-hover" key="2" onClick={_=> setColumn('times_saved_this_month')}>Most Saved This Month</li>
                         <li tabIndex="0" onKeyDown={e => e.keyCode === 13 && setColumn('times_saved')} className="sidebar-li-hover" key="3" onClick={_=> setColumn('times_saved')}>Most Saved All Time</li>

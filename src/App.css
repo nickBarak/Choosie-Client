@@ -407,6 +407,11 @@ nav ul li a:focus {
   align-items: center;
   text-align: center;
   margin: 1.5rem;
+  padding: .7rem
+}
+
+.ul-create-user select {
+  margin: .35rem;
 }
 
 .input-register {
@@ -419,7 +424,7 @@ nav ul li a:focus {
 }
 
 .prompt-register {
-  margin: 1rem 1rem .85rem 1rem;
+  margin: 0 1rem .85rem 1rem;
 }
 
 .button-register {
@@ -455,7 +460,7 @@ nav ul li a:focus {
 
 .info-list li {
   display: flex;
-  margin-Bottom: 3.5px;
+  margin-Bottom: 5px;
 }
 
 .info-list label {
@@ -467,6 +472,38 @@ nav ul li a:focus {
   margin: 0 1rem 0 1rem;
   text-align: justify;
   white-space: nowrap;
+}
+
+.profile-lower {
+  display: grid;
+  grid-template-columns: 1fr 2fr 1fr;
+  gap: 0rem;
+  justify-items: space-evenly;
+  align-items: center;
+}
+
+.profile-lower li {
+  display: flex;
+  justify-content: center;
+}
+
+.profile-lower div {
+  width: 80%;
+}
+
+.profile-lower form {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  max-height: 0;
+  max-width: 0;
+  transition:
+    transform 200ms ease-in, max-height 200ms ease-in,
+    max-width 200ms ease-in;
+  transform-origin: top;
+  justify-content: center;
+  align-items: center;
 }
 
 select {
@@ -506,7 +543,6 @@ select {
 .search-results {
   display: flex;
   flex-direction: column;
-  width: 80vw;
   margin: 3rem 2rem 0rem 2rem;
 }
 
@@ -518,14 +554,36 @@ select {
 .search-results img {
   border-radius: 11.5px;
   box-shadow: 1.5vw 1.5vw 1.5rem .55rem rgb(20, 20, 20, .5);
+  transition: transform 120ms ease-out;
 }
 
 .search-results img:hover, .search-results img:focus {
   transform: scale(1.05);
 }
 
-.search-results span {
-  
+.search-results img:focus {
+  outline: auto;
+}
+
+.search-results-info {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-left: 1.5rem;
+  cursor: pointer;
+}
+
+.search-results-info span:hover,
+.search-results-info label:hover,
+.search-results-info span:focus,
+.search-results-info label:focus {
+  color: silver;
+  cursor: pointer;
+}
+
+.search-results-info span:focus,
+.search-results-info label:focus {
+  outline: auto;
 }
 
 @media (max-width: 1200px) {

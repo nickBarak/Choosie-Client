@@ -5,6 +5,21 @@ import { useDispatch } from 'react-redux';
 import HistoryContext from '../store/contexts/History.context';
 import { updateUser } from '../store/actions/updateUser.action';
 
+const languageOptions = [
+    'Afrikaans',       'Bengali',    'Burmese',
+    'Cantonese',       'Czech',      'Dutch',
+    'English',         'Filipino',   'French',
+    'German',          'Hindi',      'Hungarian',
+    'Indonesian',      'Italian',    'Japanese',
+    'Korean',          'Malay',      'Mandarin',
+    'Polish',          'Portuguese', 'Punjabi',
+    'Romanian',        'Russian',    'Spanish',
+    'Standard Arabic', 'Sundanese',  'Swahili',
+    'Swedish',         'Tagalog',    'Tamil',
+    'Telugu',          'Thai',       'Turkish',
+    'Ukranian',        'Vietnamese'
+  ];
+
 function Register() {
     const history = useContext(HistoryContext);
     const [continued, setContinued] = useState(false);
@@ -12,23 +27,30 @@ function Register() {
     const [generalError, setGeneralError] = useState(null);
     const [registrationError, setRegistrationError] = useState(null);
     const [loginError, setLoginError] = useState(null);
-    // const [, setUser] = useContext(UserContext);
     const dispatch = useDispatch();
 
     function submitMainInfo(e) {
         setRegistrationError(null);
         e.persist();
         e.preventDefault();
-        const children = e.target.children;
-        if (children[1].value.match(/some regex/)) { setRegistrationError('Invalid username'); return }
-        if (children[3].value !== e.target.children[5].value) { setRegistrationError('Passwords must match'); return }
-        if (children[3].value.match(/some regex/)) { setRegistrationError('Invalid password'); return }
-        if (0 && 'username exists') { setRegistrationError('Username not available'); return }
-        setInfo({
-            username: children[1].value,
-            password: children[3].value
-        });
-        setContinued(true);
+        const children = e.target.children[1].children;
+        if (children[0].children[0].value.includes(' ')) { setRegistrationError('Username cannot contain a space'); return }
+        if (!/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/.exec(children[1].children[0].value)) { setRegistrationError('Password must be at least 8 characters with one of each of the following: upper case letter, lower case letter, number and special character'); return }
+        if (children[1].children[0].value !== children[2].children[0].value) { setRegistrationError('Passwords must match'); return }
+        (async _=> {
+            const response = await fetch(server + 'users/check?user=' + children[0].children[0].value);
+            const json = await response.json();
+            if (json.length) {
+                setRegistrationError('Username not available');
+                return;
+            }
+            setInfo({
+                username: children[0].children[0].value,
+                password: children[1].children[0].value
+            });
+            setContinued(true);
+            e.target.reset();
+        })();
     }
 
     function createUser(e) {
@@ -36,23 +58,18 @@ function Register() {
         setRegistrationError(null);
         e.persist();
         e.preventDefault();
-        const children = e.target.children;
-        if (!Number.isInteger(Number(children[3].value))) { setRegistrationError('Age must be a whole number'); return }
-        if (Number(children[3].value) < 0) { setRegistrationError('You\'re not that young'); return }
-        if (Number(children[3].value) > 125) { setRegistrationError('You\'re not that old'); return }
-        if (0 && 'email is not a real email') { setRegistrationError('Invalid email address'); return }
-        const radioDiv = children[5].children;
-        const sex = [radioDiv[3], radioDiv[5], radioDiv[7]].reduce((acc, cur) => cur.checked ? cur.value : acc, null)
+        const children = e.target.children[1].children;
+        if (children[2].children[0].value && !/(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9]))\.){3}(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9])|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])/.exec(children[2].children[0].value)) { setRegistrationError('Invalid email address'); return }
         fetch(server + 'users', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 ...info,
-                name: children[1].value ? children[1].value : null,
-                age: children[3].value ? Number(children[3].value) : null,
-                sex: sex === 'other' ? null : sex,
-                languages: [children[6].options[children[6].selectedIndex].text],
-                email: children[8].value ? children[8].value : null
+                name: children[0].children[0].value ? children[1].children[0].value : null,
+                age: children[1].children[0].selectedIndex ? Number(children[1].children[0].options[children[1].children[0].selectedIndex].text) : 0,
+                sex: children[1].children[1].selectedIndex ? children[1].children[1].options[children[1].children[1].selectedIndex].text : null,
+                languages: children[1].children[2].selectedIndex ? children[1].children[2].options[children[1].children[2].selectedIndex].text : null,
+                email: children[2].children[0].value ? children[2].children[0].value : null
             })
         })
             .then(res => res.json())
@@ -61,6 +78,7 @@ function Register() {
                 history.push('/');
             })
             .catch(e => setGeneralError('Something went wrong'));
+        e.target.reset();
     }
 
     async function onLogin(e) {
@@ -68,8 +86,8 @@ function Register() {
         setLoginError(null);
         e.persist();
         e.preventDefault();
-        const username = e.target.children[1].value,
-            password = e.target.children[3].value;
+        const username = e.target.children[1].children[0].children[0].value,
+            password = e.target.children[1].children[1].children[0].value;
         if (!username && !password) return;
         try {
             const response = await fetch(server+`users/${username}`),
@@ -80,63 +98,80 @@ function Register() {
                 history.push('/');
             } else setLoginError(`Invalid login`);
         } catch (e) { setGeneralError('Something went wrong') }
+        e.target.reset();
     }
 
     return !continued
         ? (
         <div className="container" style={{ flexDirection: 'column' }}>
-            {registrationError && <div style={{color: 'red'}}>{registrationError}</div>}
+            {registrationError && <div style={{color: 'red', margin: '1rem' }}>{registrationError}</div>}
             <form className="register-1" onSubmit={submitMainInfo}>
                 <div className="prompt-register">Please enter a username and password or sign in with another platform</div>
-                <input className="input-register" type="text" placeholder="username" key="username" />
-                <br />
-                <input className="input-register" type="password" placeholder="password" key="password" />
-                <br />
-                <input className="input-register" type="password" placeholder="repeat password" />
-                <br />
+                <ul style={{ display: 'flex', flexDirection: 'column', width: '80%', placeItems: 'center' }}>
+                    <li style={{ margin: '.25rem', width: '100%', maxWidth: '25rem' }}>
+                        <input className="input-register" type="text" placeholder="username" key="username" />
+                    </li>
+                    <li style={{ margin: '.25rem', width: '100%', maxWidth: '25rem' }}>
+                        <input className="input-register" type="password" placeholder="password" key="password" />
+                    </li>
+                    <li style={{ margin: '.25rem', width: '100%', maxWidth: '25rem' }}>
+                        <input className="input-register" type="password" placeholder="repeat password" />
+                    </li>
+                </ul>
                 <div>
                     <button className="button-register">Continue</button>
                     <button onClick={_=> history.push('/')} className="button-register">Cancel</button>
                 </div>
             </form>
             {loginError
-                ? <div style={{color: 'red'}}>{loginError}</div>
+                ? <div style={{color: 'red', margin: '1rem' }}>{loginError}</div>
                 : generalError && <div style={{ color: 'maroon' }}>{generalError}</div>
             }
             <form className="register-1" onSubmit={onLogin}>
                 <div className="prompt-register">Already have an account? Log in</div>
-                <input className="input-register" type="text" placeholder="username" />
-                <br />
-                <input className="input-register" type="password" placeholder="password" />
-                <br />
+                <ul style={{ display: 'flex', flexDirection: 'column', width: '80%', placeItems: 'center' }}>
+                    <li style={{ margin: '.25rem', width: '100%', maxWidth: '25rem' }}>
+                        <input className="input-register" type="text" placeholder="username" />
+                    </li>
+                    <li style={{ margin: '.25rem', width: '100%', maxWidth: '25rem' }}>
+                        <input className="input-register" type="password" placeholder="password" />
+                    </li>
+                </ul>
                 <button className="button-register">Log in</button>
             </form>
         </div>)
         : <div className="container" style={{ flexDirection: 'column' }}>
             {registrationError
-                ? <div style={{color: 'red'}}>{registrationError}</div>
+                ? <div style={{color: 'red', margin: '1rem'}}>{registrationError}</div>
                 : generalError && <div style={{ color: 'maroon' }}>{generalError}</div>
             }
             <form className="register-1" onSubmit={createUser}>
                 <div className="prompt-register">You can enter more information here for a better experience</div>
-                <input className="input-register" type="text" placeholder="first name" key="name" />
-                <br />
-                <input className="input-register" type="text" placeholder="age" key="age" />
-                <br />
-                <div>
-                    <label>sex: </label>
-                    <br />
-                    <label>female</label><input type="radio" name="sex" value="female" />
-                    <label> male</label><input type="radio" name="sex" value="male" />
-                    <label> other</label><input type="radio" name="sex" value="other" defaultChecked />
-                </div>
-                <select defaultValue="default">
-                    {['English', 'Spanish', 'French', 'Mandarin', 'Cantonese', 'Hindi', 'German', 'Italian', 'Dutch', 'Portuguese', 'Russian', 'Standard Arabic', 'Punjabi', 'Bengali', 'Polish', 'Czech', 'Ukranian', 'Indonesian', 'Japanese', 'Swahili', 'Telugu', 'Tamil', 'Turkish','Korean', 'Hungarian', 'Thai', 'Vietnamese', 'Sundanese', 'Filipino', 'Tagalog', 'Malay', 'Burmese', 'Romanian', 'Swedish', 'Afrikaans'].map((language, i) => i === 0 ? <option key={i} value="default">{language}</option> : <option key={i} >{language}</option>)}
-                </select>
-                <br />
-                <input className="input-register" type="text" placeholder="email" />
-                <br />
-                <div className="prompt-register" style={{ margin: '.5rem' }}>You can also edit these fields later</div>
+                <ul>
+                    <li style={{margin: '.75rem' }}>
+                        <input className="input-register" type="text" placeholder="first name" key="name" />
+                    </li>
+                    <li  style={{margin: '.75rem' }}className="ul-create-user">
+                        <select defaultValue="default">
+                            <option key="-1" value="default" disabled>Select an age</option>
+                            {new Array(126).fill('').map((el, i) => <option key={i}>{i}</option>)}
+                        </select>
+                        <select defaultValue="default">
+                            <option key="0" value="default" disabled>Select a sex</option>
+                            <option key="1" value="female">Female</option>
+                            <option key="2" value="male">Male</option>
+                            <option key="3" value="other">Other</option>
+                        </select>
+                        <select defaultValue="default">
+                            <option key="-1" value="default" disabled>Select a language</option>
+                            {languageOptions.map((language, i) => <option key={i} >{language}</option>)}
+                        </select>
+                    </li>
+                    <li style={{margin: '.75rem' }}>
+                        <input className="input-register" type="text" placeholder="email" />
+                    </li>
+                </ul>
+                <div className="prompt-register" style={{ marginTop: '.5rem', marginBottom: '.3rem' }}>You can also edit these fields later</div>
                 <div>
                     <button className="button-register" >Sign up</button>
                     <button className="button-register" onClick={_=> history.push('/')}>Cancel</button>

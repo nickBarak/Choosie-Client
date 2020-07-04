@@ -1,14 +1,13 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-// import UserContext from '../store/contexts/User.context';
 import { makeRequest } from '../store/actions/makeRequest.action';
 import Nav from './Nav';
 import { server } from '../APIs';
 import HistoryContext from '../store/contexts/History.context';
 import { updateUser } from '../store/actions/updateUser.action';
 
-function Movie() {
+function Movie({ location: { searchValue } }) {
     const history = useContext(HistoryContext);
     const location = useLocation();
     const dispatch = useDispatch();
@@ -76,7 +75,7 @@ function Movie() {
 
     return loading ? <div>Loading...</div> : error ? <div>Error loading movie</div> : (
         <>
-            <Nav />
+            <Nav withSearch={searchValue} searchValue={searchValue} />
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', transform: 'translateY(-3.5rem)' }}>
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '60vw' }}><img className="image-movie" src={movie.cover_file} alt="not available" />
                 <label style={{ fontWeight: 'bold', margin: '1rem 0 .2rem 0' }}>{movie.title}</label>

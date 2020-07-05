@@ -43,7 +43,7 @@ function Login() {
                 dispatch( updateUser(username) );
                 setError(null);
             } else setError(`Invalid login`);
-        } catch (e) { console.log(e) }
+        } catch (e) { setError('Something went wrong'); console.log(e) }
     }
     
     function goToRegister(e) {

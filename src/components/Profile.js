@@ -44,7 +44,7 @@ function Profile() {
         if (e) {
             e.persist();
             e.preventDefault();
-            if (e.target.children[5].value && !/(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9]))\.){3}(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9])|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])/.exec(e.target.children[5].value)) { setEditInfoError('Invalid email address'); return }
+            if (e.target.children[3].value && !/(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9]))\.){3}(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9])|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])/.exec(e.target.children[3].value)) { setEditInfoError('Invalid email address'); return }
         }
         const children = e && e.target.children,
               editedInfo = {
@@ -52,21 +52,32 @@ function Profile() {
                 sex: e ? children[1].children[0].selectedIndex ? children[1].children[0].options[children[1].children[0].selectedIndex].text : user.sex : user.sex,
                 age: e ? children[1].children[1].selectedIndex ? Number(children[1].children[1].options[children[1].children[1].selectedIndex].text) : user.age : user.age,
                 languages: e ? children[1].children[2].selectedIndex ? [children[1].children[2].options[children[1].children[2].selectedIndex].text] : user.languages : user.languages,
-                country: e ? children[4].value : user.country,
-                email: e ? children[5].value : user.email,
+                country: e ? children[2].value : user.country,
+                email: e ? children[3].value : user.email,
                 show_save_history: showSaveHistory,
                 show_description_on_hover: showDescriptionOnHover,
                 recent_save_history: clearing ? [] : user.recent_save_history
         };
-        new Promise(resolve => dispatch( makeRequest(`users/${user.username}`, '', {
-            signal,
-            method: 'PATCH',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(editedInfo)
-        }) ) || resolve())
-            .then(_=> {
-                dispatch( updateUser(user.username) );
-            });
+        if (e) {
+            try {
+                new Promise(resolve => dispatch( makeRequest(`users/${user.username}`, '', {
+                    signal,
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(editedInfo)
+                }) ) || resolve())
+                    .then(_=> {
+                        dispatch( updateUser(user.username) );
+                        setMessage('Info updated successfully');
+                        e.target.style.transform = 'scale(0)';
+                        e.target.style.maxHeight = 0;
+                        e.target.parentElement.parentElement.parentElement.parentElement.children[0].style.transform =
+                            e.target.parentElement.parentElement.parentElement.children[2].children[0].children[2].style.maxHeight === '100%'
+                                ? 'translate(-6.5rem, 2rem)'
+                                : 'translate(0)';
+                    });
+            } catch (e) { setEditInfoError('Error editing info'); console.log(e) }
+        }
     }
 
     useEffect(_=> {
@@ -93,14 +104,14 @@ function Profile() {
         if (!/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/.exec(newPassword)) { setChangePasswordError('Password must be at least 8 characters with one of each of the following: upper case letter, lower case letter, number and special character'); return }
         if (newPassword !== repeatedNewPassword) { setChangePasswordError('Passwords must match'); return }
         (async _=> {
-            await dispatch( makeRequest(`users/${user.username}`, null, {
+            await Promise.resolve().then(_=> dispatch( makeRequest(`users/${user.username}`, null, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ 
                     currentPassword,
                     newPassword
                 })
-            }) );
+            }) ));
             if (error) {
                 setChangePasswordError('Error changing password');
             } else {
@@ -117,22 +128,27 @@ function Profile() {
         })();
     }
 
-    function clearInfo(type) {
-        switch (type) {
-            case 'name':
-                break;
-            case 'sex':
-                break;
-            case 'age':
-                break;
-            case 'languages':
-                break;
-            case 'country':
-                break;
-            case 'email':
-                break;
-            default: break;
-        }
+    async function clearInfo(type) {
+        const editedInfo = { ...user };
+        if (type === 'languages') user.languages = [];
+        editedInfo[type] = null;
+        await Promise.resolve()
+            .then(_=> dispatch( makeRequest(`users/${user.username}`, null, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                name: editedInfo.name,
+                email: editedInfo.email,
+                languages: editedInfo.languages,
+                country: editedInfo.country,
+                age: editedInfo.age,
+                sex: editedInfo.sex,
+                show_save_history: user.show_save_history,
+                show_description_on_hover: user.show_description_on_hover,
+                recent_save_history: user.recent_save_history
+            })
+        }) ));
+        dispatch( updateUser(user.username) );
     }
 
     return (
@@ -142,36 +158,37 @@ function Profile() {
                 <label className="prompt-register">Your info</label>
                 <ul className="info-list">
                     <li>
-                        <button onClick={clearInfo('name')}>Clear</button>
-                        <label>Name: </label>
-                        <span>{user.name || 'Not specified'}</span>
-                    </li>
-                    <li>
+                        <button className="button-register" style={{ visibility: 'hidden' }}>Clear</button>
                         <label>Username: </label>
                         <span>{user.username}</span>
                     </li>
                     <li>
-                        <button onClick={clearInfo('sex')}>Clear</button>
+                        <button className="button-register" onClick={_=> clearInfo('name')}>Clear</button>
+                        <label>Name: </label>
+                        <span>{user.name || 'Not specified'}</span>
+                    </li>
+                    <li>
+                        <button className="button-register" onClick={_=> clearInfo('sex')}>Clear</button>
                         <label>Sex: </label>
                         <span>{user.sex || 'Not specified'}</span>
                     </li>
                     <li>
-                        <button onClick={clearInfo('age')}>Clear</button>
+                        <button className="button-register" onClick={_=> clearInfo('age')}>Clear</button>
                         <label>Age: </label>
                         <span>{user.age || 'Not specified'}</span>
                     </li>
                     <li>
-                        <button onClick={clearInfo('languages')}>Clear</button>
-                        <label>Languages: </label>
-                        <span style={{ whiteSpace: 'normal' }}>{user.languages[0].length ? user.languages : 'Not specified'}</span>
+                        <button className="button-register" onClick={_=> clearInfo('languages')}>Clear</button>
+                        <label>Language: </label>
+                        <span style={{ /* whiteSpace: 'normal' */ }}>{user.languages[0].length ? user.languages : 'Not specified'}</span>
                     </li>
                     <li>
-                        <button onClick={clearInfo('country')}>Clear</button>
+                        <button className="button-register" onClick={_=> clearInfo('country')}>Clear</button>
                         <label>Country: </label>
                         <span>{user.country || 'Not specified'}</span>
                     </li>
                     <li>
-                        <button onClick={clearInfo('email')}>Clear</button>
+                        <button className="button-register" onClick={_=> clearInfo('email')}>Clear</button>
                         <label>Email: </label>
                         <span>{user.email || 'Not specified'}</span>
                     </li>
@@ -274,7 +291,7 @@ function Profile() {
                     </div>
                 </li>
             </ul>
-            {message && <div style={{ color: 'white', margin: '.8rem' }}>{message}</div>}
+            {message && <div style={{ color: 'white', margin: '.8rem', padding: '1rem' }}>{message}</div>}
             <button style={{ margin: '1rem', backgroundColor: 'var(--bg-color-dark)', color: 'var(--color-offset)' }} onMouseOver={e => {
                 e.target.style.backgroundColor = 'var(--color-offset)';
                 e.target.style.color = 'var(--bg-color-dark)';

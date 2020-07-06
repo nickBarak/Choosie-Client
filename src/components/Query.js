@@ -30,7 +30,7 @@ function Query({ location }) {
     const dispatch = useDispatch();
     let mounted = useRef(false);
     const mainNextButton = useRef(null);
-    console.log(result)
+    const [movies, setMovies] = useState([]);
 
     useEffect(_=> { document.getElementById('root').style.opacity = 1 }, []
     );
@@ -60,6 +60,10 @@ function Query({ location }) {
             mounted.current = true;
         }
     }, [phase, set]);
+
+    useEffect(_=> {
+        setMovies(result);
+    }, [result]);
 
     function manageFilters(e) {
         e.preventDefault();
@@ -135,13 +139,13 @@ function Query({ location }) {
                 </div>
             </div>}
             {/* {<div>{loading ? 'Loading movies...' : error ? 'Error loading movies' : null}</div>} */}
-            <div style={{ display: phase < 4 ? 'none' : 'block' }}>
-                <MovieList movies={result || []} heading="Here are some movies you might be interested in" displaying="Query" lowerMargin="4rem" headingMargin="3.5rem"/>
-                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }} locationdetails={{
+            {phase > 3 && <div style={{ display: phase < 4 ? 'none' : 'block' }}>
+                <MovieList movies={movies || [{title:'mission failed'}]} heading="Here are some movies you might be interested in" displaying="Query" lowerMargin="4rem" headingMargin="3.5rem"/>
+                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }} locationdetails={JSON.stringify({
                     searchValue: answers.current,
                     page: set,
                     back: 'Results'
-                }}>
+                })}>
                     <StarRater />
                 </div>
                 <div style={{ posiiton: 'relative', display: 'flex', justifyContent: 'space-between', width: '100%', height: '100%', marginBottom: '8rem', marginTop: '1.25rem' }}>
@@ -164,7 +168,7 @@ function Query({ location }) {
                         setSet(set + 1)
                     }} ref={mainNextButton}>Next</button>
                 </div>
-            </div>
+            </div>}
         </>
     )
 }

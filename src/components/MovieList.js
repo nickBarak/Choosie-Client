@@ -8,6 +8,7 @@ import imageAlt from '../img/image-alt.png';
 import DelayLink from './DelayLink';
 
 function MovieList({ movies, heading, headingMargin, withFilter, displaying, lowerMargin, locationdetails }) {
+    const locationDetails = useRef(null);
     const [displayList, dispatchDisplayList] = useReducer(displayListReducer, movies);
     const [unsaving, setUnsaving] = useState(false);
     const [saveError, setSaveError] = useState(null);
@@ -17,7 +18,16 @@ function MovieList({ movies, heading, headingMargin, withFilter, displaying, low
     const [removingFromBinError, setRemovingFromBinError] = useState(null);
     const user = useSelector(store => store.user.result);
     const dispatch = useDispatch();
-        
+
+    // console.log('MOVIELIST :', movies && movies[0]);
+
+    useEffect(_=> {
+        locationDetails.current = locationdetails && JSON.parse(locationdetails)
+    }, [locationdetails]);
+
+    useEffect(_=> {
+        dispatchDisplayList();
+    }, [movies])
 
     useEffect(_=> {
         const controller = new AbortController(),
@@ -178,12 +188,12 @@ function MovieList({ movies, heading, headingMargin, withFilter, displaying, low
             <ul className="display-row">
                 {displayList.map((movie, i) =>
                     <li key={i}>
-                        <DelayLink to={locationdetails
+                        <DelayLink to={locationDetails.current
                             ? {
                                 pathname: `movies/${movie.id}`,
-                                searchValue: locationdetails.searchValue,
-                                page: locationdetails.page,
-                                back: locationdetails.back
+                                searchValue: locationDetails.current.searchValue,
+                                page: locationDetails.current.page,
+                                back: locationDetails.current.back
                             }
                             : `movies/${movie.id}`
                         }>
@@ -198,12 +208,12 @@ function MovieList({ movies, heading, headingMargin, withFilter, displaying, low
                             }} />
                         </DelayLink>
                         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                            <DelayLink to={locationdetails
+                            <DelayLink to={locationDetails.current
                                 ? {
                                     pathname: `movies/${movie.id}`,
-                                    searchValue: locationdetails.searchValue,
-                                    page: locationdetails.page,
-                                    back: locationdetails.back
+                                    searchValue: locationDetails.current.searchValue,
+                                    page: locationDetails.current.page,
+                                    back: locationDetails.current.back
                                 }
                                 : `movies/${movie.id}`
                             } tabIndex="-1">

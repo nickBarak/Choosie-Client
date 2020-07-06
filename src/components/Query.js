@@ -31,6 +31,7 @@ function Query({ location }) {
     let mounted = useRef(false);
     const mainNextButton = useRef(null);
     const [movies, setMovies] = useState([]);
+    const frame = useRef(null);
 
     useEffect(_=> { document.getElementById('root').style.opacity = 1 }, []
     );
@@ -73,7 +74,11 @@ function Query({ location }) {
             e.target.style.backgroundColor = 'var(--color-offset)';
             e.target.style.color = 'var(--bg-color-dark)';
             answers.current[1] = [e.target.value];
-            setPhase(phase + 1);
+            frame.current.style.opacity = 0;
+            setTimeout(_=> {
+                setPhase(phase + 1);
+                frame.current.style.opacity = 1;
+            }, 750);
             return;
         }
         if (answers.current[index].includes(e.target.textContent)) {
@@ -92,7 +97,7 @@ function Query({ location }) {
             <Nav />
             
             {phase < 4 && <div className="container" style={{ position: 'absolute', zIndex: '-1', height: '100vh', top: 0 }}>
-                <div className="frame">
+                <div className="frame" ref={frame}>
                     <h2 className="query-prompt">{prompt}</h2>
                     {buttonSet.map((set, i) => <ul key={i}className="button-wrapper">
                         {set.map((button, j) => <li key={j}><button className="button" onClick={manageFilters} style={
@@ -125,7 +130,11 @@ function Query({ location }) {
                         >{phase === 2 ? Object.values(button)[0] : button}</button></li>)}
                         {i === buttonSet.length - 1 && <li>
                             <button className="button query-next" onClick={e => {
-                                setPhase(phase + 1);
+                                frame.current.style.opacity = 0;
+                                setTimeout(_=> {
+                                    setPhase(phase + 1);
+                                    frame.current.style.opacity = 1;
+                                }, 750);
                                 [...e.target.parentElement.parentElement.parentElement.children].slice(1)
                                     .forEach(ul => [...ul.children]
                                         .forEach(li => {

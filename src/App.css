@@ -96,6 +96,7 @@ nav ul li a:focus {
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  transition: opacity 750ms ease-in;
 }
 
 .frame-temp2 {

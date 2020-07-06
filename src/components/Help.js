@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useRef } from 'react';
 import HistoryContext from '../store/contexts/History.context';
 import { transitionPage } from '../Functions';
 
@@ -9,6 +9,7 @@ const sections = [
 
 function Help() {
     const history = useContext(HistoryContext);
+    const frame = useRef(null);
 
     useEffect(_=> { document.getElementById('root').style.opacity = 1 }, []
     );
@@ -28,16 +29,25 @@ function Help() {
                     <br />
                     <div style={{ fontWeight: 'bold' }}>{slogan}</div>
                     <br />
-                    {state.sections.map((section, i) =>
-                        <section key={i}>
-                            <label>{section.label}</label>
-                            <div>{section.content}</div>
-                        </section>
-                    )}
+                    <div ref={frame}>
+                        {state.sections.map((section, i) =>
+                            <section key={i}>
+                                <label>{section.label}</label>
+                                <div>{section.content}</div>
+                            </section>
+                        )}
+                    </div>
                 </article>
                 <div style={{ position: 'relative', display: 'flex', width: '100%' }}>
                     <button className="button-v2"  onClick={_=> transitionPage(history, '/')}>Back to Home</button>
-                    <button style={{ right: 0, left: 'auto'}} className="button-v2" onClick={_=> { setState({...state, more: !state.more}); history.push('/help') }}>{state.more ? 'Previous' : 'More'}</button>
+                    <button style={{ right: 0, left: 'auto'}} className="button-v2" onClick={_=> {
+                        frame.current.style.opacity = 0;
+                        setTimeout(_=> {
+                            setState({...state, more: !state.more});
+                            history.push('/help');
+                            frame.current.style.opacity = 1;
+                        }, 750);
+                    }}>{state.more ? 'Previous' : 'More'}</button>
                 </div>
             </div>
         </div>

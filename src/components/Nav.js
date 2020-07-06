@@ -1,17 +1,19 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import DelayLink from './DelayLink';
 
-function Nav({ withSearch, searchValue }) {
+function Nav({ withBack, searchValue, page, back }) {
     return (
         <nav>
             <ul>
-                <li><Link to="/">Home</Link></li>
-                <li><Link to="/my-list">My List</Link></li>
-                <li><Link to="/popular">Popular</Link></li>
-                {withSearch && <li><Link to={{
+                <li><DelayLink to="/">Home</DelayLink></li>
+                <li><DelayLink to="/my-list">My List</DelayLink></li>
+                <li><DelayLink to="/popular">Popular</DelayLink></li>
+                {withBack && <li><DelayLink to={{
                     pathname: "/search",
-                    searchValue
-                }}>Back to Search</Link></li>}
+                    searchValue,
+                    page,
+                }}>Back to {back}</DelayLink></li>}
             </ul>
         </nav>
     )

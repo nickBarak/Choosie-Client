@@ -1,9 +1,10 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { server } from '../APIs';
 import { useDispatch } from 'react-redux';
 // import UserContext from '../store/contexts/User.context';
 import HistoryContext from '../store/contexts/History.context';
 import { updateUser } from '../store/actions/updateUser.action';
+import { transitionPage } from '../Functions';
 
 const languageOptions = [
     'Afrikaans',       'Bengali',    'Burmese',
@@ -28,6 +29,9 @@ function Register() {
     const [registrationError, setRegistrationError] = useState(null);
     const [loginError, setLoginError] = useState(null);
     const dispatch = useDispatch();
+
+    useEffect(_=> { document.getElementById('root').style.opacity = 1 }, []
+    );
 
     function submitMainInfo(e) {
         setRegistrationError(null);
@@ -65,17 +69,17 @@ function Register() {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 ...info,
-                name: children[0].children[0].value ? children[1].children[0].value : null,
+                name: children[0].children[0].value ? children[0].children[0].value : null,
                 age: children[1].children[0].selectedIndex ? Number(children[1].children[0].options[children[1].children[0].selectedIndex].text) : 0,
                 sex: children[1].children[1].selectedIndex ? children[1].children[1].options[children[1].children[1].selectedIndex].text : null,
-                languages: children[1].children[2].selectedIndex ? children[1].children[2].options[children[1].children[2].selectedIndex].text : null,
+                languages: children[1].children[2].selectedIndex ? [children[1].children[2].options[children[1].children[2].selectedIndex].text] : null,
                 email: children[2].children[0].value ? children[2].children[0].value : null
             })
         })
             .then(res => res.json())
             .then(json => {
                 dispatch( updateUser(json.username) );
-                history.push('/');
+                transitionPage(history, '/');
             })
             .catch(e => setGeneralError('Something went wrong'));
         e.target.reset();
@@ -95,7 +99,7 @@ function Register() {
             if (!json[0]) { setLoginError('Invalid login'); return }
             if (String(json[0].password) === password) {
                 dispatch( updateUser(json[0].username) );
-                history.push('/');
+                transitionPage(history, '/');
             } else setLoginError(`Invalid login`);
         } catch (e) { setGeneralError('Something went wrong') }
         e.target.reset();
@@ -106,7 +110,7 @@ function Register() {
         <div className="container" style={{ flexDirection: 'column' }}>
             {registrationError && <div style={{color: 'red', margin: '1rem' }}>{registrationError}</div>}
             <form className="register-1" onSubmit={submitMainInfo}>
-                <div className="prompt-register">Please enter a username and password or sign in with another platform</div>
+                <div className="prompt-register">Please enter a username and password</div>
                 <ul style={{ display: 'flex', flexDirection: 'column', width: '80%', placeItems: 'center' }}>
                     <li style={{ margin: '.25rem', width: '100%', maxWidth: '25rem' }}>
                         <input className="input-register" type="text" placeholder="username" key="username" />
@@ -120,7 +124,7 @@ function Register() {
                 </ul>
                 <div>
                     <button className="button-register">Continue</button>
-                    <button onClick={_=> history.push('/')} className="button-register">Cancel</button>
+                    <button type="button" onClick={_=> transitionPage(history, '/')} className="button-register">Cancel</button>
                 </div>
             </form>
             {loginError
@@ -174,7 +178,7 @@ function Register() {
                 <div className="prompt-register" style={{ marginTop: '.5rem', marginBottom: '.3rem' }}>You can also edit these fields later</div>
                 <div>
                     <button className="button-register" >Sign up</button>
-                    <button className="button-register" onClick={_=> history.push('/')}>Cancel</button>
+                    <button type="button" className="button-register" onClick={_=> transitionPage(history, '/')}>Cancel</button>
                 </div>
             </form>
     </div>

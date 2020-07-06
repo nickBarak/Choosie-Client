@@ -1,13 +1,13 @@
 import React, { useState, useReducer, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Link } from 'react-router-dom';
 import { server } from '../APIs';
 import { updateUser } from '../store/actions/updateUser.action';
 import { makeRequest } from '../store/actions/makeRequest.action';
 import Filter from './Filter';
 import imageAlt from '../img/image-alt.png';
+import DelayLink from './DelayLink';
 
-function MovieList({ movies, heading, headingMargin, withFilter, displaying, lowerMargin }) {
+function MovieList({ movies, heading, headingMargin, withFilter, displaying, lowerMargin, locationdetails }) {
     const [displayList, dispatchDisplayList] = useReducer(displayListReducer, movies);
     const [unsaving, setUnsaving] = useState(false);
     const [saveError, setSaveError] = useState(null);
@@ -178,7 +178,15 @@ function MovieList({ movies, heading, headingMargin, withFilter, displaying, low
             <ul className="display-row">
                 {displayList.map((movie, i) =>
                     <li key={i}>
-                        <Link to={`movies/${movie.id}`}>
+                        <DelayLink to={locationdetails
+                            ? {
+                                pathname: `movies/${movie.id}`,
+                                searchValue: locationdetails.searchValue,
+                                page: locationdetails.page,
+                                back: locationdetails.back
+                            }
+                            : `movies/${movie.id}`
+                        }>
                             <img src={movie.cover_file} onError={e => {
                                 e.target.src = imageAlt;
                                 e.target.style.width = '200px';
@@ -188,11 +196,19 @@ function MovieList({ movies, heading, headingMargin, withFilter, displaying, low
                                 e.preventDefault();
                                 e.dataTransfer.setData('text/plain', movie.id);
                             }} />
-                        </Link>
+                        </DelayLink>
                         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                            <Link to={`movies/${movie.id}`} tabIndex="-1">
+                            <DelayLink to={locationdetails
+                                ? {
+                                    pathname: `movies/${movie.id}`,
+                                    searchValue: locationdetails.searchValue,
+                                    page: locationdetails.page,
+                                    back: locationdetails.back
+                                }
+                                : `movies/${movie.id}`
+                            } tabIndex="-1">
                                 <label>{movie.title}</label>
-                            </Link>
+                            </DelayLink>
                             {displaying === 'Save History'
                                 ? <button className="button-manage-movie" onClick={_=> setRemovingFromHistory(movie.id)}>{removingFromHistory ? 'Removing...' : 'Remove'}</button>
                                 : displaying !== 'Popular'

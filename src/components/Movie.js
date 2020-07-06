@@ -1,13 +1,14 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { useLocation, Link } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeRequest } from '../store/actions/makeRequest.action';
 import Nav from './Nav';
 import { server } from '../APIs';
 import HistoryContext from '../store/contexts/History.context';
 import { updateUser } from '../store/actions/updateUser.action';
+import { transitionPage } from '../Functions';
 
-function Movie({ location: { searchValue } }) {
+function Movie({ location: { searchValue, page, back } }) {
     const history = useContext(HistoryContext);
     const location = useLocation();
     const dispatch = useDispatch();
@@ -34,6 +35,9 @@ function Movie({ location: { searchValue } }) {
             })
             .catch(e => setSaveError('Error saving movie'));
     }
+
+    useEffect(_=> { document.getElementById('root').style.opacity = 1 }, []
+    );
 
     useEffect(_=> dispatch( makeRequest('movies', '?id=' + location.pathname.split('/movies/')[1]) ), []);
 
@@ -73,70 +77,73 @@ function Movie({ location: { searchValue } }) {
 
     if (!movie) return <div>Error loading movie</div>
 
-    return loading ? <div>Loading...</div> : error ? <div>Error loading movie</div> : (
+    return (
         <>
-            <Nav withSearch={searchValue} searchValue={searchValue} />
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', transform: 'translateY(-3.5rem)' }}>
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '60vw' }}><img className="image-movie" src={movie.cover_file} alt="not available" />
-                <label style={{ fontWeight: 'bold', margin: '1rem 0 .2rem 0' }}>{movie.title}</label>
-                {user
-                    ? user.currently_saved.includes(movie.id)
-                        ? <button className="button-manage-movie" onClick={_=> {
-                            let confirmed = true;
-                            if (Object.values(user.bins).reduce((acc, cur) => [...acc, ...cur], []).includes(String(movie.id))) confirmed = window.confirm('This will remove the movie from all bins. Do you still want to unsave it?');
-                            confirmed && setUnsaving(movie.id)
-                        }}>{unsaving ? 'Unsaving movie...' : 'Unsave Movie'}</button>
-                        : <button className="button-manage-movie" onClick={saveMovie}>{saving ? 'Saving movie...' : 'Save to My List'}</button>
-                    : <button className="button-manage-movie" onClick={_=> history.push('/register')}>Sign in to save this movie</button>}
-                    {movie.description && <div style={{ margin: '2.5rem 0 3rem 0', textAlign: 'justify'}}>{movie.description === 'Not available' ? 'Description not available' : movie.description}</div>}
+                {loading ? <div>Loading...</div> : error ? <div>Error loading movie</div> : (
+            <>
+                <Nav withBack searchValue={searchValue} page={page} back={back} />
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', transform: 'translateY(-3.5rem)' }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '60vw' }}><img className="image-movie" src={movie.cover_file} alt="not available" />
+                    <label style={{ fontWeight: 'bold', margin: '1rem 0 .2rem 0' }}>{movie.title}</label>
+                    {user
+                        ? user.currently_saved.includes(movie.id)
+                            ? <button className="button-manage-movie" onClick={_=> {
+                                let confirmed = true;
+                                if (Object.values(user.bins).reduce((acc, cur) => [...acc, ...cur], []).includes(String(movie.id))) confirmed = window.confirm('This will remove the movie from all bins. Do you still want to unsave it?');
+                                confirmed && setUnsaving(movie.id)
+                            }}>{unsaving ? 'Unsaving movie...' : 'Unsave Movie'}</button>
+                            : <button className="button-manage-movie" onClick={saveMovie}>{saving ? 'Saving movie...' : 'Save to My List'}</button>
+                        : <button className="button-manage-movie" onClick={_=> transitionPage(history, '/register')}>Sign in to save this movie</button>}
+                        {movie.description && <div style={{ margin: '2.5rem 0 3rem 0', textAlign: 'justify'}}>{movie.description === 'Not available' ? 'Description not available' : movie.description}</div>}
+                    </div>
+                    <ul className="info-movie">
+                        <li>
+                            <label>Genres: </label>
+                            {movie.genres && <span>{movie.genres.join(', ') || 'Not available'}</span>}
+                        </li>
+                        <li>
+                            <label>Rating: </label>
+                            {movie.mpaa_rating && <span>{movie.mpaa_rating || 'Not available'}</span>}
+                        </li>
+                        <li>
+                            <label>Duration: </label>
+                            {movie.duration_in_mins
+                                ? movie.duration_in_mins % 60
+                                    ? movie.duration_in_mins >= 60
+                                        ? <span>{Math.floor(movie.duration_in_mins / 60)}h {movie.duration_in_mins % 60}min</span>
+                                        : <span>{movie.duration_in_mins} min</span>
+                                    : <span>{movie.duration_in_mins % 60}h</span>
+                                : 'Not available'}
+                        </li>
+                        <li>
+                            <label>Release Date: </label>
+                            {movie.release_date && <span>{movie.release_date.slice(0, 4) || 'Not available'}</span>}
+                        </li>
+                        <li>
+                            <label>Writers: </label>
+                            {movie.writers && <span>{movie.writers.join(', ') || 'Not available'}</span>}
+                        </li>
+                        <li>
+                            <label>Directors: </label>
+                            {movie.directors && <span>{movie.directors.join(', ') || 'Not available'}</span>}
+                        </li>
+                        <li>
+                            <label>Actors: </label>
+                            {movie.actors && <span>{movie.actors.join(', ') || 'Not available'}</span>}
+                        </li>
+                        <li>
+                            <label>Languages: </label>
+                            {movie.languages && <span>{movie.languages.join(', ') || 'Not available'}</span>}
+                        </li>
+                        <li>
+                            <label>Countries: </label>
+                            {movie.countries && <span>{movie.countries.join(', ') || 'Not available'}</span>}
+                        </li>
+                    </ul>
                 </div>
-                <ul className="info-movie">
-                    <li>
-                        <label>Genres: </label>
-                        {movie.genres && <span>{movie.genres.join(', ') || 'Not available'}</span>}
-                    </li>
-                    <li>
-                        <label>Rating: </label>
-                        {movie.mpaa_rating && <span>{movie.mpaa_rating || 'Not available'}</span>}
-                    </li>
-                    <li>
-                        <label>Duration: </label>
-                        {movie.duration_in_mins
-                            ? movie.duration_in_mins % 60
-                                ? movie.duration_in_mins >= 60
-                                    ? <span>{Math.floor(movie.duration_in_mins / 60)}h {movie.duration_in_mins % 60}min</span>
-                                    : <span>{movie.duration_in_mins} min</span>
-                                : <span>{movie.duration_in_mins % 60}h</span>
-                            : 'Not available'}
-                    </li>
-                    <li>
-                        <label>Release Date: </label>
-                        {movie.release_date && <span>{movie.release_date.slice(0, 4) || 'Not available'}</span>}
-                    </li>
-                    <li>
-                        <label>Writers: </label>
-                        {movie.writers && <span>{movie.writers.join(', ') || 'Not available'}</span>}
-                    </li>
-                    <li>
-                        <label>Directors: </label>
-                        {movie.directors && <span>{movie.directors.join(', ') || 'Not available'}</span>}
-                    </li>
-                    <li>
-                        <label>Actors: </label>
-                        {movie.actors && <span>{movie.actors.join(', ') || 'Not available'}</span>}
-                    </li>
-                    <li>
-                        <label>Languages: </label>
-                        {movie.languages && <span>{movie.languages.join(', ') || 'Not available'}</span>}
-                    </li>
-                    <li>
-                        <label>Countries: </label>
-                        {movie.countries && <span>{movie.countries.join(', ') || 'Not available'}</span>}
-                    </li>
-                </ul>
-            </div>
-        </>
-    )
+            </>
+            )}
+        </>)
 }
 
 export default Movie

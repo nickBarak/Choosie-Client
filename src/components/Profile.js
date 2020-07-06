@@ -6,6 +6,7 @@ import { makeRequest } from '../store/actions/makeRequest.action';
 import HistoryContext from '../store/contexts/History.context';
 import { updateUser } from '../store/actions/updateUser.action';
 import Toggler from './Toggler';
+import { transitionPage } from '../Functions';
 
 const languageOptions = [
     'Afrikaans',       'Bengali',    'Burmese',
@@ -40,6 +41,9 @@ function Profile() {
     const [showDescriptionOnHover, setShowDescriptionOnHover] = useState(user && user.show_description_on_hover);
     const [message, setMessage] = useState(null);
 
+    useEffect(_=> { document.getElementById('root').style.opacity = 1 }, []
+    );
+
     function editInfo(e, signal) {
         if (e) {
             e.persist();
@@ -52,8 +56,7 @@ function Profile() {
                 sex: e ? children[1].children[0].selectedIndex ? children[1].children[0].options[children[1].children[0].selectedIndex].text : user.sex : user.sex,
                 age: e ? children[1].children[1].selectedIndex ? Number(children[1].children[1].options[children[1].children[1].selectedIndex].text) : user.age : user.age,
                 languages: e ? children[1].children[2].selectedIndex ? [children[1].children[2].options[children[1].children[2].selectedIndex].text] : user.languages : user.languages,
-                country: e ? children[2].value : user.country,
-                email: e ? children[3].value : user.email,
+                email: e ? children[2].value : user.email,
                 show_save_history: showSaveHistory,
                 show_description_on_hover: showDescriptionOnHover,
                 recent_save_history: clearing ? [] : user.recent_save_history
@@ -140,7 +143,6 @@ function Profile() {
                 name: editedInfo.name,
                 email: editedInfo.email,
                 languages: editedInfo.languages,
-                country: editedInfo.country,
                 age: editedInfo.age,
                 sex: editedInfo.sex,
                 show_save_history: user.show_save_history,
@@ -180,12 +182,7 @@ function Profile() {
                     <li>
                         <button className="button-register" onClick={_=> clearInfo('languages')}>Clear</button>
                         <label>Language: </label>
-                        <span style={{ /* whiteSpace: 'normal' */ }}>{user.languages[0].length ? user.languages : 'Not specified'}</span>
-                    </li>
-                    <li>
-                        <button className="button-register" onClick={_=> clearInfo('country')}>Clear</button>
-                        <label>Country: </label>
-                        <span>{user.country || 'Not specified'}</span>
+                        <span style={{ /* whiteSpace: 'normal' */ }}>{user.languages[0] != null ? user.languages : 'Not specified'}</span>
                     </li>
                     <li>
                         <button className="button-register" onClick={_=> clearInfo('email')}>Clear</button>
@@ -236,7 +233,6 @@ function Profile() {
                                     {languageOptions.map((lang, i) => <option key={i}>{lang}</option>)}
                                 </select>
                             </div>
-                            <input style={{ width: '92.5%', margin: '.35rem' }} className="input-register" placeholder="country" />
                             <input style={{ width: '92.5%', margin: '.35rem' }} className="input-register" placeholder="email" />
                             <button className="button-register">Submit</button>
                         </form>
@@ -304,7 +300,7 @@ function Profile() {
             }} onBlur={e => {
                 e.target.style.backgroundColor = 'var(--bg-color-dark)';
                 e.target.style.color = 'var(--color-offset)';
-            }} className="button" onClick={_=> history.push('/')}>Back to Home</button>
+            }} className="button" onClick={_=> transitionPage(history, '/')}>Back to Home</button>
         </div>
         : (
             <>
@@ -321,7 +317,7 @@ function Profile() {
                 }} onBlur={e => {
                     e.target.style.backgroundColor = 'var(--color-offset)';
                     e.target.style.color = 'var(--bg-color-dark)'
-                }} className="button" onClick={_=> history.push('/')}>Back to Home</button>
+                }} className="button" onClick={_=> transitionPage(history, '/')}>Back to Home</button>
             </>
         )
     )

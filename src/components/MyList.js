@@ -7,7 +7,7 @@ import Nav from './Nav';
 import MovieList from './MovieList';
 import BinManager from './BinManager';
 import BinManagerContext from '../store/contexts/BinManager.context.js';
-import { Link } from 'react-router-dom';
+import DelayLink from './DelayLink';
 import { server } from '../APIs';
 import { updateUser } from '../store/actions/updateUser.action';
 
@@ -23,6 +23,9 @@ export default function MyList() {
     const [creatingBin, setCreatingBin] = useState(false);
     const [creatingBinError, setCreatingBinError] = useState(null);
     const [updatingBinError, setUpdatingBinError] = useState(null);
+
+    useEffect(_=> { document.getElementById('root').style.opacity = 1 }, []
+    );
 
     useEffect(_=> {
         if (user) {
@@ -101,7 +104,9 @@ export default function MyList() {
         setCreatingBinError(null);
     }
 
-return loading ? <div>Loading...</div> : error ? <div>Error loading movies</div> : (
+return (
+    <>
+        {loading ? <div>Loading...</div> : error ? <div>Error loading movies</div> : (
         <>
             <div style={{ display: 'flex', overflow: 'hidden' }}>
                 <div style={{ display: 'flex', height: '100vh', flexDirection: 'column '}}>
@@ -118,59 +123,56 @@ return loading ? <div>Loading...</div> : error ? <div>Error loading movies</div>
                             }} tabIndex="0">Save History</li>
                         }
                         <li>
-                            {Object.entries(user.bins).length
-                                    ? 
-                                    <div>
-                                        <label onFocus={e => e.target.style.color = showBins ? 'white' : 'var(--color-offset)'} onBlur={e => e.target.style.color = showBins ? 'var(--color-offset)' : 'red'} tabIndex="0" style={{ outline: 'none', cursor: 'pointer' }} onClick={onClickYourBins} onKeyDown={e => e.keyCode === 13 && onClickYourBins(e)} onMouseOver={e => e.target.style.color = showBins ? 'white' : 'var(--color-offset)'} onMouseOut={e => e.target.style.color = showBins ? 'var(--color-offset)' : 'red'}>Your Bins</label>
-                                        <ul style={{ maxHeight: 0, transform: 'scaleY(0)', transformOrigin: 'top', transition: 'max-height 175ms ease-out, transform 175ms ease-out' }}>
-                                            {Object.keys(user.bins).map((bin, i) =>
-                                                <li onFocus={e => e.target.style.color = 'var(--color-offset)'} onBlur={e => e.target.style.color = 'red'} tabIndex={showBins ? 0 : '-1'} onMouseOver={e => {
-                                                    e.target.style.color = 'var(--color-offset)';
-                                                    e.target.style.cursor = 'pointer'
-                                                }} onMouseOut={e => e.target.style.color = 'red'} style={{ marginLeft: '1.25rem', outline: 'none' }} key={i} onClick={e => {
-                                                    e.preventDefault();
+                            {<div>
+                                    <label onFocus={e => e.target.style.color = showBins ? 'white' : 'var(--color-offset)'} onBlur={e => e.target.style.color = showBins ? 'var(--color-offset)' : 'red'} tabIndex="0" style={{ outline: 'none', cursor: 'pointer' }} onClick={onClickYourBins} onKeyDown={e => e.keyCode === 13 && onClickYourBins(e)} onMouseOver={e => e.target.style.color = showBins ? 'white' : 'var(--color-offset)'} onMouseOut={e => e.target.style.color = showBins ? 'var(--color-offset)' : 'red'}>Your Bins</label>
+                                    <ul style={{ maxHeight: 0, transform: 'scaleY(0)', transformOrigin: 'top', transition: 'max-height 175ms ease-out, transform 175ms ease-out' }}>
+                                        {Object.keys(user.bins).map((bin, i) =>
+                                            <li onFocus={e => e.target.style.color = 'var(--color-offset)'} onBlur={e => e.target.style.color = 'red'} tabIndex={showBins ? 0 : '-1'} onMouseOver={e => {
+                                                e.target.style.color = 'var(--color-offset)';
+                                                e.target.style.cursor = 'pointer'
+                                            }} onMouseOut={e => e.target.style.color = 'red'} style={{ marginLeft: '1.25rem', outline: 'none' }} key={i} onClick={e => {
+                                                e.preventDefault();
+                                                dispatch( makeRequest('movies/list', '?movies=' + user.bins[bin]) );
+                                                setDisplaying(bin);
+                                                setShowBins(!showBins);
+                                                setCreatingBinError(null);
+                                            }} onKeyDown={e => {
+                                                e.preventDefault();
+                                                if (e.keyCode === 13) {
                                                     dispatch( makeRequest('movies/list', '?movies=' + user.bins[bin]) );
                                                     setDisplaying(bin);
                                                     setShowBins(!showBins);
                                                     setCreatingBinError(null);
-                                                }} onKeyDown={e => {
-                                                    e.preventDefault();
-                                                    if (e.keyCode === 13) {
-                                                        dispatch( makeRequest('movies/list', '?movies=' + user.bins[bin]) );
-                                                        setDisplaying(bin);
-                                                        setShowBins(!showBins);
-                                                        setCreatingBinError(null);
-                                                    }
-                                                }} onDrop={e => {
-                                                    e.preventDefault();
-                                                    console.log(user.currently_saved.length);
-                                                    !user.currently_saved.includes( Number(e.dataTransfer.getData('text/plain').split('/movies/')[1]) )
-                                                        ? window.confirm('Save movie and add to bin?') && updateBin(e)
-                                                        : updateBin(e);
-                                                }} onDragOver={e => { e.preventDefault(); e.target.style.color = 'blue' }} onDragLeave={e => { e.preventDefault(); e.target.style.color = 'black' }}>
-                                                    {bin}
-                                                </li>
-                                            )}
-                                            <li style={{ marginLeft: '1.25rem' }}>
-                                                {creatingBin
-                                                    ? <form onSubmit={createBin}>
-                                                        <input style={{
-                                                            borderRadius: '2px',
-                                                            padding: '.25rem',
-                                                            height: '1.3rem', width: '110px' }} type="text" placeholder="Enter bin name" />
-                                                    </form>
-                                                    : <button tabIndex="0" onClick={_=> setCreatingBin(true)} onFocus={e => e.target.style.transform = 'scale(1.15)'} onBlur={e => e.target.style.transform = 'scale(1)'} onKeyDown={e => e.keyCode === 13 && setCreatingBin(true)} style={{ backgroundColor: 'transparent', border: 'none', color: 'red', fontWeight: 'bold',
-                                                    fontSize: '1.1rem',
-                                                    transition: 'transform 50ms ease-out'
-                                                 }} onMouseOver={e => {
-                                                    e.target.style.transform = 'scale(1.15)'; e.target.style.cursor = 'pointer'
-                                                }} onMouseOut={e => e.target.style.transform = 'scale(1)'}>+</button>
                                                 }
+                                            }} onDrop={e => {
+                                                e.preventDefault();
+                                                console.log(user.currently_saved.length);
+                                                !user.currently_saved.includes( Number(e.dataTransfer.getData('text/plain').split('/movies/')[1]) )
+                                                    ? window.confirm('Save movie and add to bin?') && updateBin(e)
+                                                    : updateBin(e);
+                                            }} onDragOver={e => { e.preventDefault(); e.target.style.color = 'white' }} onDragLeave={e => { e.preventDefault(); e.target.style.color = 'red' }}>
+                                                {bin}
                                             </li>
-                                            {creatingBinError && <div style={{ color: 'maroon' }}>{creatingBinError}</div>}
-                                        </ul>
-                                    </div>
-                                    : 'Use the bin manager to organize your movies'
+                                        )}
+                                        <li style={{ marginLeft: '1.25rem' }}>
+                                            {creatingBin
+                                                ? <form onSubmit={createBin}>
+                                                    <input style={{
+                                                        borderRadius: '2px',
+                                                        padding: '.25rem',
+                                                        height: '1.3rem', width: '110px' }} type="text" placeholder="Enter bin name" />
+                                                </form>
+                                                : <button tabIndex="0" onClick={_=> setCreatingBin(true)} onFocus={e => e.target.style.transform = 'scale(1.15)'} onBlur={e => e.target.style.transform = 'scale(1)'} onKeyDown={e => e.keyCode === 13 && setCreatingBin(true)} style={{ backgroundColor: 'transparent', border: 'none', color: 'red', fontWeight: 'bold',
+                                                fontSize: '1.1rem',
+                                                transition: 'transform 50ms ease-out'
+                                                }} onMouseOver={e => {
+                                                e.target.style.transform = 'scale(1.15)'; e.target.style.cursor = 'pointer'
+                                            }} onMouseOut={e => e.target.style.transform = 'scale(1)'}>+</button>
+                                            }
+                                        </li>
+                                        {creatingBinError && <div style={{ color: 'maroon' }}>{creatingBinError}</div>}
+                                    </ul>
+                                </div>
                             }
                         </li>
                         <li>
@@ -206,11 +208,13 @@ return loading ? <div>Loading...</div> : error ? <div>Error loading movies</div>
                                     : 'Save movies by going to their page';
                         }
                     })()}/>
-                    : <h2 style={{ flex: 4, position: 'absolute', margin: '7rem 0 0 2.5rem' }}><Link to="/register">Log in</Link> to see your saved movies</h2>
+                    : <h2 style={{ flex: 4, position: 'absolute', margin: '7rem 0 0 2.5rem' }}><DelayLink to="/register">Log in</DelayLink> to see your saved movies</h2>
                 }
             </div>
 
             {user && binManagerOpen && <BinManager movies={currentlySaved} displaying={displaying} setDisplaying={setDisplaying}></BinManager>}
         </>
+        )}
+    </>
     )
 }

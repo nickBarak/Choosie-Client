@@ -10,6 +10,10 @@ function Popular() {
     const [heading, setHeading] = useState('Here\'s what movies are currently trending');
     const [set, setSet] = useState(1);
     const [column, setColumn] = useState('trending');
+    console.log('render', set);
+
+    useEffect(_=> { document.getElementById('root').style.opacity = 1 }, []
+    );
 
     useEffect(_=> {
         dispatch( makeRequest(`popular`, `?column=${column === 'trending' ? 'release_date' : column}&set=${set}`));
@@ -36,10 +40,10 @@ function Popular() {
                 <div style={{ display: 'flex', height: '100vh', flexDirection: 'column' }}>
                     <Nav />
                     <ul className="sidebar">
-                        <li tabIndex="0" onKeyDown={e => e.keyCode === 13 && setColumn('trending')} className="sidebar-li-hover" key="0" onClick={_=> setColumn('trending')}>Trending</li>
-                        <li tabIndex="0" onKeyDown={e => e.keyCode === 13 && setColumn('release_date')} className="sidebar-li-hover" key="1" onClick={_=> setColumn('release_date')}>Recent Releases</li>
-                        <li tabIndex="0" onKeyDown={e => e.keyCode === 13 && setColumn('times_saved_this_month')} className="sidebar-li-hover" key="2" onClick={_=> setColumn('times_saved_this_month')}>Most Saved This Month</li>
-                        <li tabIndex="0" onKeyDown={e => e.keyCode === 13 && setColumn('times_saved')} className="sidebar-li-hover" key="3" onClick={_=> setColumn('times_saved')}>Most Saved All Time</li>
+                        <li tabIndex="0" onKeyDown={e => e.keyCode === 13 && (setSet(1) || setColumn('trending')) } className="sidebar-li-hover" key="0" onClick={_=> setSet(1) || setColumn('trending')}>Trending</li>
+                        <li tabIndex="0" onKeyDown={e => e.keyCode === 13 && (setSet(1) || setColumn('release_date')) } className="sidebar-li-hover" key="1" onClick={_=> setSet(1) || setColumn('release_date')}>Recent Releases</li>
+                        <li tabIndex="0" onKeyDown={e => e.keyCode === 13 && (setSet(1) || setColumn('times_saved_this_month')) } className="sidebar-li-hover" key="2" onClick={_=> setSet(1) || setColumn('times_saved_this_month')}>Most Saved This Month</li>
+                        <li tabIndex="0" onKeyDown={e => e.keyCode === 13 && (setSet(1) || setColumn('times_saved')) } className="sidebar-li-hover" key="3" onClick={_=> setSet(1) || setColumn('times_saved')}>Most Saved All Time</li>
                         <li style={{ marginTop: '2.5rem', height: '23px', width: '100%' }}>
                             <div style={{ posiiton: 'relative', display: 'flex', justifyContent: 'space-between', width: '100%', height: '100%' }}>
                                 <button className="button-v2" style={{ pointerEvents: 'none', opacity: 0, left: '1rem', transition: 'opacity 550ms ease-in-out' }} onClick={e => {

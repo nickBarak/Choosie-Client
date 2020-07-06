@@ -3,7 +3,7 @@ import React, { useState, useReducer } from 'react';
 const ageRatings = ['G', 'PG', 'PG-13', 'TV-14', 'R/TV-MA', 'NR'],
       durations = ['30min', '1h', '1h 30min', '2h', '2h 30min', '3h'],
       genres = ['Action', 'Comedy', 'Drama', 'Thriller', 'Family', 'Fantasy', 'Animation'],
-      saveDates = ['2 days ago', '1 week ago', '2 weeks ago', '3 weeks ago', '1 month ago', '2 months ago', '3 months ago', '6 months ago', '1 year ago'],
+    //   saveDates = ['2 days ago', '1 week ago', '2 weeks ago', '3 weeks ago', '1 month ago', '2 months ago', '3 months ago', '6 months ago', '1 year ago'],
       releaseDates = ['1920', '1930', '1940', '1950', '1960', '1970', '1980', '1990', '2000', '2010', '2020'],
       filterOptionsInit = [ [ [ 'init', 'init', 'higher' ], [ ...ageRatings ] ] ];
 
@@ -32,7 +32,7 @@ function Filter({ displayList, dispatchDisplayList }) {
                 <option key="0" value="Age Rating">Age Rating</option>
                 <option key="1" value="Duration">Duration</option>
                 <option key="2" value="Genre">Genre</option>
-                <option key="3" value="Date Saved">Date Saved</option>
+                {/* <option key="3" value="Date Saved">Date Saved</option> */}
                 <option key="4" value="Release Date">Release Date</option>
             </select>
             {filterOptions[id][0][0] !== 'init' && (
@@ -83,9 +83,9 @@ function Filter({ displayList, dispatchDisplayList }) {
             case 'Genre':
                 newState[payload.id][1].splice(0, state[payload.id][1].length, ...genres);
                 break;
-            case 'Date Saved':
-                newState[payload.id][1].splice(0, state[payload.id][1].length, ...saveDates);
-                break;
+            // case 'Date Saved':
+            //     newState[payload.id][1].splice(0, state[payload.id][1].length, ...saveDates);
+            //     break;
             case 'Release Date':
                 newState[payload.id][1].splice(0, state[payload.id][1].length, ...releaseDates);
                 break;

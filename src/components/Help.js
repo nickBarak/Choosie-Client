@@ -1,13 +1,17 @@
 import React, { useState, useEffect, useContext } from 'react';
 import HistoryContext from '../store/contexts/History.context';
+import { transitionPage } from '../Functions';
 
 const sections = [
-    [{label: 'Overview', content: `Choosie is an intelligent service for simplifying movie selection. It employs machine learning technology - primarily in the form of deep learning - to understand those who use it. That means that it is able to translate your input through a series of data modifications to a language that a computer can make sense of effectively. In doing this, Choosie learns how to serve you individually - from your personal tastes to your typical selection process - so you will truly receive tailored assistance.`}, {label: 'Start', content: `Selecting the 'Start' button on the home screen will initiate a questionnaire`}, {label: 'My List', content: `You can navigate to a personal store of saved movies by selecting 'My List' from the home screen or navigation bar. Here you'll be able to keep track of any movies on your "to-watch" list and any others you don't want to forget about. You can create multiple 'bins' to store related movies and label them to your preference in order to manage your collection more easily.`}, {label: 'Popular', content: `In 'Popular' you can view movies that are currently trending, released recently, or have been saved by many other users.`}],
+    [{label: 'Overview', content: `Choosie is a service for simplifying movie selection. With Choosie you have a guide to help you find the perfect movie, as well as a tool for organizing your movie-watching activity in the future. Additionally, Choosie lends itself as a resource for viewing information related to any movie in its 500,000 title catalog as well as what is new and popular in the Choosie community. If you can't decide on a movie, just use Choosie!`}, {label: 'Start', content: `Selecting the 'Start' button on the home screen will initiate a questionnaire to help you find the kind of movies you're looking for. You will be able to select one or more answers to each question, advancing by selecting the blue button in the bottom right during each phase.`}, {label: 'My List', content: `You can navigate to a personal store of saved movies by selecting 'My List' from the home screen or navigation bar. Here you'll be able to keep track of any movies on your "to-watch" list and any others you don't want to forget about. You can create multiple 'bins' to store related movies and label them to your preference in order to manage your collection more easily.`}, {label: 'Popular', content: `In 'Popular' you can view movies that are currently trending, were released recently, or have been saved by many other users on both a short- and long-term basis.`}],
     [{label: 'About Me', content: `My name is Nick Barak and I'm a self-taught developer. I recently graduated from the University of California, Santa Barbara with a degree in Economics & Accounting and am currently pursuing a career in software engineering. Choosie is my first major project and I am happy to have been able to utilize a lot of the things that I have learned since I started learning to code in the creation of this application. This project is the first of many to come.`}, {label: 'Contact', content: `You can contact me by email at nicholasjbarak@gmail.com. I am always looking for feedback for improvement so don't hesitate to send me suggestions or complaints.`}]
 ], slogan = `Choosie is the solution for those without problems.`;
 
 function Help() {
     const history = useContext(HistoryContext);
+
+    useEffect(_=> { document.getElementById('root').style.opacity = 1 }, []
+    );
 
     const [state, setState] = useState({
         more: false,
@@ -32,7 +36,7 @@ function Help() {
                     )}
                 </article>
                 <div style={{ position: 'relative', display: 'flex', width: '100%' }}>
-                    <button className="button-v2"  onClick={_=> history.push('/')}>Back to Home</button>
+                    <button className="button-v2"  onClick={_=> transitionPage(history, '/')}>Back to Home</button>
                     <button style={{ right: 0, left: 'auto'}} className="button-v2" onClick={_=> { setState({...state, more: !state.more}); history.push('/help') }}>{state.more ? 'Previous' : 'More'}</button>
                 </div>
             </div>

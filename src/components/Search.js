@@ -2,27 +2,35 @@ import React, { useState, useEffect, useContext, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { search } from '../store/actions/search.action';
 import Nav from './Nav';
-import { Link } from 'react-router-dom';
+import DelayLink from './DelayLink';
 import HistoryContext from '../store/contexts/History.context';
 import StarRater from './StarRater';
 
-let mounted;
-
 function Search({ location }) {
+    const mounted = useRef(false);
     const history = useContext(HistoryContext);
     const { loading, searchValue, result } = useSelector(store => store.search);
     const dispatch = useDispatch();
     const [page, setPage] = useState(1);
     const user = useSelector(store => store.user.result);
+    console.log(result)
 
     const nextButton1 = useRef(null),
           nextButton2 = useRef(null),
           previousButton1 = useRef(null),
           previousButton2 = useRef(null);
 
+
+    useEffect(_=> { document.getElementById('root').style.opacity = 1 }, []
+    );
+
     useEffect(_=> {
         dispatch( search(user ? user.username : null, location.searchValue ? mounted ? searchValue : location.searchValue : searchValue, page) );
-        mounted = true;
+        !mounted.current && location.page && setPage(location.page);
+        if (!mounted.current && location.page > 1) {
+            [nextButton1, nextButton2].forEach(btn => btn.current.style.transform = 'translateX(calc(190px - 1rem))');
+        }
+        mounted.current = true;
     }, [page]);
 
     useEffect(_=> {
@@ -42,7 +50,7 @@ function Search({ location }) {
                 btn.current.style.opacity = 0;
                 btn.current.style.pointerEvents = 'none';
             });
-            [nextButton1, nextButton2].forEach(btn => btn.current.style.transform = 'translateX(0)')
+            [nextButton1, nextButton2].forEach(btn => btn.current.style.transform = 'translateX(0)');
         } else if (previousButton1.current) {
             [previousButton1, previousButton2].forEach(btn => {
                 btn.current.style.opacity = 1;
@@ -94,16 +102,20 @@ function Search({ location }) {
                     {result && <ul className="search-results">
                         {result.slice(0, 10).map((result, i) =>
                             <li key={i}>
-                                <Link to={{
+                                <DelayLink to={{
                                     pathname: `movies/${result.id}`,
-                                    searchValue
+                                    searchValue,
+                                    page,
+                                    back: 'Search'
                                 }}>
                                     <img src={result.cover_file} alt="not available" />
-                                </Link>
+                                </DelayLink>
                                 <span className="search-results-info">
-                                    <Link to={{
+                                    <DelayLink to={{
                                         pathname: `movies/${result.id}`,
-                                    searchValue
+                                        searchValue,
+                                        page,
+                                        back: 'Search'
                                     }}>
                                         <span style={{ fontSize: '1.3rem', color: 'white', position: 'relative', zIndex: '5' }}>
                                             <label>{result.title}</label>
@@ -117,7 +129,7 @@ function Search({ location }) {
                                             }
                                             <span> | {result.release_date.slice(0, 4)}</span>
                                         </span>
-                                    </Link>
+                                    </DelayLink>
                                 </span>
                             </li>
                         )}

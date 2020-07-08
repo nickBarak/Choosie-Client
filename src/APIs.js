@@ -1,5 +1,5 @@
 export const server = new URL(
-    'https://choosie-api.herokuapp.com/'
+    'https://choosie-api.herokuapp.com'
     // 'http://localhost:8082'
 );
 

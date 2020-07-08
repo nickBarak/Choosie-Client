@@ -28,6 +28,7 @@ function Home() {
 
     function onClick(button, route) {
         user && fetch(`${server}home/${user.username}`, {
+            mode: 'cors',
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ button })

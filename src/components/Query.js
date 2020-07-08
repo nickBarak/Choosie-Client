@@ -145,6 +145,7 @@ function Query({ location }) {
                             <button className="button query-next" onClick={e => {
                                 if (user && phase === 1)
                                     fetch(server + 'start?user=' + user.username, {
+                                        mode: 'cors',
                                         method: 'POST',
                                         headers: { 'Content-Type': 'application/json' },
                                         body: JSON.stringify({

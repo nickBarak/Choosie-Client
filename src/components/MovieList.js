@@ -30,6 +30,7 @@ function MovieList({ movies, heading, headingMargin, withFilter, displaying, low
             removingFromBin && (async _=> {
                 try {
                     let res = await fetch(server + `users/${user.username}/bins`, {
+                        mode: 'cors',
                         signal,
                         method: 'PATCH',
                         headers: { 'Content-Type': 'application/json' },
@@ -46,6 +47,7 @@ function MovieList({ movies, heading, headingMargin, withFilter, displaying, low
                 try {
                     let res;
                     res = await fetch(server + `movies?user=${user.username}`, {
+                        mode: 'cors',
                         signal,
                         method: 'DELETE',
                         headers: { 'Content-Type': 'application/json' },
@@ -57,6 +59,7 @@ function MovieList({ movies, heading, headingMargin, withFilter, displaying, low
                         .filter(bin => bin[1].includes(String(unsaving)));
                     for (let binWithMovie of binsWithMovie) {
                         res = await fetch(server + `users/${user.username}/bins`, {
+                            mode: 'cors',
                             signal,
                             method: 'PATCH',
                             headers: { 'Content-Type': 'application/json' },
@@ -79,6 +82,7 @@ function MovieList({ movies, heading, headingMargin, withFilter, displaying, low
                 try {
                     let res;
                     res = await fetch(server + `users/${user.username}`, {
+                        mode: 'cors',
                         signal,
                         method: 'PATCH',
                         headers: { 'Content-Type': 'application/json' },

@@ -23,6 +23,7 @@ function Movie({ location: { searchValue, page, back } }) {
     function saveMovie() {
         setSaving(true);
         fetch(server + `movies?user=${user.username}`, {
+            mode: 'cors',
             method: user.save_history.includes(movie.id) ? 'PUT' : 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ movieID: movie.id, inRecent: user.recent_save_history.includes(movie.id) })
@@ -48,6 +49,7 @@ function Movie({ location: { searchValue, page, back } }) {
             try {
                 let res;
                 res = await fetch(server + `movies?user=${user.username}`, {
+                    mode: 'cors',
                     signal,
                     method: 'DELETE',
                     headers: { 'Content-Type': 'application/json' },
@@ -59,6 +61,7 @@ function Movie({ location: { searchValue, page, back } }) {
                     .filter(bin => bin[1].includes(String(unsaving)));
                 for (let binWithMovie of binsWithMovie) {
                     res = await fetch(server + `users/${user.username}/bins`, {
+                        mode: 'cors',
                         signal,
                         method: 'PATCH',
                         headers: { 'Content-Type': 'application/json' },

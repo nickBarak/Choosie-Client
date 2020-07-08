@@ -26,6 +26,7 @@ function BinManager({ movies, displaying, setDisplaying }) {
         formData.append('bin', typeof bin === 'string' ? bin : JSON.stringify(bin));
         try {
             const response = await fetch(server + `users/${user.username}/bins`, {
+                mode: 'cors',
                 method,
                 body: formData
             });
@@ -74,6 +75,7 @@ function BinManager({ movies, displaying, setDisplaying }) {
                 ? [ ...user.bins[binToUpdate], toUpdate.value ]
                 : user.bins[binToUpdate].filter(movie => movie !== toUpdate.value);
             user && fetch(server + `users/${user.username}/bins`, {
+                mode: 'cors',
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({

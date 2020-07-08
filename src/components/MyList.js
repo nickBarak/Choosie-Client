@@ -53,6 +53,7 @@ export default function MyList() {
             const formData = new FormData();
             formData.append('bin', JSON.stringify({ [binName]: [] }) );
                 const response = await fetch(server + `users/${user.username}/bins`, {
+                    mode: 'cors',
                     method: 'POST',
                     body: formData
                 });
@@ -77,6 +78,7 @@ export default function MyList() {
         try {
             if (!user.currently_saved.includes(Number(id))) {
                 res = await fetch(server + `movies?user=${user.username}`, {
+                    mode: 'cors',
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ movieID: Number(id), inRecent: true })
@@ -85,6 +87,7 @@ export default function MyList() {
             }
 
             res = await fetch(server + `users/${user.username}/bins`, {
+                mode: 'cors',
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({

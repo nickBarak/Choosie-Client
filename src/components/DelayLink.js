@@ -23,10 +23,6 @@ function DelayLink({ to, className, children }) {
   };
 
   return <Link className={className} to={to} onClick={onClick}>{children}</Link>;
-};
-
-DelayLink.propTypes = {
-  to: PropTypes.string
-};
+}
 
 export default DelayLink;

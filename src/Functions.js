@@ -21,3 +21,8 @@ export function transitionPage(history, route) {
         root.style.opacity = 1;
     }, 1500);
 }
+
+export function transitionDisplayList() {
+    document.getElementById('display-row').style.transform = 'translateY(10vh)';
+    setTimeout(_=> document.getElementById('display-row').style.transform = 'translateY(0)', 500);
+}

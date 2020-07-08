@@ -1,19 +1,34 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Nav from './Nav';
 import MovieList from './MovieList';
 import { makeRequest } from '../store/actions/makeRequest.action';
 import { useDispatch, useSelector } from 'react-redux';
 
-function Popular() {
+function Popular({ location }) {
     const dispatch = useDispatch();
     const { loading, error, result } = useSelector(store => store.makeRequest);
     const [heading, setHeading] = useState('Here\'s what movies are currently trending');
     const [set, setSet] = useState(1);
     const [column, setColumn] = useState('trending');
-    console.log('render', set);
+    const nextButton = useRef(null),
+          previousButton = useRef(null);
 
     useEffect(_=> { document.getElementById('root').style.opacity = 1 }, []
     );
+
+    useEffect(_=> {
+        setTimeout(_=> {
+            if (1 || (result && result.length < 19)) {
+                nextButton.current.style.opacity = 1;
+                nextButton.current.style.pointerEvents = 'auto';
+            }
+        }, 150);
+    }, []);
+
+    useEffect(_=> {
+        location.searchValue && setColumn(location.searchValue);
+        location.page && setSet(location.page);
+    }, [])
 
     useEffect(_=> {
         dispatch( makeRequest(`popular`, `?column=${column === 'trending' ? 'release_date' : column}&set=${set}`));
@@ -34,16 +49,52 @@ function Popular() {
         }
     }, [column, set]);
 
+    useEffect(_=> {
+        setTimeout(_=> document.getElementById('display-row').style.transform = 'translateY(0rem)', 150);
+    }, [column, set]);
+
+    useEffect(_=> {
+        (async _=> {
+            if (result && (result.length < 20) && nextButton.current) {
+                nextButton.current.style.opacity = 0;
+                nextButton.current.style.pointerEvents = 'none';
+            } else if (result && nextButton.current) {
+                nextButton.current.style.opacity = 1;
+                nextButton.current.style.pointerEvents = 'auto';
+            }
+            if (set === 1 && previousButton.current) {
+                previousButton.current.style.opacity = 0;
+                previousButton.current.style.pointerEvents = 'none';
+                nextButton.current.style.transform = 'translateX(0)';
+            } else if (previousButton.current) {
+                previousButton.current.style.opacity = 1;
+                previousButton.current.style.pointerEvents = 'auto';
+            }
+            if (set === 2)
+                nextButton.current.style.transform = 'translate(calc(190px - 1rem))';
+        })();
+    }, [column]);
+
+    const onClickOrEnter = (e, column) => {
+        if (!e || e.keyCode === 13) {
+            document.getElementById('display-row').style.transform = 'translateY(150vh)';
+            setTimeout(_=> {
+                setSet(1);
+                setColumn(column);
+            }, 300);
+        }
+    }
+
     return (
         <>
             <div style={{ display: 'flex', overflow: 'hidden' }}>
                 <div style={{ display: 'flex', height: '100vh', flexDirection: 'column' }}>
                     <Nav />
                     <ul className="sidebar">
-                        <li tabIndex="0" onKeyDown={e => e.keyCode === 13 && (setSet(1) || setColumn('trending')) } className="sidebar-li-hover" key="0" onClick={_=> setSet(1) || setColumn('trending')}>Trending</li>
-                        <li tabIndex="0" onKeyDown={e => e.keyCode === 13 && (setSet(1) || setColumn('release_date')) } className="sidebar-li-hover" key="1" onClick={_=> setSet(1) || setColumn('release_date')}>Recent Releases</li>
-                        <li tabIndex="0" onKeyDown={e => e.keyCode === 13 && (setSet(1) || setColumn('times_saved_this_month')) } className="sidebar-li-hover" key="2" onClick={_=> setSet(1) || setColumn('times_saved_this_month')}>Most Saved This Month</li>
-                        <li tabIndex="0" onKeyDown={e => e.keyCode === 13 && (setSet(1) || setColumn('times_saved')) } className="sidebar-li-hover" key="3" onClick={_=> setSet(1) || setColumn('times_saved')}>Most Saved All Time</li>
+                        <li tabIndex="0" onKeyDown={e => column !== 'trending' && onClickOrEnter(e, 'trending')} className="sidebar-li-hover" key="0" onClick={_=> column !== 'trending' && onClickOrEnter(null, 'trending')}>Trending</li>
+                        <li tabIndex="0" onKeyDown={e => column !== 'release_date' && onClickOrEnter(e, 'release_date')} className="sidebar-li-hover" key="1" onClick={_=> column !== 'release_date' && onClickOrEnter(null, 'release_date')}>Recent Releases</li>
+                        <li tabIndex="0" onKeyDown={e => column !== 'times_saved_this_month' && onClickOrEnter(e, 'times_saved_this_month')} className="sidebar-li-hover" key="2" onClick={_=> column !== 'times_saved_this_month' && onClickOrEnter(null, 'times_saved_this_month')}>Most Saved This Month</li>
+                        <li tabIndex="0" onKeyDown={e => column !== 'times_saved' && onClickOrEnter(e, 'times_saved')} className="sidebar-li-hover" key="3" onClick={_=> column !== 'times_saved' && onClickOrEnter(null, 'times_saved')}>Most Saved All Time</li>
                         <li style={{ marginTop: '2.5rem', height: '23px', width: '100%' }}>
                             <div style={{ posiiton: 'relative', display: 'flex', justifyContent: 'space-between', width: '100%', height: '100%' }}>
                                 <button className="button-v2" style={{ pointerEvents: 'none', opacity: 0, left: '1rem', transition: 'opacity 550ms ease-in-out' }} onClick={e => {
@@ -53,8 +104,9 @@ function Popular() {
                                         e.target.style.pointerEvents = 'none';
                                     }
                                     e.target.blur();
-                                    setSet(set - 1)
-                                }}>Previous</button>
+                                    document.getElementById('display-row').style.transform = 'translateY(150vh)';
+                                    setTimeout(_=> setSet(set - 1), 300);
+                                }} ref={previousButton}>Previous</button>
                                 <button style={{ left: '1rem', transition: 'transform 550ms ease-in-out' }} className="button-v2" onClick={e => {
                                     if (set === 1) {
                                         e.target.style.transform = 'translateX(calc(190px - 1rem))';
@@ -62,18 +114,18 @@ function Popular() {
                                         e.target.parentElement.children[0].style.pointerEvents = 'auto'
                                     }
                                     e.target.blur();
-                                    setSet(set + 1)
-                                }}>Next</button>
+                                    document.getElementById('display-row').style.transform = 'translateY(150vh)';
+                                    setTimeout(_=> setSet(set + 1), 300);
+                                }} ref={nextButton}>Next</button>
                             </div>
                         </li>
                     </ul>
                 </div>
                 
                 <div style={{ flex: 4, marginBottom: '2rem' }}>
-                    {error && <div>{error}</div>}
-                    {loading
-                        ? <div>Loading movies...</div>
-                        : <MovieList movies={result} heading={heading} headingMargin="4rem" displaying={'Popular'}/>    
+                    {<MovieList movies={result} heading={error ? 
+                    'Error loading movies' : heading} headingMargin="4rem" displaying={'Popular'}
+                    locationdetails={{searchValue: column, page: set, back: '/popular'}}/>    
                     }
                 </div>
             </div>

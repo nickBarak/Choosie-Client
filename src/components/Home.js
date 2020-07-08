@@ -22,7 +22,7 @@ function Home() {
         try { 
             dispatch( search(user ? user.username : null, e.target.children[0].value, 1) );
             e.target.reset();
-            transitionPage(history, '/search');
+            history.push('/search');
         } catch (e) { console.log(e) }
     }
 

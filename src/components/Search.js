@@ -7,13 +7,12 @@ import HistoryContext from '../store/contexts/History.context';
 import StarRater from './StarRater';
 
 function Search({ location }) {
-    const mounted = useRef(false);
+    const mounted = useRef(0);
     const history = useContext(HistoryContext);
     const { loading, searchValue, result } = useSelector(store => store.search);
     const dispatch = useDispatch();
     const [page, setPage] = useState(1);
     const user = useSelector(store => store.user.result);
-    console.log(result)
 
     const nextButton1 = useRef(null),
           nextButton2 = useRef(null),
@@ -25,12 +24,21 @@ function Search({ location }) {
     );
 
     useEffect(_=> {
-        dispatch( search(user ? user.username : null, location.searchValue ? mounted ? searchValue : location.searchValue : searchValue, page) );
-        !mounted.current && location.page && setPage(location.page);
         if (!mounted.current && location.page > 1) {
-            [nextButton1, nextButton2].forEach(btn => btn.current.style.transform = 'translateX(calc(190px - 1rem))');
+            setTimeout(_=> {
+                [nextButton1, nextButton2].forEach(btn => btn.current.style.transform = 'translateX(calc(190px - 1rem))');
+                [previousButton1, previousButton2].forEach(btn => {
+                    btn.current.style.opacity = 1;
+                    btn.current.style.pointerEvents = 'auto';
+                });
+            }, 150);
         }
-        mounted.current = true;
+        // if (!mounted.current && location.withNext)
+        !mounted.current && location.page && setPage(location.page);
+    }, []);
+
+    useEffect(_=> {
+        if (!location.page || mounted.current++) dispatch( search(user ? user.username : null, searchValue, page) );
     }, [page]);
 
     useEffect(_=> {
@@ -106,7 +114,7 @@ function Search({ location }) {
                                     pathname: `movies/${result.id}`,
                                     searchValue,
                                     page,
-                                    back: 'Search'
+                                    back: '/search'
                                 }}>
                                     <img src={result.cover_file} alt="not available" />
                                 </DelayLink>
@@ -115,7 +123,7 @@ function Search({ location }) {
                                         pathname: `movies/${result.id}`,
                                         searchValue,
                                         page,
-                                        back: 'Search'
+                                        back: '/search'
                                     }}>
                                         <span style={{ fontSize: '1.3rem', color: 'white', position: 'relative', zIndex: '5' }}>
                                             <label>{result.title}</label>

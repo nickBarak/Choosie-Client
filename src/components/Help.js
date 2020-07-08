@@ -10,6 +10,7 @@ const sections = [
 function Help() {
     const history = useContext(HistoryContext);
     const frame = useRef(null);
+    const frame2 = useRef(null);
 
     useEffect(_=> { document.getElementById('root').style.opacity = 1 }, []
     );
@@ -22,14 +23,14 @@ function Help() {
     useEffect(_=> setState({...state, sections: sections[state.more ? 1 : 0]}), [state.more]);
 
     return (
-        <div className="container">
+        <div className="container transition-frame" ref={frame}>
             <div className="help">
                 <h2>What is <span style={{ fontWeight: 600 }} className="logo">Choosie</span>?</h2>
                 <article style={{ width: '100%' }}>
                     <br />
                     <div style={{ fontWeight: 'bold' }}>{slogan}</div>
                     <br />
-                    <div ref={frame}>
+                    <div>
                         {state.sections.map((section, i) =>
                             <section key={i}>
                                 <label>{section.label}</label>

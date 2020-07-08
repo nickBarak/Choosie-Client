@@ -32,7 +32,14 @@ export default function MyList() {
             dispatch( makeRequest('movies/list', '?movies=' + user.currently_saved) );
             dispatch( getCurrentlySaved(user.currently_saved) );
         }
+        user && setTimeout(_=> document.getElementById('display-row').style.transform = 'translateY(0)', 150);
     }, []);
+
+    useEffect(_=> {
+        if (user) {
+            setTimeout(_=> document.getElementById('display-row').style.transform = 'translateY(0)', 500);
+        }
+    }, [displaying])
 
     useEffect(_=> { if (!showBins) setCreatingBin(false) }, [showBins])
 
@@ -113,12 +120,14 @@ return (
                     <Nav />
                     {user && <ul className="sidebar">
                         {<li className="sidebar-li-hover" onClick={e => {
-                                dispatch( makeRequest('movies/list', '?movies=' + user.currently_saved) );
+                                if (displaying !== 'Currently Saved') document.getElementById('display-row').style.transform = 'translateY(150vh)';
+                                setTimeout(_=> dispatch( makeRequest('movies/list', '?movies=' + user.currently_saved) ), 300);
                                 setDisplaying('Currently Saved');
                             }} tabIndex="0">Currently Saved</li>
                         }
                         { user.show_save_history && <li className="sidebar-li-hover" onClick={e => {
-                                dispatch( makeRequest('movies/list', '?movies=' + user.recent_save_history) );
+                                if (displaying !== 'Save History') document.getElementById('display-row').style.transform = 'translateY(150vh)';
+                                setTimeout(_=> dispatch( makeRequest('movies/list', '?movies=' + user.recent_save_history) ), 300);
                                 setDisplaying('Save History');
                             }} tabIndex="0">Save History</li>
                         }
@@ -132,14 +141,16 @@ return (
                                                 e.target.style.cursor = 'pointer'
                                             }} onMouseOut={e => e.target.style.color = 'red'} style={{ marginLeft: '1.25rem', outline: 'none' }} key={i} onClick={e => {
                                                 e.preventDefault();
-                                                dispatch( makeRequest('movies/list', '?movies=' + user.bins[bin]) );
+                                                if (displaying !== bin) document.getElementById('display-row').style.transform = 'translateY(150vh)';
+                                                setTimeout(_=> dispatch( makeRequest('movies/list', '?movies=' + user.bins[bin]) ), 300);
                                                 setDisplaying(bin);
                                                 setShowBins(!showBins);
                                                 setCreatingBinError(null);
                                             }} onKeyDown={e => {
                                                 e.preventDefault();
                                                 if (e.keyCode === 13) {
-                                                    dispatch( makeRequest('movies/list', '?movies=' + user.bins[bin]) );
+                                                    if (displaying !== bin) document.getElementById('display-row').style.transform = 'translateY(150vh)';
+                                                    setTimeout(_=> dispatch( makeRequest('movies/list', '?movies=' + user.bins[bin]) ), 300);
                                                     setDisplaying(bin);
                                                     setShowBins(!showBins);
                                                     setCreatingBinError(null);

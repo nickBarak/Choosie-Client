@@ -30,7 +30,7 @@ function Home() {
         user && fetch(`${server}home/${user.username}`, {
             mode: 'cors',
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
             body: JSON.stringify({ button })
         })
             .then(res => !res.ok && console.log('Something went wrong'))

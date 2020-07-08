@@ -8,7 +8,14 @@ export const createMakeRequestLaunch = _=> ({ type: MAKE_REQUEST_LAUNCH }),
 export const makeRequest = (route, querystring, options={}) => {
     return dispatch => {
         dispatch(createMakeRequestLaunch())
-        fetch(server+`${route}${querystring ? querystring : ''}`, { ...options, mode: 'cors' })
+        fetch(server+`${route}${querystring ? querystring : ''}`, {
+            ...options,
+            mode: 'cors',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            }
+        })
             .then(res => res.json())
             .then(res => {
                 dispatch( createMakeRequestSuccess(res) );

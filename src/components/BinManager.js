@@ -28,7 +28,8 @@ function BinManager({ movies, displaying, setDisplaying }) {
             const response = await fetch(server + `users/${user.username}/bins`, {
                 mode: 'cors',
                 method,
-                body: formData
+                body: formData,
+                headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' }
             });
             setError(null) || response.ok
                 ? callback && callback()
@@ -77,7 +78,7 @@ function BinManager({ movies, displaying, setDisplaying }) {
             user && fetch(server + `users/${user.username}/bins`, {
                 mode: 'cors',
                 method: 'PATCH',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
                 body: JSON.stringify({
                     bin: { [binToUpdate]: updatedMovies }
                 })

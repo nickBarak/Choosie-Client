@@ -33,7 +33,7 @@ function MovieList({ movies, heading, headingMargin, withFilter, displaying, low
                         mode: 'cors',
                         signal,
                         method: 'PATCH',
-                        headers: { 'Content-Type': 'application/json' },
+                        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
                         body: JSON.stringify({ bin: { [displaying]: user.bins[displaying].filter(id => id !== String(removingFromBin)) } })
                     });
                     !res.ok && setSaveError('Error removing movie from bin');
@@ -50,7 +50,7 @@ function MovieList({ movies, heading, headingMargin, withFilter, displaying, low
                         mode: 'cors',
                         signal,
                         method: 'DELETE',
-                        headers: { 'Content-Type': 'application/json' },
+                        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
                         body: JSON.stringify({ movieID: unsaving })
                     });
                     !res.ok && setSaveError('Error unsaving movie');
@@ -62,7 +62,7 @@ function MovieList({ movies, heading, headingMargin, withFilter, displaying, low
                             mode: 'cors',
                             signal,
                             method: 'PATCH',
-                            headers: { 'Content-Type': 'application/json' },
+                            headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
                             body: JSON.stringify({ bin: { [binWithMovie[0]]: binWithMovie[1].filter(id => id !== String(unsaving)) } })
                         });
                         !res.ok && setSaveError('Error unsaving movie');
@@ -85,7 +85,7 @@ function MovieList({ movies, heading, headingMargin, withFilter, displaying, low
                         mode: 'cors',
                         signal,
                         method: 'PATCH',
-                        headers: { 'Content-Type': 'application/json' },
+                        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
                         body: JSON.stringify({
                             name: user.name,
                             sex: user.sex,

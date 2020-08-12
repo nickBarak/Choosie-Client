@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext, useRef } from 'react';
+import React, { useState, useContext } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { server } from '../APIs';
 // import UserContext from '../store/contexts/User.context';
@@ -97,6 +97,7 @@ function BinManager({ movies, displaying, setDisplaying }) {
     }
 
     return (
+        <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: '33%', display: 'flex', justifyContent: 'center', alignItems: 'center', pointerEvents: 'none' }}>
         <div className="bin-manager">
             {error && <div style={{ color: 'maroon' }}>{error}</div>}
             <label style={{ fontWeight: 600 }}>Bin Manager</label>
@@ -165,6 +166,7 @@ function BinManager({ movies, displaying, setDisplaying }) {
             </>
             }
             {Object.keys(user.bins).length > 0 && <button className="button-register" onClick={_=> setBinManagerOpen(false)}>Close</button>}
+        </div>
         </div>
     )
 }

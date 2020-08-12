@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import './App.css';
 import { Route, Switch } from 'react-router-dom';
 import Home from './components/Home';
@@ -19,7 +19,7 @@ function App() {
         <Route path='/' exact component={Home} />
         <Route path='/movies/:id' component={Movie} />
         <Route path='/register' exact component={Register} />
-        <Route path='/profile/:id' exact component={Profile} />
+        <Route path='/profile/:username' exact component={Profile} />
         <Route path='/search' exact component={Search} />
         <Route path='/help' exact component={Help} />
         <Route path='/query' exact component={Query} />

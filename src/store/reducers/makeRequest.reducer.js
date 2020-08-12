@@ -8,7 +8,7 @@ const initialState = {
     error: null
 };
 
-export default (state=initialState, { type, payload }) => {
+export default (state=initialState, { type, payload, callback }) => {
     switch (type) {
         default: return state;;
         case MAKE_REQUEST_LAUNCH:
@@ -17,6 +17,7 @@ export default (state=initialState, { type, payload }) => {
                 loading: true
             }
         case MAKE_REQUEST_SUCCESS:
+            setTimeout(callback, 50);
             return {
                 ...state,
                 loading: false,

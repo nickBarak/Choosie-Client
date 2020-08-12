@@ -66,7 +66,7 @@ function Search({ location }) {
             });
         }
         if (page === 2)
-            [nextButton1, nextButton2].forEach(btn => btn.current.style.transform = 'translate(calc(190px - 1rem))');
+            [nextButton1, nextButton2].forEach(btn => btn.current.style.transform = 'translateX(calc(190px - 1rem))');
     }, [result]);
 
     function onSearch(e) {

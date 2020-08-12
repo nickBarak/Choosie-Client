@@ -8,7 +8,7 @@ const ageRatings = ['G', 'PG', 'PG-13', 'TV-14', 'R/TV-MA', 'NR'],
       filterOptionsInit = [ [ [ 'init', 'init', 'higher' ], [ ...ageRatings ] ] ];
 
 function Filter({ displayList, dispatchDisplayList }) {
-    const [filterOptions, dispatchFilterOptions] = useReducer(filterOptionsReducer, JSON.parse( JSON.stringify(filterOptionsInit) ) );
+    const [filterOptions, dispatchFilterOptions] = useReducer(filterOptionsReducer, JSON.parse( JSON.stringify(filterOptionsInit) ));
     const [filterID, setFilterID] = useState(0);
 
     const makeFilter = id => (
@@ -23,9 +23,9 @@ function Filter({ displayList, dispatchDisplayList }) {
                     type: "init",
                     payload: { id, select: 1 }
                 });
-                if (e.target.parentNode.children.length > 1) {
-                    e.target.parentNode.children[1].selectedIndex = 0;
-                    e.target.parentNode.children[2].children[0].children[0].checked = true;
+                if (e.target.parentElement.children.length > 1) {
+                    e.target.parentElement.children[1].selectedIndex = 0;
+                    e.target.parentElement.children[2].children[0].children[0].checked = true;
                 }
             }}>
                 <option key="-1" value="init" disabled>Select an option</option>
@@ -43,7 +43,7 @@ function Filter({ displayList, dispatchDisplayList }) {
                         type: e.target.options[e.target.selectedIndex].text,
                         payload: { id, select: 1 }
                     });
-                    dispatchDisplayList( deriveFilterValues(e.target.parentNode.parentNode.parentNode) );
+                    dispatchDisplayList( deriveFilterValues(e.target.parentElement.parentElement.parentElement) );
                 }}>
                     <option key="-1" value="init" disabled>Select an option</option>
                     {filterOptions[id][1].map((option, i) => <option key={i} value={option}>{option}</option>)}
@@ -51,15 +51,15 @@ function Filter({ displayList, dispatchDisplayList }) {
                 <span>
                     <label style={{ marginLeft: '.35rem' }}><input style={{ margin: '.5' }} type="radio" name={`filterByRadio_${id}`} value="higher" defaultChecked={filterOptions[id][0][2] === 'higher' ? true : false} onChange={e => {
                         dispatchFilterOptions({ type: 'higher', payload: { id, select: 2 }});
-                        dispatchDisplayList( deriveFilterValues(e.target.parentNode.parentNode.parentNode.parentNode.parentNode) );
+                        dispatchDisplayList( deriveFilterValues(e.target.parentElement.parentElement.parentElement.parentElement.parentElement) );
                     }} />higher/later</label>
                     <label style={{ marginLeft: '.35rem' }}><input style={{ margin: '.5' }} type="radio" name={`filterByRadio_${id}`} value="lower" defaultChecked={filterOptions[id][0][2] === 'lower' ? true : false} onChange={e => {
                         dispatchFilterOptions({ type: 'lower', payload: { id, select: 2 }});
-                        dispatchDisplayList( deriveFilterValues(e.target.parentNode.parentNode.parentNode.parentNode.parentNode) );
+                        dispatchDisplayList( deriveFilterValues(e.target.parentElement.parentElement.parentElement.parentElement.parentElement) );
                     }} />lower/earlier</label>
                     <label style={{ marginLeft: '.35rem' }}><input style={{ margin: '.5' }} type="radio" name={`filterByRadio_${id}`} value="exact" defaultChecked={filterOptions[id][0][2] === 'exact' ? true : false} onChange={e => {
                         dispatchFilterOptions({ type: 'exact', payload: { id, select: 2 }});
-                        dispatchDisplayList( deriveFilterValues(e.target.parentNode.parentNode.parentNode.parentNode.parentNode) );
+                        dispatchDisplayList( deriveFilterValues(e.target.parentElement.parentElement.parentElement.parentElement.parentElement) );
                     }} />exact</label>
                 </span>
             </>

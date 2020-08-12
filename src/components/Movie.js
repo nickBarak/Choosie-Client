@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeRequest } from '../store/actions/makeRequest.action';
 import Nav from './Nav';
@@ -97,7 +97,10 @@ function Movie({ location: { searchValue, page, back } }) {
                             }}>{unsaving ? 'Unsaving movie...' : 'Unsave Movie'}</button>
                             : <button className="button-manage-movie" onClick={saveMovie}>{saving ? 'Saving movie...' : 'Save to My List'}</button>
                         : <button className="button-manage-movie" onClick={_=> transitionPage(history, '/register')}>Sign in to save this movie</button>}
-                        {movie.description && <div style={{ margin: '2.5rem 0 3rem 0', textAlign: 'justify'}}>{movie.description === 'Not available' ? 'Description not available' : movie.description}</div>}
+                        {movie.description && <div style={{ margin: '2.5rem 0 3rem 0', textAlign: 'justify', position: 'relative' }}>
+                            {movie.description === 'Not available' ? 'Description not available' : movie.description}
+                            {movie.description !== 'Not available' && <span className="imdb-credit">-Taken from <a href={movie.src_url} target="_blank" rel="noopener noreferrer">IMDb</a></span>}
+                        </div>}
                     </div>
                     <ul className="info-movie">
                         <li>

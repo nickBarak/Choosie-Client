@@ -6,6 +6,7 @@ import { makeRequest } from '../store/actions/makeRequest.action';
 import StarRater from './StarRater';
 import { query } from '../store/actions/query.action';
 import { server } from '../APIs';
+import { slideDisplayRow } from '../Functions';
 
 class QueryContent {
     constructor(prompt, buttonSet, nextButton) {
@@ -32,17 +33,15 @@ function Query({ location }) {
     const dispatch = useDispatch();
     let mounted = useRef(false);
     const mainNextButton = useRef(null);
+    const mainNextButton2 = useRef(null);
+    const mainPrevButton = useRef(null);
+    const mainPrevButton2 = useRef(null);
     const [movies, setMovies] = useState([]);
     const frame = useRef(null);
     const frame2 = useRef(null);
 
     useEffect(_=> { document.getElementById('root').style.opacity = 1 }, []
     );
-
-    useEffect(_=> {
-        if (phase === 4)
-            document.getElementById('display-row').style.transform = 'translateY(0)';
-    }, [phase]);
 
     useEffect(_=> {
         if (phase > 3) {
@@ -56,12 +55,13 @@ function Query({ location }) {
                 (answers.current[2].length && !answers.current[2].includes('Any'))
                     ? `&timePeriods=${answers.current[2]}`
                     : '';
-
-            dispatch( makeRequest(`start`, (genres || timeConstraint || timePeriods) && '?set=' + set + genres + timeConstraint + timePeriods) );
+            
+            setTimeout(_=> dispatch( makeRequest(`start`, (genres || timeConstraint || timePeriods) && '?set=' + set + genres + timeConstraint + timePeriods, {}, slideDisplayRow(200, null, 3)) ), 300);
         } else if (phase > 1) answers.current.push([]);
         if (!mounted) {
             if (location.page) {
-                if (location.page > 1) mainNextButton.current.style.transform = 'translateX(calc(190px - 1rem))';
+                if (location.page > 1)
+                    [mainNextButton, mainNextButton2].forEach(btn => { btn.current.style.transform = 'translateX(calc(190px - 1rem))' });
                 answers.current = location.searchValue;
                 setPhase(4);
                 location.page > 1 && setSet(location.page);
@@ -171,34 +171,66 @@ function Query({ location }) {
                 </div>
             </div>}
             {/* {<div>{loading ? 'Loading movies...' : error ? 'Error loading movies' : null}</div>} */}
-            {phase > 3 && <div style={{ display: phase < 4 ? 'none' : 'block', opacity: 0 }} ref={frame2} className="transition-frame">
+            {phase > 3 && <div style={{ display: phase < 4 ? 'none' : 'block', opacity: 0, position: 'relative' }} ref={frame2} className="transition-frame">
+                <div style={{ position: 'absolute', display: 'flex', justifyContent: 'space-between', left: 0, top: '1rem' }}>
+                    <button className="button-v2" style={{ pointerEvents: 'none', opacity: 0, left: '1.5rem', transition: 'opacity 550ms ease-in-out' }} onClick={e => {
+                        if (set === 2) {
+                            [e.target, mainPrevButton2.current].forEach(btn => {
+                                btn.style.opacity = 0;
+                                btn.parentElement.children[1].style.transform = 'translateX(0)';
+                                btn.style.pointerEvents = 'none';
+                            });
+                        }
+                        e.target.blur();
+                        slideDisplayRow(0, null, 2);
+                        setSet(set - 1)
+                    }} ref={mainPrevButton}>Previous</button>
+                    <button style={{ left: '1.5rem', transition: 'transform 550ms ease-in-out' }} className="button-v2" onClick={e => {
+                        if (set === 1) {
+                            [e.target, mainNextButton2.current].forEach(btn => {
+                                btn.style.transform = 'translateX(calc(190px - 1rem))';
+                                btn.parentElement.children[0].style.opacity = 1;
+                                btn.parentElement.children[0].style.pointerEvents = 'auto';
+                            });
+                        }
+                        e.target.blur();
+                        slideDisplayRow(0, null, 1);
+                        setSet(set + 1)
+                    }} ref={mainNextButton}>Next</button>
+                </div>
                 <MovieList movies={movies || [{title:'mission failed'}]} heading="Here are some movies you might be interested in" displaying="Query" lowerMargin="4rem" headingMargin="3.5rem" locationdetails={{
                     searchValue: answers.current,
                     page: set,
                     back: '/query'
                 }}/>
-                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '9.25rem' }}>
                     <StarRater />
                 </div>
-                <div style={{ posiiton: 'relative', display: 'flex', justifyContent: 'space-between', width: '100%', height: '100%', marginBottom: '8rem', marginTop: '1.25rem' }}>
+                <div style={{ position: 'absolute', display: 'flex', justifyContent: 'space-between', bottom: '4.5rem', left: 0 }}>
                     <button className="button-v2" style={{ pointerEvents: 'none', opacity: 0, left: '1.5rem', transition: 'opacity 550ms ease-in-out' }} onClick={e => {
                         if (set === 2) {
-                            e.target.style.opacity = 0;
-                            e.target.parentElement.children[1].style.transform = 'translateX(0)';
-                            e.target.style.pointerEvents = 'none';
+                            [e.target, mainPrevButton.current].forEach(btn => {
+                                btn.style.opacity = 0;
+                                btn.parentElement.children[1].style.transform = 'translateX(0)';
+                                btn.style.pointerEvents = 'none';
+                            });
                         }
                         e.target.blur();
+                        slideDisplayRow(0, null, 2);
                         setSet(set - 1)
-                    }}>Previous</button>
+                    }} ref={mainPrevButton2}>Previous</button>
                     <button style={{ left: '1.5rem', transition: 'transform 550ms ease-in-out' }} className="button-v2" onClick={e => {
                         if (set === 1) {
-                            e.target.style.transform = 'translateX(calc(190px - 1rem))';
-                            e.target.parentElement.children[0].style.opacity = 1;
-                            e.target.parentElement.children[0].style.pointerEvents = 'auto'
+                            [e.target, mainNextButton.current].forEach(btn => {
+                                btn.style.transform = 'translateX(calc(190px - 1rem))';
+                                btn.parentElement.children[0].style.opacity = 1;
+                                btn.parentElement.children[0].style.pointerEvents = 'auto';
+                            });
                         }
                         e.target.blur();
+                        slideDisplayRow(0, null, 1);
                         setSet(set + 1)
-                    }} ref={mainNextButton}>Next</button>
+                    }} ref={mainNextButton2}>Next</button>
                 </div>
             </div>}
         </>

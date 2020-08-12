@@ -3,6 +3,7 @@ import Nav from './Nav';
 import MovieList from './MovieList';
 import { makeRequest } from '../store/actions/makeRequest.action';
 import { useDispatch, useSelector } from 'react-redux';
+import { slideDisplayRow } from '../Functions';
 
 function Popular({ location }) {
     const dispatch = useDispatch();
@@ -31,7 +32,7 @@ function Popular({ location }) {
     }, [])
 
     useEffect(_=> {
-        dispatch( makeRequest(`popular`, `?column=${column === 'trending' ? 'release_date' : column}&set=${set}`));
+        dispatch( makeRequest(`popular`, `?column=${column === 'trending' ? 'release_date' : column}&set=${set}`, {}, _=> slideDisplayRow(150, false)));
         switch (column) {
             default: break;
             case 'trending':
@@ -47,10 +48,6 @@ function Popular({ location }) {
                 setHeading('Here are the most saved movies to date');
                 break;
         }
-    }, [column, set]);
-
-    useEffect(_=> {
-        setTimeout(_=> document.getElementById('display-row').style.transform = 'translateY(0rem)', 150);
     }, [column, set]);
 
     useEffect(_=> {
@@ -77,11 +74,9 @@ function Popular({ location }) {
 
     const onClickOrEnter = (e, column) => {
         if (!e || e.keyCode === 13) {
-            document.getElementById('display-row').style.transform = 'translateY(150vh)';
-            setTimeout(_=> {
-                setSet(1);
-                setColumn(column);
-            }, 300);
+            slideDisplayRow();
+            setSet(1);
+            setColumn(column);
         }
     }
 
@@ -104,8 +99,8 @@ function Popular({ location }) {
                                         e.target.style.pointerEvents = 'none';
                                     }
                                     e.target.blur();
-                                    document.getElementById('display-row').style.transform = 'translateY(150vh)';
-                                    setTimeout(_=> setSet(set - 1), 300);
+                                    slideDisplayRow();
+                                    setSet(set - 1);
                                 }} ref={previousButton}>Previous</button>
                                 <button style={{ left: '1rem', transition: 'transform 550ms ease-in-out' }} className="button-v2" onClick={e => {
                                     if (set === 1) {
@@ -114,8 +109,8 @@ function Popular({ location }) {
                                         e.target.parentElement.children[0].style.pointerEvents = 'auto'
                                     }
                                     e.target.blur();
-                                    document.getElementById('display-row').style.transform = 'translateY(150vh)';
-                                    setTimeout(_=> setSet(set + 1), 300);
+                                    slideDisplayRow();
+                                    setSet(set + 1);
                                 }} ref={nextButton}>Next</button>
                             </div>
                         </li>

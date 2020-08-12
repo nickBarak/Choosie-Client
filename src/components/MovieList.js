@@ -1,4 +1,4 @@
-import React, { useState, useReducer, useEffect, useRef } from 'react';
+import React, { useState, useReducer, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { server } from '../APIs';
 import { updateUser } from '../store/actions/updateUser.action';

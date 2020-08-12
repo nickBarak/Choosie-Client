@@ -244,11 +244,8 @@ nav ul li a:focus {
   flex-direction: column;
   align-items: center;
   color: white;
-  width: 45%;
-  position: fixed;
-  bottom: 50%;
-  left: 25%;
   padding: 1.25rem 1.25rem;
+  width: 40rem;
 }
 
 .label-bin-manager {
@@ -594,6 +591,23 @@ select {
 .search-results-info span:focus,
 .search-results-info label:focus {
   outline: auto;
+}
+
+.imdb-credit {
+  font-style: italic;
+  font-size: .8rem;
+  position: absolute;
+  bottom: -1rem;
+  right: 0;
+}
+
+.imdb-credit a {
+  color: #fff;
+}
+
+.imdb-credit a:hover {
+  color: red;
+  text-decoration: underline;
 }
 
 @media (max-width: 1200px) {

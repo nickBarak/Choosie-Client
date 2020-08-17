@@ -5,6 +5,8 @@ import { makeRequest } from '../store/actions/makeRequest.action';
 import { useDispatch, useSelector } from 'react-redux';
 import { slideDisplayRow } from '../Functions';
 
+let mounted;
+
 function Popular({ location }) {
     const dispatch = useDispatch();
     const { loading, error, result } = useSelector(store => store.makeRequest);
@@ -13,9 +15,25 @@ function Popular({ location }) {
     const [column, setColumn] = useState('trending');
     const nextButton = useRef(null),
           previousButton = useRef(null);
+    !sessionStorage.getItem('popularCache') && sessionStorage.setItem('popularCache', JSON.stringify({
+        trending: [[]],
+        release_date: [[]],
+        times_saved: [[]],
+        times_saved_this_month: [[]]
+    }));
 
-    useEffect(_=> { document.getElementById('root').style.opacity = 1 }, []
-    );
+    useEffect(_=> {
+        let cache = JSON.parse(sessionStorage.getItem('popularCache'));
+        if (mounted && !cache[column][set]) {
+            cache[column].push(result);
+            sessionStorage.setItem('popularCache', JSON.stringify(cache));
+        }
+    }, [result]);
+
+    useEffect(_=> {
+        document.getElementById('root').style.opacity = 1;
+        mounted = true;
+    }, []);
 
     useEffect(_=> {
         setTimeout(_=> {
@@ -118,7 +136,7 @@ function Popular({ location }) {
                 </div>
                 
                 <div style={{ flex: 4, marginBottom: '2rem' }}>
-                    {<MovieList movies={result} heading={error ? 
+                    {<MovieList movies={mounted ? JSON.parse(sessionStorage.getItem('popularCache'))[column][set] ? JSON.parse(sessionStorage.getItem('popularCache'))[column][set] : result : []} heading={error ? 
                     'Error loading movies' : heading} headingMargin="4rem" displaying={'Popular'}
                     locationdetails={{searchValue: column, page: set, back: '/popular'}}/>    
                     }

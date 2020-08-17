@@ -16,7 +16,6 @@
     "uuidv4": "^6.1.0"
   },
   "scripts": {
-    "aws-eb:prod": "npm run build && npm run start:prod",
     "prestart": "react-scrips build",
     "start": "react-scripts start",
     "build": "react-scripts build",

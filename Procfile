@@ -1,1 +1,1 @@
-web: npm aws-eb:prod
+web: npm start

@@ -8,7 +8,6 @@ import imageAlt from '../img/image-alt.png';
 import DelayLink from './DelayLink';
 
 function MovieList({ movies, heading, headingMargin, withFilter, displaying, lowerMargin, locationdetails }) {
-    console.log(locationdetails);
     const [displayList, dispatchDisplayList] = useReducer(displayListReducer, movies);
     const [unsaving, setUnsaving] = useState(false);
     const [saveError, setSaveError] = useState(null);

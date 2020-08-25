@@ -70,6 +70,7 @@ export default function MyList() {
         let res;
         const id = e.dataTransfer.getData('text/plain').split('/movies/')[1];
         try {
+            console.log(e.target.tagName);
             if (!user.currently_saved.includes(Number(id))) {
                 res = await fetch(server + `movies?user=${user.username}`, {
                     mode: 'cors',
@@ -152,7 +153,7 @@ return (
                                             }
                                         }} onDrop={e => {
                                             e.preventDefault();
-                                            console.log(user.currently_saved.length);
+                                            // console.log(user.currently_saved.length);
                                             !user.currently_saved.includes( Number(e.dataTransfer.getData('text/plain').split('/movies/')[1]) )
                                                 ? window.confirm('Save movie and add to bin?') && updateBin(e)
                                                 : updateBin(e);

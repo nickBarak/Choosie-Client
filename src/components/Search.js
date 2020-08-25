@@ -20,6 +20,16 @@ function Search({ location }) {
           previousButton2 = useRef(null);
 
 
+    !sessionStorage.getItem('searchCache') && sessionStorage.setItem('searchCache', JSON.stringify({ [searchValue]: [[]] }));
+    
+    useEffect(_=> {
+        let cache = JSON.parse(sessionStorage.getItem('searchCache'));
+        if (mounted.current && !cache[searchValue][page]) {
+            cache[searchValue].push(result);
+            sessionStorage.setItem('searchCache', JSON.stringify(cache));
+        }
+    }, [result]);
+
     useEffect(_=> { document.getElementById('root').style.opacity = 1 }, []
     );
 
@@ -90,9 +100,9 @@ function Search({ location }) {
                         <input style={{ marginTop: '.8rem' }} className="search" type="text" placeholder="Search actors, genres, directors" />
                     </form>
                 </div>
-                {loading
+                {(mounted && loading && JSON.parse(sessionStorage.getItem('searchCache')) && JSON.parse(sessionStorage.getItem('searchCache'))[searchValue] && (!JSON.parse(sessionStorage.getItem('searchCache'))[searchValue][page] || !JSON.parse(sessionStorage.getItem('searchCache'))[searchValue][page].length))
                     ? <div>Loading...</div>
-                    : !result
+                    : !result.length
                         ? <div>No results found</div>
                         : null
                 }
@@ -107,8 +117,8 @@ function Search({ location }) {
                             setPage(page + 1);
                         }}>Next</button>
                     </div>
-                    {result && <ul className="search-results">
-                        {result.slice(0, 10).map((result, i) =>
+                    {!result.length ? null : <ul className="search-results">
+                        {(JSON.parse(sessionStorage.getItem('searchCache'))[searchValue][page] ? JSON.parse(sessionStorage.getItem('searchCache'))[searchValue][page] : result).slice(0, 10).map((result, i) =>
                             <li key={i}>
                                 <DelayLink to={{
                                     pathname: `movies/${result.id}`,
@@ -143,7 +153,7 @@ function Search({ location }) {
                         )}
                     </ul>}
 
-                    <div style={{ posiiton: 'relative', display: 'flex', justifyContent: 'space-between', width: '100%', height: '100%', transform: 'translateY(-.5rem)', marginBottom: '4rem'}}>
+                    <div style={{ posiiton: 'relative', display: 'flex', justifyContent: 'space-between', width: '100%', height: '100%', marginBottom: '4rem'}}>
                         <button ref={previousButton2} className="button-v2" style={{ pointerEvents: 'none', opacity: 0, left: '1rem', transition: 'opacity 550ms ease-in-out' }} onClick={e => {
                             e.target.blur();
                             setPage(page - 1)

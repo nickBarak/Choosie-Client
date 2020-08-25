@@ -16,7 +16,7 @@
     "uuidv4": "^6.1.0"
   },
   "scripts": {
-    "prestart": "react-scrips build",
+    "prestart": "react-scripts build",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",

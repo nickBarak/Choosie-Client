@@ -182,7 +182,7 @@ function Profile() {
                     <li>
                         <button className="button-register" onClick={_=> clearInfo('languages')}>Clear</button>
                         <label>Language: </label>
-                        <span style={{ /* whiteSpace: 'normal' */ }}>{user.languages[0] != null ? user.languages : 'Not specified'}</span>
+                        <span style={{ /* whiteSpace: 'normal' */ }}>{(user.languages != null && user.languages[0] != null) ? user.languages : 'Not specified'}</span>
                     </li>
                     <li>
                         <button className="button-register" onClick={_=> clearInfo('email')}>Clear</button>

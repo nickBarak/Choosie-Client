@@ -39,11 +39,11 @@ function Home() {
     }
     
     return (
-        <div className="container">
+        <div className="container home">
             <Login history={history} />
 
-            <div className="frame">
-                <h1 className="logo" style={{ userSelect: 'none', fontSize: 45}}>Choosie</h1>
+            <div className="frame home-frame">
+                <h1 className="logo main-logo" style={{ userSelect: 'none' }}>Choosie</h1>
                 <form onSubmit={onSearch}>
                     <input className="search" type="text" placeholder="Search actors, genres, directors" style={{ margin: '1.5rem 1.5rem'}} />
                 </form>

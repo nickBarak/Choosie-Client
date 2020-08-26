@@ -179,7 +179,7 @@ function MovieList({ movies, heading, headingMargin, withFilter, displaying, low
     }
 
     return (
-        <div style={{ flex: 4, margin: `3rem 3rem ${lowerMargin || '11rem'} 3rem` }}>
+        <div className="movie-list" style={{ flex: 4, marginBottom: lowerMargin || '11rem' }}>
             <h2 style={{ textAlign: 'center', marginBottom: headingMargin }}>{heading}</h2>
             {withFilter && <Filter displayList={displayList} dispatchDisplayList={dispatchDisplayList} />}
             <ul id="display-row">
@@ -204,7 +204,7 @@ function MovieList({ movies, heading, headingMargin, withFilter, displaying, low
                                 e.dataTransfer.setData('text/plain', movie.id);
                             }} />
                         </DelayLink>
-                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                        <div className="display-row-movie-title" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                             <DelayLink to={locationdetails
                                 ? {
                                     pathname: `movies/${movie.id}`,

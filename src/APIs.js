@@ -1,5 +1,5 @@
 export const server = new URL(
-    'http://choosie-env.eba-zrvb6h9m.us-west-1.elasticbeanstalk.com/'
+    'https://api.choosie.us'
     // 'http://localhost:8082'
 );
 

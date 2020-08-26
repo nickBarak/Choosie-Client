@@ -25,7 +25,7 @@ function Popular({ location }) {
     useEffect(_=> {
         let cache = JSON.parse(sessionStorage.getItem('popularCache'));
         if (mounted && (!cache[column][set] || !cache[column][set].length)) {
-            cache[column].push(result);
+            cache[column].push( result.map(({ id }) => id) );
             sessionStorage.setItem('popularCache', JSON.stringify(cache));
         }
     }, [result]);
@@ -51,7 +51,10 @@ function Popular({ location }) {
     }, [])
 
     useEffect(_=> {
-        dispatch( makeRequest(`popular`, `?column=${column === 'trending' ? 'release_date' : column}&set=${set}`, {}, _=> slideDisplayRow(150, false)));
+        const cache = JSON.parse(sessionStorage.getItem('popularCache'))[column][set];
+        cache
+            ? dispatch( makeRequest(`movies/list`, `?movies=${cache.join(',')}`, {}, _=> slideDisplayRow(150, false)) )
+            : dispatch( makeRequest(`popular`, `?column=${column === 'trending' ? 'release_date' : column}&set=${set}`, {}, _=> slideDisplayRow(150, false)));
         switch (column) {
             default: break;
             case 'trending':
@@ -137,7 +140,7 @@ function Popular({ location }) {
                 </div>
                 
                 <div style={{ flex: 4, marginBottom: '2rem' }}>
-                    {<MovieList movies={mounted ? JSON.parse(sessionStorage.getItem('popularCache'))[column][set] ? JSON.parse(sessionStorage.getItem('popularCache'))[column][set] : result : result} heading={error ? 
+                    {<MovieList movies={result} heading={error ? 
                     'Error loading movies' : heading} headingMargin="4rem" displaying={'Popular'}
                     locationdetails={{searchValue: column, page: set, back: '/popular'}}/>    
                     }

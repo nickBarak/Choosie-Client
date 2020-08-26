@@ -57,7 +57,7 @@ function Login() {
     }
 
     return (
-        <div style={{ position: 'absolute', left: '1rem', top: '1rem' }}>
+        <div className="login" style={{ position: 'absolute', left: '1rem', top: '1rem' }}>
             {user
             ? (
                 <>
@@ -71,11 +71,11 @@ function Login() {
             : open 
                 ? (
                     <>
-                        <div ref={errorRef} style={{ position: 'absolute', top: '-2rem', left: '1.8rem', color: 'red', transition: 'transform 300ms ease-in-out' }}>{error}</div>
-                        <form onSubmit={onLogin} ref={loginForm} style={{backgroundColor: 'transparent', display: 'inline-block', transition: 'transform 300ms ease-in-out'}}>
-                            <input style={{ padding: '.25rem', height: '1.25rem', marginBottom: '.2rem'}} type="text" placeholder="username" />
+                        <div ref={errorRef} style={{ position: 'absolute', top: '-2rem', left: '1.8rem', color: 'red', transition: 'transform 300ms ease-in-out', whiteSpace: 'nowrap' }}>{error}</div>
+                        <form onSubmit={onLogin} ref={loginForm} style={{backgroundColor: 'transparent', display: 'inline-block', transition: 'transform 300ms ease-in-out', width: '100%' }}>
+                            <input style={{ padding: '.25rem', height: '1.25rem', marginBottom: '.2rem', width: '100%' }} type="text" placeholder="username" />
                             <br />
-                            <input style={{ padding: '.25rem', height: '1.25rem' }} type="password" placeholder="password" />
+                            <input style={{ padding: '.25rem', height: '1.25rem', width: '100%' }} type="password" placeholder="password" />
                             <br />
                             <div style={{ marginTop: '.25rem', display: 'flex', justifyContent: 'space-between' }}>
                                 <button className="button-manage-movie" onClick={e => e.target.blur()}>Log in</button>

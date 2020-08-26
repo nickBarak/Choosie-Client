@@ -25,7 +25,7 @@ function Search({ location }) {
     useEffect(_=> {
         let cache = JSON.parse(sessionStorage.getItem('searchCache'));
         if (mounted.current && !cache[searchValue][page]) {
-            cache[searchValue].push(result);
+            cache[searchValue].push( result.map(movie => movie.id) );
             sessionStorage.setItem('searchCache', JSON.stringify(cache));
         }
     }, [result]);
@@ -48,7 +48,12 @@ function Search({ location }) {
     }, []);
 
     useEffect(_=> {
-        if (!location.page || mounted.current++) dispatch( search(user ? user.username : null, searchValue, page) );
+        if (!location.page || mounted.current++) {
+            const cache = sessionStorage.getItem('searchCache')[searchValue] && sessionStorage.getItem('searchCache')[searchValue][page];
+            cache
+                ? dispatch( search(user ? user.username : null, searchValue, page, cache.join(',')) )
+                : dispatch( search(user ? user.username : null, searchValue, page) );
+        }
     }, [page]);
 
     useEffect(_=> {
@@ -84,7 +89,10 @@ function Search({ location }) {
         e.preventDefault();
         setPage(1);
         if (!e.target.children[0].value) return;
-        dispatch( search(user ? user.username : null, e.target.children[0].value, page) );
+        const cache = sessionStorage.getItem('searchCache')[searchValue] && sessionStorage.getItem('searchCache')[searchValue][page];
+        cache
+            ? dispatch( search(user ? user.username : null, e.target.children[0].value, page, cache.join(',')) )
+            : dispatch( search(user ? user.username : null, e.target.children[0].value, page) );
         e.target.reset();
     }
 
@@ -118,7 +126,7 @@ function Search({ location }) {
                         }}>Next</button>
                     </div>
                     {!result.length ? null : <ul className="search-results">
-                        {(JSON.parse(sessionStorage.getItem('searchCache'))[searchValue][page] ? JSON.parse(sessionStorage.getItem('searchCache'))[searchValue][page] : result).slice(0, 10).map((result, i) =>
+                        {result.slice(0, 10).map((result, i) =>
                             <li key={i}>
                                 <DelayLink to={{
                                     pathname: `movies/${result.id}`,

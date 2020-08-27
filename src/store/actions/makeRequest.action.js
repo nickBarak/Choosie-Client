@@ -13,7 +13,7 @@ export const makeRequest = (route, querystring, options={}, callback=_=>{}) => {
             mode: 'cors',
             headers: {
                 'Content-Type': 'application/json',
-                'Accept': 'application/json'
+                // 'Accept': 'application/json'
             }
         })
             .then(res => res.json())

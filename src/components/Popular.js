@@ -5,7 +5,7 @@ import { makeRequest } from '../store/actions/makeRequest.action';
 import { useDispatch, useSelector } from 'react-redux';
 import { slideDisplayRow } from '../Functions';
 
-let mounted;
+// let mounted;
 
 function Popular({ location }) {
     const dispatch = useDispatch();
@@ -15,24 +15,24 @@ function Popular({ location }) {
     const [column, setColumn] = useState('trending');
     const nextButton = useRef(null),
           previousButton = useRef(null);
-    !sessionStorage.getItem('popularCache') && sessionStorage.setItem('popularCache', JSON.stringify({
-        trending: [[]],
-        release_date: [[]],
-        times_saved: [[]],
-        times_saved_this_month: [[]]
-    }));
+    // !sessionStorage.getItem('popularCache') && sessionStorage.setItem('popularCache', JSON.stringify({
+    //     trending: [[]],
+    //     release_date: [[]],
+    //     times_saved: [[]],
+    //     times_saved_this_month: [[]]
+    // }));
 
-    useEffect(_=> {
-        let cache = JSON.parse(sessionStorage.getItem('popularCache'));
-        if (mounted && (!cache[column][set] || !cache[column][set].length)) {
-            cache[column].push( result.map(({ id }) => id) );
-            sessionStorage.setItem('popularCache', JSON.stringify(cache));
-        }
-    }, [result]);
+    // useEffect(_=> {
+    //     let cache = JSON.parse(sessionStorage.getItem('popularCache'));
+    //     if (mounted && (!cache[column][set] || !cache[column][set].length)) {
+    //         cache[column].push( result.map(({ id }) => id) );
+    //         sessionStorage.setItem('popularCache', JSON.stringify(cache));
+    //     }
+    // }, [result]);
 
     useEffect(_=> {
         document.getElementById('root').style.opacity = 1;
-        mounted = true;
+        // mounted = true;
         dispatch( makeRequest(`popular`, `?column=${column === 'trending' ? 'release_date' : column}&set=${set}`, {}, _=> slideDisplayRow(150, false)));
     }, []);
 
@@ -51,10 +51,10 @@ function Popular({ location }) {
     }, [])
 
     useEffect(_=> {
-        const cache = JSON.parse(sessionStorage.getItem('popularCache'))[column][set];
-        cache
-            ? dispatch( makeRequest(`movies/list`, `?movies=${cache.join(',')}`, {}, _=> slideDisplayRow(150, false)) )
-            : dispatch( makeRequest(`popular`, `?column=${column === 'trending' ? 'release_date' : column}&set=${set}`, {}, _=> slideDisplayRow(150, false)));
+        // const cache = JSON.parse(sessionStorage.getItem('popularCache'))[column][set];
+        // cache
+        //     ? dispatch( makeRequest(`movies/list`, `?movies=${cache.join(',')}`, {}, _=> slideDisplayRow(150, false)) )
+            dispatch( makeRequest(`popular`, `?column=${column}&set=${set}`, {}, _=> slideDisplayRow(150, false)));
         switch (column) {
             default: break;
             case 'trending':
@@ -109,8 +109,8 @@ function Popular({ location }) {
                     <Nav />
                     <ul className="sidebar">
                         <li tabIndex="0" onKeyDown={e => column !== 'trending' && onClickOrEnter(e, 'trending')} className="sidebar-li-hover" key="0" onClick={_=> column !== 'trending' && onClickOrEnter(null, 'trending')}>Trending</li>
-                        <li tabIndex="0" onKeyDown={e => column !== 'release_date' && onClickOrEnter(e, 'release_date')} className="sidebar-li-hover" key="1" onClick={_=> column !== 'release_date' && onClickOrEnter(null, 'release_date')}>Recent Releases</li>
-                        <li tabIndex="0" onKeyDown={e => column !== 'times_saved_this_month' && onClickOrEnter(e, 'times_saved_this_month')} className="sidebar-li-hover" key="2" onClick={_=> column !== 'times_saved_this_month' && onClickOrEnter(null, 'times_saved_this_month')}>Most Saved This Month</li>
+                        <li tabIndex="0" onKeyDown={e => column !== 'recent_releases' && onClickOrEnter(e, 'recent_releases')} className="sidebar-li-hover" key="1" onClick={_=> column !== 'recent_releases' && onClickOrEnter(null, 'recent_releases')}>Recent Releases</li>
+                        <li tabIndex="0" onKeyDown={e => column !== 'most_saved_this_month' && onClickOrEnter(e, 'most_saved_this_month')} className="sidebar-li-hover" key="2" onClick={_=> column !== 'most_saved_this_month' && onClickOrEnter(null, 'most_saved_this_month')}>Most Saved This Month</li>
                         <li tabIndex="0" onKeyDown={e => column !== 'times_saved' && onClickOrEnter(e, 'times_saved')} className="sidebar-li-hover" key="3" onClick={_=> column !== 'times_saved' && onClickOrEnter(null, 'times_saved')}>Most Saved All Time</li>
                         <li style={{ marginTop: '2.5rem', height: '23px', width: '100%' }}>
                             <div style={{ posiiton: 'relative', display: 'flex', justifyContent: 'space-between', width: '100%', height: '100%' }}>

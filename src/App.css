@@ -745,8 +745,20 @@ select {
     font-size: .7rem;
   }
 
-  .sidebar {
+  /* .sidebar {
     width: 120px;
     font-size: .8rem;
+  } */
+
+  /* .sidebar { */
+    /* width:100%; */
+  /* } */
+
+  /* .movie-list-heading {
+    font-size: 1.25rem;
+  } */
+  
+  .popular {
+    flex-direction: column;
   }
 }

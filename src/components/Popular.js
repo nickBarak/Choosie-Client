@@ -104,8 +104,8 @@ function Popular({ location }) {
 
     return (
         <>
-            <div style={{ display: 'flex', overflow: 'hidden' }}>
-                <div style={{ display: 'flex', height: '100vh', flexDirection: 'column' }}>
+            <div className="popular" style={{ display: 'flex', overflow: 'hidden' }}>
+                <div className="popular-full-sidebar" style={{ display: 'flex', flexDirection: 'column' }}>
                     <Nav />
                     <ul className="sidebar">
                         <li tabIndex="0" onKeyDown={e => column !== 'trending' && onClickOrEnter(e, 'trending')} className="sidebar-li-hover" key="0" onClick={_=> column !== 'trending' && onClickOrEnter(null, 'trending')}>Trending</li>

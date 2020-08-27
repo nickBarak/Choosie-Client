@@ -108,6 +108,7 @@ function MovieList({ movies, heading, headingMargin, withFilter, displaying, low
     
 
     function displayListReducer(state, filters) {
+        if (!movies) return state;
         const newState = [ ...movies ];
         if (!filters) return newState;
         for (let { type, payload: { value, range } } of filters) {
@@ -180,7 +181,7 @@ function MovieList({ movies, heading, headingMargin, withFilter, displaying, low
 
     return (
         <div className="movie-list" style={{ flex: 4, marginBottom: lowerMargin || '11rem' }}>
-            <h2 style={{ textAlign: 'center', marginBottom: headingMargin }}>{heading}</h2>
+            <h2 className="movie-list-heading" style={{ textAlign: 'center', marginBottom: headingMargin }}>{heading}</h2>
             {withFilter && <Filter displayList={displayList} dispatchDisplayList={dispatchDisplayList} />}
             <ul id="display-row">
                 {displayList.map((movie, i) =>

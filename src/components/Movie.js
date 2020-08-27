@@ -25,7 +25,7 @@ function Movie({ location: { searchValue, page, back } }) {
         fetch(server + `movies?user=${user.username}`, {
             mode: 'cors',
             method: user.save_history.includes(movie.id) ? 'PUT' : 'POST',
-            headers: { 'Content-Type': 'application/json'/*, 'Accept': 'application/json' */},
+            headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
             body: JSON.stringify({ movieID: movie.id, inRecent: user.recent_save_history.includes(movie.id) })
         })
             .then(res => {
@@ -52,7 +52,7 @@ function Movie({ location: { searchValue, page, back } }) {
                     mode: 'cors',
                     signal,
                     method: 'DELETE',
-                    headers: { 'Content-Type': 'application/json'/*, 'Accept': 'application/json' */},
+                    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
                     body: JSON.stringify({ movieID: unsaving })
                 });
                 !res.ok && setSaveError('Error unsaving movie');
@@ -64,7 +64,7 @@ function Movie({ location: { searchValue, page, back } }) {
                         mode: 'cors',
                         signal,
                         method: 'PATCH',
-                        headers: { 'Content-Type': 'application/json'/*, 'Accept': 'application/json' */},
+                        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
                         body: JSON.stringify({ bin: { [binWithMovie[0]]: binWithMovie[1].filter(id => id !== String(unsaving)) } })
                     });
                     !res.ok && setSaveError('Error unsaving movie');

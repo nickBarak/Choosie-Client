@@ -12,7 +12,7 @@ function StarRater() {
             fetch(server + 'search', {
                 mode: 'cors',
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json'/*, 'Accept': 'application/json' */ },
+                headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
                 body: JSON.stringify({ rating, username: user ? user.username : null })
             })
         } catch (e) { console.log(e) }

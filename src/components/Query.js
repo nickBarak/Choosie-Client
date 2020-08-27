@@ -147,7 +147,7 @@ function Query({ location }) {
                                     fetch(server + 'start?user=' + user.username, {
                                         mode: 'cors',
                                         method: 'POST',
-                                        headers: { 'Content-Type': 'application/json'/*, 'Accept': 'application/json' */},
+                                        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
                                         body: JSON.stringify({
                                             genres: answers.current[0].map(answer => ({[answer]: user.genre_selection[answer] + 1} ))
                                         })

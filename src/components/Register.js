@@ -67,7 +67,7 @@ function Register() {
         fetch(server + 'users', {
             mode: 'cors',
             method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+            headers: { 'Content-Type': 'application/json'/*, 'Accept': 'application/json' */},
             body: JSON.stringify({
                 ...info,
                 name: children[0].children[0].value ? children[0].children[0].value : null,

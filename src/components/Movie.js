@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { useLocation, Link } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeRequest } from '../store/actions/makeRequest.action';
 import Nav from './Nav';
@@ -7,6 +7,7 @@ import { server } from '../APIs';
 import HistoryContext from '../store/contexts/History.context';
 import { updateUser } from '../store/actions/updateUser.action';
 import { transitionPage } from '../Functions';
+import imageAlt from '../img/image-alt.png';
 
 function Movie({ location: { searchValue, page, back } }) {
     const history = useContext(HistoryContext);
@@ -81,12 +82,17 @@ function Movie({ location: { searchValue, page, back } }) {
     if (!movie) return <div>Error loading movie</div>
 
     return (
-        <>
+        <div className="movie-page">
                 {loading ? <div>Loading...</div> : error ? <div>Error loading movie</div> : (
             <>
                 <Nav withBack searchValue={searchValue} page={page} back={back} />
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', transform: 'translateY(-3.5rem)' }}>
-                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '60vw' }}><img className="image-movie" src={movie.cover_file} alt="not available" />
+                <div className="movie-page-main" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '60vw' }}>
+                        <picture>
+                            <source srcSet={movie.cover_file} />
+                            <source srcSet={imageAlt} />
+                            <img className="image-movie" alt="thumbnail" type="image/gif" />
+                        </picture>
                     <label style={{ fontWeight: 'bold', margin: '1rem 0 .2rem 0' }}>{movie.title}</label>
                     {user
                         ? user.currently_saved.includes(movie.id)
@@ -97,7 +103,7 @@ function Movie({ location: { searchValue, page, back } }) {
                             }}>{unsaving ? 'Unsaving movie...' : 'Unsave Movie'}</button>
                             : <button className="button-manage-movie" onClick={saveMovie}>{saving ? 'Saving movie...' : 'Save to My List'}</button>
                         : <button className="button-manage-movie" onClick={_=> transitionPage(history, '/register')}>Sign in to save this movie</button>}
-                        {movie.description && <div style={{ margin: '2.5rem 0 3rem 0', textAlign: 'justify', position: 'relative' }}>
+                        {movie.description && <div className="movie-page-description" style={{ margin: '2.5rem 0 3rem 0', position: 'relative' }}>
                             {movie.description === 'Not available' ? 'Description not available' : movie.description}
                             {movie.description !== 'Not available' && <span className="imdb-credit">-Taken from <a href={movie.src_url} target="_blank" rel="noopener noreferrer">IMDb</a></span>}
                         </div>}
@@ -149,7 +155,7 @@ function Movie({ location: { searchValue, page, back } }) {
                 </div>
             </>
             )}
-        </>)
+        </div>)
 }
 
 export default Movie

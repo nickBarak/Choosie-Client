@@ -23,7 +23,7 @@ function Help() {
     useEffect(_=> setState({...state, sections: sections[state.more ? 1 : 0]}), [state.more]);
 
     return (
-        <div className="container transition-frame" ref={frame}>
+        <div className="container transition-frame help-container" ref={frame}>
             <div className="help">
                 <h2>What is <span style={{ fontWeight: 600 }} className="logo">Choosie</span>?</h2>
                 <article style={{ width: '100%' }}>

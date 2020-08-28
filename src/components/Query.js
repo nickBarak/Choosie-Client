@@ -101,7 +101,7 @@ function Query({ location }) {
     }
 
     return (
-        <>
+        <div className="query">
             <Nav />
             
             {phase < 4 && <div className="container" style={{ position: 'absolute', zIndex: '-1', height: '100vh', top: 0 }}>
@@ -172,7 +172,7 @@ function Query({ location }) {
             </div>}
             {/* {<div>{loading ? 'Loading movies...' : error ? 'Error loading movies' : null}</div>} */}
             {phase > 3 && <div style={{ display: phase < 4 ? 'none' : 'block', opacity: 0, position: 'relative' }} ref={frame2} className="transition-frame">
-                <div style={{ position: 'absolute', display: 'flex', justifyContent: 'space-between', left: 0, top: '1rem' }}>
+                <div style={{ position: 'absolute', display: 'flex', justifyContent: 'space-between', left: 0, top: '1.5rem' }}>
                     <button className="button-v2" style={{ pointerEvents: 'none', opacity: 0, left: '1.5rem', transition: 'opacity 550ms ease-in-out' }} onClick={e => {
                         if (set === 2) {
                             [e.target, mainPrevButton2.current].forEach(btn => {
@@ -206,7 +206,7 @@ function Query({ location }) {
                 <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '9.25rem' }}>
                     <StarRater />
                 </div>
-                <div style={{ position: 'absolute', display: 'flex', justifyContent: 'space-between', bottom: '4.5rem', left: 0 }}>
+                <div style={{ position: 'absolute', display: 'flex', justifyContent: 'space-between', bottom: '5rem', left: 0 }}>
                     <button className="button-v2" style={{ pointerEvents: 'none', opacity: 0, left: '1.5rem', transition: 'opacity 550ms ease-in-out' }} onClick={e => {
                         if (set === 2) {
                             [e.target, mainPrevButton.current].forEach(btn => {
@@ -233,7 +233,7 @@ function Query({ location }) {
                     }} ref={mainNextButton2}>Next</button>
                 </div>
             </div>}
-        </>
+        </div>
     )
 }
 

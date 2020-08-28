@@ -5,6 +5,7 @@ import Nav from './Nav';
 import DelayLink from './DelayLink';
 import HistoryContext from '../store/contexts/History.context';
 import StarRater from './StarRater';
+import imageAlt from '../img/image-alt.png';
 
 function Search({ location }) {
     const mounted = useRef(0);
@@ -97,30 +98,31 @@ function Search({ location }) {
     }
 
     return (
-        <>
+        <div className="search-page">
             <Nav />
             
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-                <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', width: '60vw', marginBottom: !loading && result ? '1.5rem' : '2rem' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', width: '60vw', marginBottom: '1.5rem' }}>
                     <label style={{ margin: '.4rem 0', fontSize: '1.3rem' }}>"{searchValue}"</label>
                     <StarRater />
                     <form onSubmit={onSearch}>
                         <input style={{ marginTop: '.8rem' }} className="search" type="text" placeholder="Search actors, genres, directors" />
                     </form>
                 </div>
-                {(mounted && loading && JSON.parse(sessionStorage.getItem('searchCache')) && JSON.parse(sessionStorage.getItem('searchCache'))[searchValue] && (!JSON.parse(sessionStorage.getItem('searchCache'))[searchValue][page] || !JSON.parse(sessionStorage.getItem('searchCache'))[searchValue][page].length))
-                    ? <div>Loading...</div>
-                    : !result.length
-                        ? <div>No results found</div>
-                        : null
-                }
-                <div style={{ display: result ? 'block' : 'none', width: '60vw' }}>
+                <div style={{ visibility: loading || !result.length  ? 'visible' : 'hidden' }}>{
+                    mounted && loading
+                        ? 'Loading...'
+                        : !result.length
+                            ? 'No results found'
+                            : 'Results Below'
+                }</div>
+                <div className="search-results-container" style={{ display: result ? 'block' : 'none' }}>
                     <div style={{ posiiton: 'relative', display: 'flex', justifyContent: 'space-between', width: '100%', height: '100%' }}>
-                        <button ref={previousButton1} className="button-v2" style={{ pointerEvents: 'none', opacity: 0, left: '20vw', transition: 'opacity 550ms ease-in-out' }} onClick={e => {
+                        <button ref={previousButton1} className="button-v2" style={{ pointerEvents: 'none', opacity: 0, transition: 'opacity 550ms ease-in-out' }} onClick={e => {
                             e.target.blur();
                             setPage(page - 1)
                         }}>Previous</button>
-                        <button ref={nextButton1} className="button-v2" style={{ left: '20vw', opacity: 1, transition: 'opacity 550ms ease-in-out, transform 550ms ease-in-out' }} onClick={e => {
+                        <button ref={nextButton1} className="button-v2" style={{ opacity: 1, transition: 'opacity 550ms ease-in-out, transform 550ms ease-in-out' }} onClick={e => {
                             e.target.blur();
                             setPage(page + 1);
                         }}>Next</button>
@@ -134,7 +136,11 @@ function Search({ location }) {
                                     page,
                                     back: '/search'
                                 }}>
-                                    <img src={result.cover_file} alt="not available" />
+                                    <picture>
+                                        <source srcSet={result.cover_file} />
+                                        <source srcSet={imageAlt} />
+                                        <img alt="thumbnail" type="image/gif" />
+                                    </picture>
                                 </DelayLink>
                                 <span className="search-results-info">
                                     <DelayLink to={{
@@ -143,7 +149,7 @@ function Search({ location }) {
                                         page,
                                         back: '/search'
                                     }}>
-                                        <span style={{ fontSize: '1.3rem', color: 'white', position: 'relative', zIndex: '5' }}>
+                                        <span style={{ color: 'white', position: 'relative', zIndex: '5' }}>
                                             <label>{result.title}</label>
                                             <span> | {result.genres.join(', ')}</span>
                                             <span> | {result.mpaa_rating}</span>
@@ -162,18 +168,18 @@ function Search({ location }) {
                     </ul>}
 
                     <div style={{ posiiton: 'relative', display: 'flex', justifyContent: 'space-between', width: '100%', height: '100%', marginBottom: '4rem'}}>
-                        <button ref={previousButton2} className="button-v2" style={{ pointerEvents: 'none', opacity: 0, left: '1rem', transition: 'opacity 550ms ease-in-out' }} onClick={e => {
+                        <button ref={previousButton2} className="button-v2" style={{ pointerEvents: 'none', opacity: 0, transition: 'opacity 550ms ease-in-out' }} onClick={e => {
                             e.target.blur();
                             setPage(page - 1)
                         }}>Previous</button>
-                        <button ref={nextButton2} style={{ left: '1rem', transition: 'transform 550ms ease-in-out, opacity 550ms ease-in-out' }} className="button-v2" onClick={e => {
+                        <button ref={nextButton2} style={{ transition: 'transform 550ms ease-in-out, opacity 550ms ease-in-out' }} className="button-v2" onClick={e => {
                             e.target.blur();
                             setPage(page + 1)
                         }}>Next</button>
                     </div>
                 </div>
             </div>
-        </>
+        </div>
     )
 }
 

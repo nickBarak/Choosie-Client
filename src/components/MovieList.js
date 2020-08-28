@@ -195,15 +195,14 @@ function MovieList({ movies, heading, headingMargin, withFilter, displaying, low
                             }
                             : `movies/${movie.id}`
                         }>
-                            <img src={movie.cover_file} onError={e => {
-                                e.target.src = imageAlt;
-                                e.target.style.width = '200px';
-                                e.target.style.height = '267.5px';
-                                e.target.style.boxShadow = 'none';
-                            }} alt="Not available" onDrag={e => {
+                            <picture>
+                                <source srcSet={movie.cover_file} />
+                                <source srcSet={imageAlt} />
+                                <img alt="thumbnail" type="image/gif" onDrag={e => {
                                 e.preventDefault();
                                 e.dataTransfer.setData('text/plain', movie.id);
-                            }} />
+                                }} />
+                            </picture>
                         </DelayLink>
                         <div className="display-row-movie-title" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                             <DelayLink to={locationdetails
@@ -242,8 +241,8 @@ function MovieList({ movies, heading, headingMargin, withFilter, displaying, low
                         {(!user || user.show_description_on_hover) && <div className="movie-description">
                             {(!movie.description || movie.description === 'Not available')
                                 ? 'Description not available'
-                                : movie.description.length > 200
-                                    ? movie.description.slice(0, 200) + '...'
+                                : movie.description.length > (window.outerWith > 455 ? 200 : 125)
+                                    ? movie.description.slice(0, window.outerWidth > 455 ? 200 : 125) + '...'
                                     : movie.description}
                         </div>}
                     </li>)}

@@ -29,7 +29,7 @@ function Login() {
     const onLogin = async e => {
         e.persist();
         e.preventDefault();
-        const username = e.target.children[0].value,
+        const username = e.target.children[0].value && e.target.children[0].value,
             password = e.target.children[2].value;
         if (!username && !password) {
             setError(null);
@@ -61,10 +61,10 @@ function Login() {
             {user
             ? (
                 <>
-                    <div style={{ color: 'var(--color-offset)', fontSize: '1.75rem' }}>Welcome, {user.name || user.username}</div>
-                    <span style={{ padding: '0 2rem' }}>
-                        <button onClick={_=> { dispatch( updateUser(null) ); setOpen(false) }}style={{ color: 'white', cursor: 'pointer', backgroundColor: 'transparent', border: 'none', marginRight: '.5rem' }} onMouseOver={e => e.target.style.color = 'silver'} onMouseOut={e => e.target.style.color = 'white'} onFocus={e => e.target.style.color = 'silver'} onBlur={e => e.target.style.color = 'white'}>Log out</button>
-                        <button onClick={_=> transitionPage(history, `profile/${user.username}`)} style={{ color: 'white', cursor: 'pointer', backgroundColor: 'transparent', border: 'none', marginLeft: '.5rem' }} onMouseOver={e => e.target.style.color = 'silver'} onMouseOut={e => e.target.style.color = 'white'} onFocus={e => e.target.style.color = 'silver'} onBlur={e => e.target.style.color = 'white'}>View profile</button>
+                    <div className="login-welcome" style={{ color: 'var(--color-offset)' }}>Welcome, {user.name || user.username}</div>
+                    <span style={{ padding: '0 2rem', display: 'flex', flexWrap: 'nowrap' }}>
+                        <button onClick={_=> { dispatch( updateUser(null) ); setOpen(false) }}style={{ color: 'white', cursor: 'pointer', backgroundColor: 'transparent', border: 'none', marginRight: '.5rem', whiteSpace: 'nowrap' }} onMouseOver={e => e.target.style.color = 'silver'} onMouseOut={e => e.target.style.color = 'white'} onFocus={e => e.target.style.color = 'silver'} onBlur={e => e.target.style.color = 'white'}>Log out</button>
+                        <button onClick={_=> transitionPage(history, `profile/${user.username}`)} style={{ color: 'white', cursor: 'pointer', backgroundColor: 'transparent', border: 'none', marginLeft: '.5rem', whiteSpace: 'nowrap' }} onMouseOver={e => e.target.style.color = 'silver'} onMouseOut={e => e.target.style.color = 'white'} onFocus={e => e.target.style.color = 'silver'} onBlur={e => e.target.style.color = 'white'}>View profile</button>
                     </span>
                 </>
             )

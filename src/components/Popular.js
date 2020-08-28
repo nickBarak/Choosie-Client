@@ -112,9 +112,9 @@ function Popular({ location }) {
                         <li tabIndex="0" onKeyDown={e => column !== 'recent_releases' && onClickOrEnter(e, 'recent_releases')} className="sidebar-li-hover" key="1" onClick={_=> column !== 'recent_releases' && onClickOrEnter(null, 'recent_releases')}>Recent Releases</li>
                         <li tabIndex="0" onKeyDown={e => column !== 'most_saved_this_month' && onClickOrEnter(e, 'most_saved_this_month')} className="sidebar-li-hover" key="2" onClick={_=> column !== 'most_saved_this_month' && onClickOrEnter(null, 'most_saved_this_month')}>Most Saved This Month</li>
                         <li tabIndex="0" onKeyDown={e => column !== 'most_saved' && onClickOrEnter(e, 'most_saved')} className="sidebar-li-hover" key="3" onClick={_=> column !== 'most_saved' && onClickOrEnter(null, 'most_saved')}>Most Saved All Time</li>
-                        <li style={{ marginTop: '2.5rem', height: '23px', width: '100%' }}>
+                        <li className="popular-button-container" style={{ width: '100%' }}>
                             <div style={{ posiiton: 'relative', display: 'flex', justifyContent: 'space-between', width: '100%', height: '100%' }}>
-                                <button className="button-v2" style={{ pointerEvents: 'none', opacity: 0, left: '1rem', transition: 'opacity 550ms ease-in-out' }} onClick={e => {
+                                <button className="button-v2" style={{ pointerEvents: 'none', opacity: 0, transition: 'opacity 550ms ease-in-out' }} onClick={e => {
                                     if (set === 2) {
                                         e.target.style.opacity = 0;
                                         e.target.parentElement.children[1].style.transform = 'translateX(0)';
@@ -124,7 +124,7 @@ function Popular({ location }) {
                                     slideDisplayRow();
                                     setSet(set - 1);
                                 }} ref={previousButton}>Previous</button>
-                                <button style={{ left: '1rem', transition: 'transform 550ms ease-in-out' }} className="button-v2" onClick={e => {
+                                <button style={{ transition: 'transform 550ms ease-in-out' }} className="button-v2" onClick={e => {
                                     if (set === 1) {
                                         e.target.style.transform = 'translateX(calc(190px - 1rem))';
                                         e.target.parentElement.children[0].style.opacity = 1;

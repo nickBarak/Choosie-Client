@@ -7,6 +7,7 @@ import StarRater from './StarRater';
 import { query } from '../store/actions/query.action';
 import { server } from '../APIs';
 import { slideDisplayRow } from '../Functions';
+import { uuid } from 'uuidv4';
 
 class QueryContent {
     constructor(prompt, buttonSet, nextButton) {
@@ -107,7 +108,8 @@ function Query({ location }) {
             {phase < 4 && <div className="container" style={{ position: 'absolute', zIndex: '-1', height: '100vh', top: 0 }}>
                 <div className="frame transition-frame" ref={frame}>
                     <h2 className="query-prompt">{prompt}</h2>
-                    {buttonSet.map((set, i) => <ul key={i}className="button-wrapper">
+                    {(window.innerWidth > 455 || ![1, 3].includes(phase))
+                        ? buttonSet.map((set, i) => <ul key={i}className="button-wrapper button-wrapper-full">
                         {(_=> {
                             const buttons = (phase === 0 && user)
                                 ? Object.entries(user.genre_selection).sort(([, a], [, b]) => b - a).map(([key]) => key).slice(0, 4)
@@ -167,12 +169,71 @@ function Query({ location }) {
                                 );
                             }}>{nextButton}</button>
                         </li>}
-                    </ul>)}
+                    </ul>)
+                    : <ul className="button-wrappper button-wrapper-mobile">{
+                        buttonSet.reduce((acc, cur) => [...acc, ...cur], []).filter(btn => btn).map((button, i, buttons) => <>
+                            <li key={uuid()}><button className="button"
+                                onClick={manageFilters} style={
+                                    button
+                                        ? (phase === 1 && answers.current[0].includes(button))
+                                            ? { color: 'var(--color-offset)', backgroundColor: 'var(--bg-color-dark)' }
+                                            : { color: 'var(-bg-color-dark)', backgroundColor: 'var(--color-offset)' }
+                                        : { visibility: 'hidden' }
+                                    } value={phase === 2 && Object.keys(button)[0]}
+                                        onMouseOver={e => {
+                                            e.target.style.backgroundColor = 'var(--bg-color-dark)';
+                                            e.target.style.color = 'var(--color-offset)';
+                                        }}
+                                        onFocus={e => {
+                                            e.target.style.backgroundColor='var(--bg-color-dark)';
+                                            e.target.style.color = 'var(--color-offset)';
+                                        }}
+                                        onMouseOut={e => {
+                                            if (answers.current[phase > 0 ? phase - 1 : phase] && !answers.current[phase > 0 ? phase - 1 : phase].includes(e.target.textContent)) {
+                                                e.target.style.backgroundColor = 'var(--color-offset)';
+                                                e.target.style.color = 'var(--bg-color-dark)';
+                                            }
+                                        }}
+                                        onBlur={e => {
+                                            if (answers.current[phase === 1 ? phase - 1 : phase] && !answers.current[phase > 0 ? phase - 1 : phase].includes(e.target.textContent)) {
+                                                e.target.style.backgroundColor = 'var(--color-offset)';
+                                                e.target.style.color = 'var(--bg-color-dark)';
+                                            }
+                                        }}
+                                    >{phase === 2 ? Object.values(button)[0] : button}</button></li>
+                            {i === buttons.length - 1 && <li>
+                                <button className="button query-next" onClick={e => {
+                                    if (user && phase === 1)
+                                        fetch(server + 'start?user=' + user.username, {
+                                            mode: 'cors',
+                                            method: 'POST',
+                                            headers: { 'Content-Type': 'application/json'/*, 'Accept': 'application/json' */},
+                                            body: JSON.stringify({
+                                                genres: answers.current[0].map(answer => ({[answer]: user.genre_selection[answer] + 1} ))
+                                            })
+                                        });
+                                    frame.current.style.opacity = 0;
+                                    setTimeout(_=> {
+                                        setPhase(phase + 1);
+                                        if (frame.current) frame.current.style.opacity = 1;
+                                        if (frame2.current) frame2.current.style.opacity = 1;
+                                    }, 750);
+                                    [...e.target.parentElement.parentElement.parentElement.children].slice(1)
+                                        .forEach(ul => [...ul.children]
+                                            .forEach(li => {
+                                            li.children[0].style.color = 'var(--bg-color-dark';
+                                            li.children[0].style.backgroundColor = 'var(--color-offset)';
+                                        })
+                                    );
+                                }}>{nextButton}</button>
+                            </li>}
+                        </>)}</ul>
+                    }
                 </div>
             </div>}
             {/* {<div>{loading ? 'Loading movies...' : error ? 'Error loading movies' : null}</div>} */}
             {phase > 3 && <div style={{ display: phase < 4 ? 'none' : 'block', opacity: 0, position: 'relative' }} ref={frame2} className="transition-frame">
-                <div style={{ position: 'absolute', display: 'flex', justifyContent: 'space-between', left: 0, top: '1.5rem' }}>
+                <div className="button-v2-container" style={{ position: 'absolute', display: 'flex', justifyContent: 'space-between', left: 0, top: '1.5rem' }}>
                     <button className="button-v2" style={{ pointerEvents: 'none', opacity: 0, left: '1.5rem', transition: 'opacity 550ms ease-in-out' }} onClick={e => {
                         if (set === 2) {
                             [e.target, mainPrevButton2.current].forEach(btn => {
@@ -206,7 +267,7 @@ function Query({ location }) {
                 <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '9.25rem' }}>
                     <StarRater />
                 </div>
-                <div style={{ position: 'absolute', display: 'flex', justifyContent: 'space-between', bottom: '5rem', left: 0 }}>
+                <div className="button-v2-container" style={{ position: 'absolute', display: 'flex', justifyContent: 'space-between', bottom: '5rem', left: 0 }}>
                     <button className="button-v2" style={{ pointerEvents: 'none', opacity: 0, left: '1.5rem', transition: 'opacity 550ms ease-in-out' }} onClick={e => {
                         if (set === 2) {
                             [e.target, mainPrevButton.current].forEach(btn => {

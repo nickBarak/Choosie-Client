@@ -241,8 +241,8 @@ function MovieList({ movies, heading, headingMargin, withFilter, displaying, low
                         {(!user || user.show_description_on_hover) && <div className="movie-description">
                             {(!movie.description || movie.description === 'Not available')
                                 ? 'Description not available'
-                                : movie.description.length > (window.outerWith > 455 ? 200 : 125)
-                                    ? movie.description.slice(0, window.outerWidth > 455 ? 200 : 125) + '...'
+                                : movie.description.length > (window.outerWith > 450 ? 200 : 125)
+                                    ? movie.description.slice(0, window.innerWidth > 450 ? 200 : 125) + '...'
                                     : movie.description}
                         </div>}
                     </li>)}

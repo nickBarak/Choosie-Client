@@ -103,7 +103,6 @@ function Profile() {
               currentPassword = children[0].value,
               newPassword = children[1].value,
               repeatedNewPassword = children[2].value;
-        if (currentPassword !== user.password) { setChangePasswordError('Entry for current password was incorrect'); return }
         if (!/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/.exec(newPassword)) { setChangePasswordError('Password must be at least 8 characters with one of each of the following: upper case letter, lower case letter, number and special character'); return }
         if (newPassword !== repeatedNewPassword) { setChangePasswordError('Passwords must match'); return }
         (async _=> {

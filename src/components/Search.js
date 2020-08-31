@@ -3,13 +3,11 @@ import { useSelector, useDispatch } from 'react-redux';
 import { search } from '../store/actions/search.action';
 import Nav from './Nav';
 import DelayLink from './DelayLink';
-import HistoryContext from '../store/contexts/History.context';
 import StarRater from './StarRater';
 import imageAlt from '../img/image-alt.png';
 
 function Search({ location }) {
     const mounted = useRef(0);
-    const history = useContext(HistoryContext);
     const { loading, searchValue, result } = useSelector(store => store.search);
     const dispatch = useDispatch();
     const [page, setPage] = useState(1);
@@ -21,11 +19,13 @@ function Search({ location }) {
           previousButton2 = useRef(null);
 
 
-    !sessionStorage.getItem('searchCache') && sessionStorage.setItem('searchCache', JSON.stringify({ [searchValue]: [[]] }));
+    useEffect(_=> {
+        !sessionStorage.getItem('searchCache') && sessionStorage.setItem('searchCache', JSON.stringify({ [searchValue]: [[]] }));
+    })
     
     useEffect(_=> {
         let cache = JSON.parse(sessionStorage.getItem('searchCache'));
-        if (mounted.current && !cache[searchValue][page]) {
+        if (mounted.current && cache[searchValue] && !cache[searchValue][page]) {
             cache[searchValue].push( result.map(movie => movie.id) );
             sessionStorage.setItem('searchCache', JSON.stringify(cache));
         }
@@ -151,15 +151,15 @@ function Search({ location }) {
                                     }}>
                                         <span style={{ color: 'white', position: 'relative', zIndex: '5' }}>
                                             <label>{result.title}</label>
-                                            <span> | {result.genres.join(', ')}</span>
-                                            <span> | {result.mpaa_rating}</span>
-                                            {result.duration_in_mins % 60
+                                            { result.genres && <span> | {result.genres.join(', ')}</span>}
+                                            {result.mpaa_rating !== 'Not available' && <span> | {result.mpaa_rating}</span>}
+                                            {result.duration_in_mins ? result.duration_in_mins % 60
                                                 ? result.duration_in_mins >= 60
                                                     ? <span> | {Math.floor(result.duration_in_mins / 60)}h {result.duration_in_mins % 60} min</span>
                                                     : <span> | {result.duration_in_mins} min</span>
                                                 : <span> | {result.duration_in_mins % 60}h</span>
-                                            }
-                                            <span> | {result.release_date.slice(0, 4)}</span>
+                                            : null}
+                                            {result.release_date && <span> | {result.release_date.slice(0, 4)}</span>}
                                         </span>
                                     </DelayLink>
                                 </span>

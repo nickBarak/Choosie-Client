@@ -30,6 +30,7 @@ a {
 
 nav {
   margin: 1rem 0 1.75rem 1rem;
+  z-index: 40;
 }
 
 nav ul {
@@ -41,7 +42,7 @@ nav ul {
   list-style: none;
 }
 
-nav ul li a{
+nav ul li a {
   margin: .25rem 0;
   color: var(--color-offset);
   transition: color 200ms, margin-left 200ms;
@@ -652,7 +653,8 @@ select {
 }
 
 .movie-page-main {
-  transform: translateY(-3.5rem);
+  transform: translateY(-1.5rem);
+  
 }
 
 .login-welcome {
@@ -755,6 +757,10 @@ select {
 
   .search-results-info a span {
     font-size: 1rem;
+  }
+
+  .popular .button-v2 {
+    font-size: 1.15rem;
   }
 }
 
@@ -1018,7 +1024,8 @@ select {
   }
 
   .query .movie-list-heading {
-    font-size: .925rem;
+    /* font-size: .925rem; */
+    transform: translateY(-1.5rem);
   }
 
   .query .button {

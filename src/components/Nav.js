@@ -1,7 +1,7 @@
 import React from 'react';
 import DelayLink from './DelayLink';
 
-function Nav({ withBack, searchValue, page, back }) {
+function Nav({ withBack, searchValue, page, back, scrollY }) {
 
     return (
         <nav>
@@ -13,6 +13,7 @@ function Nav({ withBack, searchValue, page, back }) {
                     pathname: back,
                     searchValue,
                     page,
+                    scrollY
                 }}>Back</DelayLink></li>}
             </ul>
         </nav>

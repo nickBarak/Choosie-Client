@@ -4,6 +4,7 @@ import MovieList from './MovieList';
 import { makeRequest } from '../store/actions/makeRequest.action';
 import { useDispatch, useSelector } from 'react-redux';
 import { slideDisplayRow } from '../Functions';
+import { Simulate } from 'react-dom/test-utils';
 
 // let mounted;
 
@@ -15,6 +16,8 @@ function Popular({ location }) {
     const [column, setColumn] = useState('trending');
     const nextButton = useRef(null),
           previousButton = useRef(null);
+    const scrollYRef = useRef(0);
+    const [scrollY, setScrollY] = useState(0);
     // !sessionStorage.getItem('popularCache') && sessionStorage.setItem('popularCache', JSON.stringify({
     //     trending: [[]],
     //     release_date: [[]],
@@ -46,9 +49,27 @@ function Popular({ location }) {
     }, []);
 
     useEffect(_=> {
-        location.searchValue && setColumn(location.searchValue);
-        location.page && setSet(location.page);
-    }, [])
+        window.addEventListener('scroll', _=> {
+            scrollYRef.current = window.scrollY;
+        });
+    }, []);
+
+    useEffect(_=> setScrollY(scrollYRef.current), [scrollY.current]);
+
+    useEffect(_=> {
+        setTimeout(_=> {
+            location.searchValue && setColumn(location.searchValue);
+            location.page && setSet(location.page);
+            location.scrollY && window.scrollTo(0, location.scrollY);
+            nextButton.current.style.opacity = 1;
+            nextButton.current.style.pointerEvents = 'auto';
+            if (location.page > 1) {
+                nextButton.current.style.transform = `translateX(calc(${window.innerWidth > 850 ? '190' : '140'}px - 1rem))`;
+                nextButton.current.parentElement.children[0].style.opacity = 1;
+                nextButton.current.parentElement.children[0].style.pointerEvents = 'auto';
+            }
+        }, 155);
+    }, []);
 
     useEffect(_=> {
         // const cache = JSON.parse(sessionStorage.getItem('popularCache'))[column][set];
@@ -126,9 +147,9 @@ function Popular({ location }) {
                                 }} ref={previousButton}>Previous</button>
                                 <button style={{ transition: 'transform 550ms ease-in-out' }} className="button-v2" onClick={e => {
                                     if (set === 1) {
-                                        e.target.style.transform = 'translateX(calc(190px - 1rem))';
+                                        e.target.style.transform = `translateX(calc(${window.innerWidth > 850 ? '190' : '140'}px - 1rem))`;
                                         e.target.parentElement.children[0].style.opacity = 1;
-                                        e.target.parentElement.children[0].style.pointerEvents = 'auto'
+                                        e.target.parentElement.children[0].style.pointerEvents = 'auto';
                                     }
                                     e.target.blur();
                                     slideDisplayRow();
@@ -142,7 +163,7 @@ function Popular({ location }) {
                 <div style={{ flex: 4, marginBottom: '2rem' }}>
                     {<MovieList movies={result} heading={error ? 
                     'Error loading movies' : heading} headingMargin="4rem" displaying={'Popular'}
-                    locationdetails={{searchValue: column, page: set, back: '/popular'}}/>    
+                    locationdetails={{ searchValue: column, page: set, back: '/popular', scrollY }}/>    
                     }
                 </div>
             </div>

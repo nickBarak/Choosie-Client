@@ -37,13 +37,22 @@ function Login() {
             return;
         }
         try {
-            const response = await fetch(server+`users/${username}`),
-            json = await response.json();
-            if (!json[0]) { setError('Invalid login'); return }
-            if (String(json[0].password) === password) {
+            const response = await fetch(server+`users/validate`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: {
+                    username,
+                    password
+                }
+            });
+            const validLogin = await response.json();
+            if (!validLogin) {
+                setError('Invalid login');
+                return
+            } else {
                 dispatch( updateUser(username) );
                 setError(null);
-            } else setError(`Invalid login`);
+            }
         } catch (e) { setError('Something went wrong'); console.log(e) }
     }
 

@@ -24,6 +24,8 @@ const phases = [
     new QueryContent('Time periods preferred?', [ ['1970s', '1980s', 'Earlier', 'Any'], ['1990s', '2000s', 'Later'] ], 'Next')
 ]
 
+const phase3MobileButtonSet = ['Earlier', '1970s', '1980s', '1990s', '2000s', 'Later', 'Any'];
+
 function Query({ location }) {
     const user = useSelector(store => store.user.result);
     const [phase, setPhase] = useState(0);
@@ -32,7 +34,6 @@ function Query({ location }) {
     const { loading, error, result } = useSelector(store => store.makeRequest);
     const [set, setSet] = useState(1);
     const dispatch = useDispatch();
-    let mounted = useRef(false);
     const mainNextButton = useRef(null);
     const mainNextButton2 = useRef(null);
     const mainPrevButton = useRef(null);
@@ -40,9 +41,18 @@ function Query({ location }) {
     const [movies, setMovies] = useState([]);
     const frame = useRef(null);
     const frame2 = useRef(null);
+    const mounted = useRef(false);
 
     useEffect(_=> { document.getElementById('root').style.opacity = 1 }, []
     );
+
+    useEffect(_=> {
+        if (location.searchValue) {
+            answers.current = location.searchValue;
+            setPhase(4);
+            setSet(location.page);
+        }
+    }, []);
 
     useEffect(_=> {
         if (phase > 3) {
@@ -56,19 +66,24 @@ function Query({ location }) {
                 (answers.current[2].length && !answers.current[2].includes('Any'))
                     ? `&timePeriods=${answers.current[2]}`
                     : '';
-            
+        
+            document.getElementsByClassName('transition-frame')[0].style.opacity = 1;
             setTimeout(_=> dispatch( makeRequest(`start`, (genres || timeConstraint || timePeriods) && '?set=' + set + genres + timeConstraint + timePeriods, {}, slideDisplayRow(200, null, 3)) ), 300);
-        } else if (phase > 1) answers.current.push([]);
-        if (!mounted) {
-            if (location.page) {
-                if (location.page > 1)
-                    [mainNextButton, mainNextButton2].forEach(btn => { btn.current.style.transform = 'translateX(calc(190px - 1rem))' });
-                answers.current = location.searchValue;
-                setPhase(4);
-                location.page > 1 && setSet(location.page);
+            if (!mounted.current && location.page > 1) {
+                setTimeout(_=> {
+                    [mainNextButton, mainNextButton2].forEach(btn => {
+                        if (btn.current) btn.current.style.transform = 'translateX(calc(190px - 1rem))'
+                    });
+                    [mainPrevButton, mainPrevButton2].forEach(btn => {
+                        if (btn.current) {
+                            btn.current.style.opacity = 1;
+                            btn.current.style.pointerEvents = 'auto';
+                        }
+                    });
+                }, 200);
+                mounted.current = true;
             }
-            mounted.current = true;
-        }
+        } else if (phase > 1) answers.current.push([]);
     }, [phase, set]);
 
     useEffect(_=> {
@@ -171,7 +186,9 @@ function Query({ location }) {
                         </li>}
                     </ul>)
                     : <ul className="button-wrappper button-wrapper-mobile">{
-                        buttonSet.reduce((acc, cur) => [...acc, ...cur], []).filter(btn => btn).map((button, i, buttons) => <>
+                        (phase === 3
+                            ? phase3MobileButtonSet
+                            : buttonSet.reduce((acc, cur) => [...acc, ...cur], []).filter(btn => btn)).map((button, i, buttons) => <>
                             <li key={uuid()}><button className="button"
                                 onClick={manageFilters} style={
                                     button

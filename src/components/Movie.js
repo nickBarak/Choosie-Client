@@ -9,7 +9,7 @@ import { updateUser } from '../store/actions/updateUser.action';
 import { transitionPage } from '../Functions';
 import imageAlt from '../img/image-alt.png';
 
-function Movie({ location: { searchValue, page, back } }) {
+function Movie({ location: { searchValue, page, back, scrollY } }) {
     const history = useContext(HistoryContext);
     const location = useLocation();
     const dispatch = useDispatch();
@@ -25,7 +25,7 @@ function Movie({ location: { searchValue, page, back } }) {
         fetch(server + `movies?user=${user.username}`, {
             mode: 'cors',
             method: user.save_history.includes(movie.id) ? 'PUT' : 'POST',
-            headers: { 'Content-Type': 'application/json'/*, 'Accept': 'application/json' */},
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ movieID: movie.id, inRecent: user.recent_save_history.includes(movie.id) })
         })
             .then(res => {
@@ -84,7 +84,7 @@ function Movie({ location: { searchValue, page, back } }) {
         <div className="movie-page">
                 {loading ? <div>Loading...</div> : error ? <div>Error loading movie</div> : (
             <>
-                <Nav withBack searchValue={searchValue} page={page} back={back} />
+                <Nav withBack searchValue={searchValue} page={page} back={back} scrollY={scrollY} />
                 <div className="movie-page-main" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '60vw' }}>
                         <picture>

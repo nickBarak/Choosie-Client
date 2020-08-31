@@ -166,11 +166,11 @@ function MovieList({ movies, heading, headingMargin, withFilter, displaying, low
                     break;
                 case 'Release Date':
                     if (range === 'exact') {
-                        newState.splice(0, newState.length, ...newState.filter(movie => Number(value) === Number(movie.release_date.slice(0, 4))));
+                        newState.splice(0, newState.length, ...newState.filter(movie => movie.release_date && Number(value) === Number(movie.release_date.slice(0, 4))));
                         break;
                     }
                     newState.splice(0, newState.length, ...newState.filter(movie => {
-                        const year = Number(movie.release_date.slice(0, 4));
+                        const year = movie.release_date && Number(movie.release_date.slice(0, 4));
                         return range === 'higher' ? year >= Number(value) : year <= Number(value);
                     }));
                     break;
@@ -191,7 +191,8 @@ function MovieList({ movies, heading, headingMargin, withFilter, displaying, low
                                 pathname: `movies/${movie.id}`,
                                 searchValue: locationdetails.searchValue,
                                 page: locationdetails.page,
-                                back: locationdetails.back
+                                back: locationdetails.back,
+                                scrollY: locationdetails.scrollY
                             }
                             : `movies/${movie.id}`
                         }>
@@ -210,7 +211,8 @@ function MovieList({ movies, heading, headingMargin, withFilter, displaying, low
                                     pathname: `movies/${movie.id}`,
                                     searchValue: locationdetails.searchValue,
                                     page: locationdetails.page,
-                                    back: locationdetails.back
+                                    back: locationdetails.back,
+                                    scrollY: locationdetails.scrollY
                                 }
                                 : `movies/${movie.id}`
                             } tabIndex="-1">

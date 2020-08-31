@@ -153,7 +153,7 @@ function Profile() {
         dispatch( updateUser(user.username) );
     }
 
-    return (
+    return (<div className="profile">{
         user && user.username === location.pathname.split('/profile/')[1]
         ? <div className="container" style={{ flexDirection: 'column' }}>
             <div className="register-1" style={{ transition: 'transform 300ms ease-out'}}>
@@ -205,16 +205,17 @@ function Profile() {
                                     style.transform === 'scale(0)'
                                         ? 'scale(1)'
                                         : 'scale(0)';
-                                e.target.parentElement.parentElement.parentElement.parentElement.children[0].style.transform =
-                                    style.maxHeight === '100%'
-                                    ? otherOpen
-                                        ? 'translate(6rem, 3rem)'
-                                        : 'translate(6rem, 5rem)'
-                                    : otherOpen
-                                        ? 'translate(-6.5rem, 2rem)'
-                                        : 'translate(0)';
+                            if (window.innerWidth < 455) return;
+                            e.target.parentElement.parentElement.parentElement.parentElement.children[0].style.transform =
+                                style.maxHeight === '100%'
+                                ? otherOpen
+                                    ? 'translate(6rem, 3rem)'
+                                    : 'translate(6rem, 5rem)'
+                                : otherOpen
+                                    ? 'translate(-6.5rem, 2rem)'
+                                    : 'translate(0)';
                         }}>Edit Info</button>
-                        <div className="error-msg" style={{ color: 'maroon' }}>{editInfoError}</div>
+                        <div className="error-msg" style={{ color: 'red' }}>{editInfoError}</div>
                         <form onSubmit={editInfo} style={{ transform: 'scale(0)' }}>
                             <input style={{ width: '92.5%', margin: '.35rem' }} className="input-register" placeholder="name" />
                             <div style={{ margin: '.75rem' }} className="ul-create-user">
@@ -268,6 +269,7 @@ function Profile() {
                                     style.transform === 'scale(0)'
                                         ? 'scale(1)'
                                         : 'scale(0)';
+                            if (window.innerWidth < 455) return;
                             e.target.parentElement.parentElement.parentElement.parentElement.children[0].style.transform =
                                 style.maxHeight === '100%'
                                     ? otherOpen
@@ -277,7 +279,7 @@ function Profile() {
                                         ? 'translate(6rem, 5rem)'
                                         : 'translate(0)';
                         }}>Change Password</button>
-                        <div className="error-msg" style={{ color: 'maroon' }}>{changePasswordError}</div>
+                        <div className="error-msg" style={{ color: 'red' }}>{changePasswordError}</div>
                         <form onSubmit={changePassword} style={{ transform: 'scale(0)' }}>
                             <input style={{ width: '92.5%' }} className="input-register" type="password" placeholder="Enter current password" />
                             <input style={{ width: '92.5%' }} className="input-register" type="password" placeholder="Enter new password" />
@@ -288,7 +290,7 @@ function Profile() {
                 </li>
             </ul>
             {message && <div style={{ color: 'white', margin: '.8rem', padding: '1rem' }}>{message}</div>}
-            <button style={{ margin: '1rem', backgroundColor: 'var(--bg-color-dark)', color: 'var(--color-offset)' }} onMouseOver={e => {
+            <button style={{ margin: '1rem', backgroundColor: 'var(--bg-color-dark)', color: 'var(--color-offset)', minHeight: '2.3rem' }} onMouseOver={e => {
                 e.target.style.backgroundColor = 'var(--color-offset)';
                 e.target.style.color = 'var(--bg-color-dark)';
             }} onFocus={e => {
@@ -319,8 +321,8 @@ function Profile() {
                     e.target.style.color = 'var(--bg-color-dark)'
                 }} className="button" onClick={_=> transitionPage(history, '/')}>Back to Home</button>
             </>
-        )
-    )
+        )}
+    </div>)
 }
 
 export default Profile

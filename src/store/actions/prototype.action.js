@@ -1,6 +1,6 @@
 export function ActionPrototype(LAUNCH_TYPE, SUCCESS_TYPE, FAILURE_TYPE, url, options={}) {
     return (...params) => {
-        params.forEach((param, i) => { url = url.replace(new RegExp(`!{${i+1}}!`), param) });
+        params.forEach((param, i) => { url = url.replace(`!{${i+1}}!`, param) });
         return dispatch => {
             dispatch({ type: LAUNCH_TYPE });
             fetch(url, options)

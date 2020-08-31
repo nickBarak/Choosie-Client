@@ -33,7 +33,7 @@ function Popular({ location }) {
     useEffect(_=> {
         document.getElementById('root').style.opacity = 1;
         // mounted = true;
-        dispatch( makeRequest(`popular`, `?column=${column === 'trending' ? 'release_date' : column}&set=${set}`, {}, _=> slideDisplayRow(150, false)));
+        dispatch( makeRequest(`popular`, `?column=${column}&set=${set}`, {}, _=> slideDisplayRow(150, false)));
     }, []);
 
     useEffect(_=> {
@@ -60,13 +60,13 @@ function Popular({ location }) {
             case 'trending':
                 setHeading('Here\'s what movies are currently trending');
                 break;
-            case 'release_date':
+            case 'recent_releases':
                 setHeading('Here are the newest movies on record');
                 break;
-            case 'times_saved_this_month':
+            case 'most_saved_this_month':
                 setHeading('Here are the most popular movies this month');
                 break;
-            case 'times_saved':
+            case 'most_saved':
                 setHeading('Here are the most saved movies to date');
                 break;
         }

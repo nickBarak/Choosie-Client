@@ -13,9 +13,8 @@ function Movie({ location: { searchValue, page, back } }) {
     const history = useContext(HistoryContext);
     const location = useLocation();
     const dispatch = useDispatch();
-    const movie = useSelector(store => store.makeRequest.result[0]);
+    const movie = useSelector(store => store.makeRequest.result && store.makeRequest.result[0]);
     const { loading, error } = useSelector(store => store.makeRequest);
-    // const [user, setUser] = useContext(UserContext);
     const [saving, setSaving] = useState(false);
     const [unsaving, setUnsaving] = useState(false);
     const [saveError, setSaveError] = useState(null);

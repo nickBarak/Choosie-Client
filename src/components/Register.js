@@ -130,7 +130,7 @@ function Register() {
             </form>
             {loginError
                 ? <div style={{color: 'red', margin: '1rem' }}>{loginError}</div>
-                : generalError && <div style={{ color: 'maroon' }}>{generalError}</div>
+                : generalError && <div style={{ color: 'red' }}>{generalError}</div>
             }
             <form className="register-1" onSubmit={onLogin}>
                 <div className="prompt-register">Already have an account? Log in</div>
@@ -148,7 +148,7 @@ function Register() {
         : <div className="container" style={{ flexDirection: 'column' }}>
             {registrationError
                 ? <div style={{color: 'red', margin: '1rem'}}>{registrationError}</div>
-                : generalError && <div style={{ color: 'maroon' }}>{generalError}</div>
+                : generalError && <div style={{ color: 'red' }}>{generalError}</div>
             }
             <form className="register-1" onSubmit={createUser}>
                 <div className="prompt-register">You can enter more information here for a better experience</div>

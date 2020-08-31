@@ -29,7 +29,7 @@ export default function MyList() {
 
     useEffect(_=> {
         if (user) {
-            dispatch( makeRequest('movies/list', '?movies=' + user.currently_saved, {}, _=> slideDisplayRow(50, false)) );
+            dispatch( makeRequest('movies/list', '?movies=' + user.currently_saved.join(','), {}, _=> slideDisplayRow(50, false)) );
             dispatch( getCurrentlySaved(user.currently_saved) );
         }
     }, []);
@@ -43,13 +43,10 @@ export default function MyList() {
         try {
             if (Object.keys(user.bins).includes(binName)) return setCreatingBinError('Bin already exists');
             setCreatingBinError(null);
-            const formData = new FormData();
-            formData.append('bin', JSON.stringify({ [binName]: [] }) );
                 const response = await fetch(server + `users/${user.username}/bins`, {
-                    headers: { 'Content-Type': 'application/json'/*, 'Accept': 'application/json' */},
-                    mode: 'cors',
+                    headers: { 'Content-Type': 'application/json'},
                     method: 'POST',
-                    body: formData
+                    body: JSON.stringify({ bin: { [binName]: [] }})
                 });
                 if (response.ok) {
                     dispatch( updateUser(user.username) );
@@ -70,7 +67,6 @@ export default function MyList() {
         let res;
         const id = e.dataTransfer.getData('text/plain').split('/movies/')[1];
         try {
-            console.log(e.target.tagName);
             if (!user.currently_saved.includes(Number(id))) {
                 res = await fetch(server + `movies?user=${user.username}`, {
                     mode: 'cors',
@@ -110,20 +106,19 @@ export default function MyList() {
     }
 
 return (
-    <>
-        <div style={{ display: 'flex', overflow: 'hidden' }}>
-            <div style={{ display: 'flex', height: '100vh', flexDirection: 'column '}}>
+        <div className="my-list" style={{ display: 'flex', overflow: 'hidden' }}>
+            <div style={{ display: 'flex', flexDirection: 'column '}}>
                 <Nav />
                 {user && <ul className="sidebar">
                     {<li className="sidebar-li-hover" onClick={e => {
                             if (displaying !== 'Currently Saved') slideDisplayRow();
-                            setTimeout(_=> dispatch( makeRequest('movies/list', '?movies=' + user.currently_saved, {}, _=> slideDisplayRow(150, false)) ), 150);
+                            setTimeout(_=> dispatch( makeRequest('movies/list', '?movies=' + user.currently_saved.join(','), {}, _=> slideDisplayRow(150, false)) ), 150);
                             setDisplaying('Currently Saved');
                         }} tabIndex="0">Currently Saved</li>
                     }
                     { user.show_save_history && <li className="sidebar-li-hover" onClick={e => {
                             if (displaying !== 'Save History') slideDisplayRow();
-                            setTimeout(_=> dispatch( makeRequest('movies/list', '?movies=' + user.recent_save_history, {}, _=> slideDisplayRow(150, false)) ), 150);
+                            setTimeout(_=> dispatch( makeRequest('movies/list', '?movies=' + user.recent_save_history.join(','), {}, _=> slideDisplayRow(150, false)) ), 150);
                             setDisplaying('Save History');
                         }} tabIndex="0">Save History</li>
                     }
@@ -138,7 +133,7 @@ return (
                                         }} onMouseOut={e => e.target.style.color = 'red'} style={{ marginLeft: '1.25rem', outline: 'none' }} key={i} onClick={e => {
                                             e.preventDefault();
                                             if (displaying !== bin) slideDisplayRow();
-                                            setTimeout(_=> dispatch( makeRequest('movies/list', '?movies=' + user.bins[bin], {}, _=> slideDisplayRow(150, false)) ), 150);
+                                            setTimeout(_=> dispatch( makeRequest('movies/list', '?movies=' + user.bins[bin].join(','), {}, _=> slideDisplayRow(150, false)) ), 150);
                                             setDisplaying(bin);
                                             setShowBins(!showBins);
                                             setCreatingBinError(null);
@@ -146,7 +141,7 @@ return (
                                             e.preventDefault();
                                             if (e.keyCode === 13) {
                                                 if (displaying !== bin) slideDisplayRow();
-                                                setTimeout(_=> dispatch( makeRequest('movies/list', '?movies=' + user.bins[bin], {}, _=> slideDisplayRow(150, false)) ), 150);
+                                                setTimeout(_=> dispatch( makeRequest('movies/list', '?movies=' + user.bins[bin].join(','), {}, _=> slideDisplayRow(150, false)) ), 150);
                                                 setDisplaying(bin);
                                                 setShowBins(!showBins);
                                                 setCreatingBinError(null);
@@ -177,7 +172,7 @@ return (
                                         }} onMouseOut={e => e.target.style.transform = 'scale(1)'}>+</button>
                                         }
                                     </li>
-                                    {creatingBinError && <div style={{ color: 'maroon' }}>{creatingBinError}</div>}
+                                    {creatingBinError && <div style={{ color: 'red' }}>{creatingBinError}</div>}
                                 </ul>
                             </div>
                         }
@@ -203,7 +198,7 @@ return (
                 ? error ? <div style={{ marginTop: '25%', width: '100%', textAlign: 'center' }}>Error loading movies</div> :
                     <MovieList withFilter displaying={displaying} movies={result} headingMargin="2rem" heading={(_=> {
                         switch (displaying) {
-                            default: return result.length
+                            default: return console.log(JSON.stringify(result)) || result.length
                                 ? `This is what was in "${displaying}"`
                                 : 'This bin was empty!';
                             case 'Currently Saved':
@@ -218,9 +213,7 @@ return (
                     })()}/>
                 : <h2 style={{ flex: 4, position: 'absolute', margin: '7rem 0 0 2.5rem' }}><DelayLink to="/register"><span style={{ color: '#cc0000' }} onMouseOver={e => { e.target.style.textDecoration = 'underline' }} onMouseOut={e => { e.target.style.textDecoration = 'none' }}>Log in</span></DelayLink> to see your saved movies</h2>
             }
+            {user && binManagerOpen && <BinManager movies={currentlySaved} displaying={displaying} setDisplaying={setDisplaying}></BinManager>}
         </div>
-
-        {user && binManagerOpen && <BinManager movies={currentlySaved} displaying={displaying} setDisplaying={setDisplaying}></BinManager>}
-    </>
     )
 }

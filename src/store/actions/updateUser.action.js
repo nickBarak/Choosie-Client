@@ -15,7 +15,7 @@ export const updateUser = username => {
         dispatch( createUpdateUserLaunch() );
         fetch(server + `users/${username}`)
             .then(res => res.json())
-            .then(res => { dispatch( createUpdateUserSuccess(res[0]) ) })
+            .then(res => { dispatch( createUpdateUserSuccess(res) ) })
             .catch(e => dispatch( createUpdateUserFailure(e) ));
     }
 }

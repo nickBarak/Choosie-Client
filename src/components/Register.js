@@ -97,10 +97,10 @@ function Register() {
             const response = await fetch(server+`users/validate`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: {
+                body: JSON.stringify({
                     username,
                     password
-                }
+                })
             });
             const validLogin = await response.json();
             if (!validLogin) {

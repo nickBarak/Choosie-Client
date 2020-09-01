@@ -27,7 +27,6 @@ function Login() {
     }, [error])
 
     const onLogin = async e => {
-        console.log('Logging in');
         e.persist();
         e.preventDefault();
         const username = e.target.children[0].value,
@@ -38,18 +37,15 @@ function Login() {
             return;
         }
         try {
-            console.log('pre-fetch');
             const response = await fetch(server+`users/validate`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: {
+                body: JSON.stringify({
                     username,
                     password
-                }
+                })
             });
-            console.log('post-fetch');
             const validLogin = await response.json();
-            console.log(validLogin);
             if (!(await validLogin)) {
                 setError('Invalid login');
                 return

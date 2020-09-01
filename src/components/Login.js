@@ -29,7 +29,7 @@ function Login() {
     const onLogin = async e => {
         e.persist();
         e.preventDefault();
-        const username = e.target.children[0].value && e.target.children[0].value,
+        const username = e.target.children[0].value,
             password = e.target.children[2].value;
         if (!username && !password) {
             setError(null);
@@ -46,7 +46,8 @@ function Login() {
                 }
             });
             const validLogin = await response.json();
-            if (!validLogin) {
+            console.log(validLogin);
+            if (!(await validLogin)) {
                 setError('Invalid login');
                 return
             } else {

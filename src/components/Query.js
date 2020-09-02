@@ -64,7 +64,9 @@ function Query({ location }) {
 	const [phase, setPhase] = useState(0);
 	const { prompt, buttonSet, nextButton } = phase < 4 && phases[phase];
 	const answers = useRef([[]]);
-	const { result, error } = useSelector(store => store.makeRequest);
+	let { result, error } = useSelector(store => store.makeRequest);
+	const resultIDs = [];
+	result = result.filter(({ id }) => !resultIDs.includes(id) && resultIDs.push(id));
 	const [set, setSet] = useState(1);
 	const dispatch = useDispatch();
 	const mainNextButton = useRef(null);

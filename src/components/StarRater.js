@@ -15,7 +15,7 @@ function StarRater() {
 				method: "POST",
 				headers: {
 					"Content-Type":
-						"application/json" /*, 'Accept': 'application/json' */,
+						"application/json",
 				},
 				body: JSON.stringify({
 					rating,

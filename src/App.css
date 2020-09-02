@@ -792,11 +792,13 @@ select {
 
   .star-rater {
     font-size: .85rem;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
   }
 
   .star-rater span {
     display: block;
-    text-align: center;
     margin-top: .2rem;
   }
 
@@ -916,6 +918,10 @@ select {
 
   .home-frame {
     /* transform: translateY(-3.5rem); */
+  }
+
+  .star-rater {
+    width: 150%;
   }
 
   .login {

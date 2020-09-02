@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { search } from "../store/actions/search.action";
+import searchActions from "../store/actions/search.action";
 import Nav from "./Nav";
 import DelayLink from "./DelayLink";
 import StarRater from "./StarRater";
@@ -9,9 +9,17 @@ import { uuid } from "uuidv4";
 
 function Search({ location }) {
 	const mounted = useRef(0);
-	const { loading, searchValue, result } = useSelector(store => store.search);
-	const dispatch = useDispatch();
 	const [page, setPage] = useState(1);
+	const searchTitle = useSelector(store => store.searchTitle);
+	const searchPeople = useSelector(store => store.searchPeople);
+	const searchGenre = useSelector(store => store.searchGenre);
+	const searchDescription = useSelector(store => store.searchDescription);
+	const searchResultIDs = [];
+	const searchResults = [searchTitle, searchPeople, searchGenre, searchDescription]
+		.reduce((acc, cur) => [...acc, ...cur.result], [])
+		.filter(({ id }) => !searchResultIDs.includes(id) && searchResultIDs.push(id))
+		.slice((page - 1) * 10, page * 11);
+	const dispatch = useDispatch();
 	const user = useSelector(store => store.user.result);
 
 	const nextButton1 = useRef(null),
@@ -23,7 +31,7 @@ function Search({ location }) {
 		!sessionStorage.getItem("searchCache") &&
 			sessionStorage.setItem(
 				"searchCache",
-				JSON.stringify({ [searchValue]: [[]] })
+				JSON.stringify({ [searchTitle.searchValue]: [[]] })
 			);
 	});
 
@@ -32,14 +40,14 @@ function Search({ location }) {
 			let cache = JSON.parse(sessionStorage.getItem("searchCache"));
 			if (
 				mounted.current &&
-				cache[searchValue] &&
-				!cache[searchValue][page]
+				cache[searchTitle.searchValue] &&
+				!cache[searchTitle.searchValue][page]
 			) {
-				cache[searchValue].push(result.map(movie => movie.id));
+				cache[searchTitle.searchValue][page] = searchResults.map(movie => movie.id);
 				sessionStorage.setItem("searchCache", JSON.stringify(cache));
 			}
 		},
-		[result]
+		[searchTitle, searchPeople, searchGenre, searchDescription]
 	);
 
 	useEffect(_ => {
@@ -69,24 +77,27 @@ function Search({ location }) {
 		_ => {
 			if (!location.page || mounted.current++) {
 				const cache =
-					sessionStorage.getItem("searchCache")[searchValue] &&
-					sessionStorage.getItem("searchCache")[searchValue][page];
-				cache
-					? dispatch(
-							search(
-								user ? user.username : null,
-								searchValue,
-								page,
-								cache.join(",")
-							)
-					  )
-					: dispatch(
-							search(
-								user ? user.username : null,
-								searchValue,
-								page
-							)
-					  );
+				sessionStorage.getItem("searchCache")[searchTitle.searchValue] &&
+				sessionStorage.getItem("searchCache")[searchTitle.searchValue][page];
+
+				Object.values(searchActions).forEach(action => {
+					cache
+						? dispatch(
+								action(
+									user ? user.username : null,
+									searchTitle.searchValue,
+									page,
+									cache.join(",")
+								)
+						)
+						: dispatch(
+								action(
+									user ? user.username : null,
+									searchTitle.searchValue,
+									page
+								)
+						);
+				});
 			}
 		},
 		[page]
@@ -94,12 +105,12 @@ function Search({ location }) {
 
 	useEffect(
 		_ => {
-			if (result && result.length < 11 && nextButton1.current) {
+			if (searchResults.length < 11 && nextButton1.current) {
 				[nextButton1, nextButton2].forEach(btn => {
 					btn.current.style.opacity = 0;
 					btn.current.style.pointerEvents = "none";
 				});
-			} else if (result && nextButton1.current) {
+			} else if (searchResults && nextButton1.current) {
 				[nextButton1, nextButton2].forEach(btn => {
 					btn.current.style.opacity = 1;
 					btn.current.style.pointerEvents = "auto";
@@ -126,7 +137,7 @@ function Search({ location }) {
 							"translateX(calc(190px - 1rem))")
 				);
 		},
-		[result]
+		[searchTitle]
 	);
 
 	function onSearch(e) {
@@ -135,24 +146,27 @@ function Search({ location }) {
 		setPage(1);
 		if (!e.target.children[0].value) return;
 		const cache =
-			sessionStorage.getItem("searchCache")[searchValue] &&
-			sessionStorage.getItem("searchCache")[searchValue][page];
-		cache
-			? dispatch(
-					search(
-						user ? user.username : null,
-						e.target.children[0].value,
-						page,
-						cache.join(",")
-					)
-			  )
-			: dispatch(
-					search(
-						user ? user.username : null,
-						e.target.children[0].value,
-						page
-					)
-			  );
+			sessionStorage.getItem("searchCache")[searchTitle.searchValue] &&
+			sessionStorage.getItem("searchCache")[searchTitle.searchValue][page];
+		
+		Object.values(searchActions).forEach(action => {
+			cache
+				? dispatch(
+						action(
+							user ? user.username : null,
+							e.target.children[0].value,
+							page,
+							cache.join(",")
+						)
+				)
+				: dispatch(
+						action(
+							user ? user.username : null,
+							e.target.children[0].value,
+							page
+						)
+				);
+		});
 		e.target.reset();
 	}
 
@@ -179,7 +193,7 @@ function Search({ location }) {
 					}}
 				>
 					<label style={{ margin: ".4rem 0", fontSize: "1.3rem" }}>
-						"{searchValue}"
+						"{searchTitle.searchValue}"
 					</label>
 					<StarRater />
 					<form onSubmit={onSearch}>
@@ -194,18 +208,18 @@ function Search({ location }) {
 				<div
 					style={{
 						visibility:
-							loading || !result.length ? "visible" : "hidden",
+						(searchTitle.loading || searchPeople.loading || searchGenre.loading || searchDescription.loading) || !searchResults.length ? "visible" : "hidden",
 					}}
 				>
-					{mounted && loading
+					{mounted && (searchTitle.loading || searchPeople.loading || searchGenre.loading || searchDescription.loading)
 						? "Loading..."
-						: !result.length
-						? "No results found"
-						: "Results Below"}
+						: !searchResults.length
+							? "No results found"
+							: "Results Below"}
 				</div>
 				<div
 					className="search-results-container"
-					style={{ display: result ? "block" : "none" }}
+					style={{ display: searchTitle.result ? "block" : "none" }}
 				>
 					<div
 						style={{
@@ -247,22 +261,22 @@ function Search({ location }) {
 							Next
 						</button>
 					</div>
-					{!result.length ? null : (
+					{!searchResults.length ? null : (
 						<ul className="search-results">
-							{result.slice(0, 10).map((result, i) => (
+							{searchResults.slice(0, 10).map(movie => (
 								<li key={uuid()}>
 									{/* Image Link */}
 									<DelayLink
 										to={{
-											pathname: `movies/${result.id}`,
-											searchValue,
+											pathname: `movies/${movie.id}`,
+											searchValue: searchTitle.searchValue,
 											page,
 											back: "/search",
 										}}
 									>
 										<picture>
 											<source
-												srcSet={result.cover_file}
+												srcSet={movie.cover_file}
 											/>
 											<source srcSet={imageAlt} />
 											<img
@@ -275,8 +289,8 @@ function Search({ location }) {
 										{/* Text Link*/}
 										<DelayLink
 											to={{
-												pathname: `movies/${result.id}`,
-												searchValue,
+												pathname: `movies/${movie.id}`,
+												searchValue: searchTitle.searchValue,
 												page,
 												back: "/search",
 											}}
@@ -288,37 +302,37 @@ function Search({ location }) {
 													zIndex: "5",
 												}}
 											>
-												<label>{result.title}</label>
-												{result.genres && (
+												<label>{movie.title}</label>
+												{movie.genres && (
 													<span>
 														{" "}
 														|{" "}
-														{result.genres.join(
+														{movie.genres.join(
 															", "
 														)}
 													</span>
 												)}
-												{result.mpaa_rating !==
+												{movie.mpaa_rating !==
 													"Not available" && (
 													<span>
 														{" "}
-														| {result.mpaa_rating}
+														| {movie.mpaa_rating}
 													</span>
 												)}
-												{result.duration_in_mins ? (
-													result.duration_in_mins %
+												{movie.duration_in_mins ? (
+													movie.duration_in_mins %
 													60 ? (
-														result.duration_in_mins >=
+														movie.duration_in_mins >=
 														60 ? (
 															<span>
 																{" "}
 																|{" "}
 																{Math.floor(
-																	result.duration_in_mins /
+																	movie.duration_in_mins /
 																		60
 																)}
 																h{" "}
-																{result.duration_in_mins %
+																{movie.duration_in_mins %
 																	60}{" "}
 																min
 															</span>
@@ -327,7 +341,7 @@ function Search({ location }) {
 																{" "}
 																|{" "}
 																{
-																	result.duration_in_mins
+																	movie.duration_in_mins
 																}{" "}
 																min
 															</span>
@@ -336,17 +350,17 @@ function Search({ location }) {
 														<span>
 															{" "}
 															|{" "}
-															{result.duration_in_mins %
+															{movie.duration_in_mins %
 																60}
 															h
 														</span>
 													)
 												) : null}
-												{result.release_date && (
+												{movie.release_date && (
 													<span>
 														{" "}
 														|{" "}
-														{result.release_date.slice(
+														{movie.release_date.slice(
 															0,
 															4
 														)}

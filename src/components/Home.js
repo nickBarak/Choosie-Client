@@ -2,7 +2,7 @@ import React, { useContext, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import Login from "./Login";
 import Footer from "./Footer";
-import { search } from "../store/actions/search.action";
+import searchActions from "../store/actions/search.action";
 import UserContext from "../store/contexts/User.context";
 import HistoryContext from "../store/contexts/History.context";
 import { server } from "../APIs";
@@ -23,11 +23,13 @@ function Home() {
 		e.persist();
 		e.preventDefault();
 		try {
-			dispatch(
-				search(
-					user ? user.username : null,
-					e.target.children[0].value,
-					1
+			Object.values(searchActions).forEach(action =>
+				dispatch(
+					action(
+						user ? user.username : null,
+						e.target.children[0].value,
+						1
+					)
 				)
 			);
 			e.target.reset();

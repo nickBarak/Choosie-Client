@@ -23,7 +23,10 @@ export const updateUser = username => {
 			return;
 		}
 		dispatch(createUpdateUserLaunch());
-		fetch(server + `users/${username}`)
+		fetch(server + `users/${username}`, {
+			// mode: 'cors',
+			// credentials: true
+		})
 			.then(res => res.json())
 			.then(res => {
 				dispatch(createUpdateUserSuccess(res));

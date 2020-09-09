@@ -177,6 +177,7 @@ function Register() {
 				return;
 			} else {
 				dispatch(updateUser(username));
+				sessionStorage.setItem('username', username);
 				setLoginError(null);
 				transitionPage(history, "/");
 			}

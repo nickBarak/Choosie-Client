@@ -52,6 +52,7 @@ function Login() {
 				return;
 			} else {
 				dispatch(updateUser(username));
+				sessionStorage.setItem('username', username);
 				setError(null);
 			}
 		} catch (e) {

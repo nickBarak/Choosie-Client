@@ -73,7 +73,6 @@ function Query({ location }) {
 	const mainNextButton2 = useRef(null);
 	const mainPrevButton = useRef(null);
 	const mainPrevButton2 = useRef(null);
-	const [movies, setMovies] = useState([]);
 	const frame = useRef(null);
 	const frame2 = useRef(null);
 	const mounted = useRef(false);
@@ -147,13 +146,6 @@ function Query({ location }) {
 			} else if (phase > 1) answers.current.push([]);
 		},
 		[phase, set]
-	);
-
-	useEffect(
-		_ => {
-			setMovies(result);
-		},
-		[result]
 	);
 
 	/* Make sure buttons show proper color */
@@ -582,7 +574,7 @@ function Query({ location }) {
 					}}
 					ref={frame2}
 					className="transition-frame"
-				>
+				>{result && result.length && <>
 					<div
 						className="button-v2-container"
 						style={{
@@ -646,10 +638,13 @@ function Query({ location }) {
 						>
 							Next
 						</button>
-					</div>
+					</div> </>}
 					<MovieList
-						movies={movies || [{ title: "mission failed" }]}
-						heading="Here are some movies you might be interested in"
+						movies={result || []}
+						heading={result ? result.length
+							? "Here are some movies you might be interested in"
+							: "No results found"
+						: "Error loading movies"}
 						displaying="Query"
 						lowerMargin="4rem"
 						headingMargin="3.5rem"
@@ -659,6 +654,7 @@ function Query({ location }) {
 							back: "/query",
 						}}
 					/>
+					{result && result.length && <>
 					<div
 						style={{
 							display: "flex",
@@ -733,6 +729,7 @@ function Query({ location }) {
 							Next
 						</button>
 					</div>
+					</>}
 				</div>
 			)}
 		</div>

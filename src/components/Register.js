@@ -146,8 +146,9 @@ function Register() {
 			}),
 		})
 			.then(res => res.json())
-			.then(json => {
-				dispatch(updateUser(json.username));
+			.then(({ username }) => {
+				dispatch(updateUser(username));
+				sessionStorage.setItem('username', username)
 				transitionPage(history, "/");
 			})
 			.catch(e => setGeneralError("Something went wrong"));

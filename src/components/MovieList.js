@@ -49,6 +49,7 @@ function MovieList({
 								signal,
 								method: "PATCH",
 								headers: { "Content-Type": "application/json" },
+								credentials: 'include',
 								body: JSON.stringify({
 									bin: {
 										[displaying]: user.bins[
@@ -90,6 +91,7 @@ function MovieList({
 								signal,
 								method: "DELETE",
 								headers: { "Content-Type": "application/json" },
+								credentials: 'include',
 								body: JSON.stringify({ movieID: unsaving }),
 							}
 						);
@@ -107,6 +109,7 @@ function MovieList({
 									headers: {
 										"Content-Type": "application/json",
 									},
+									credentials: 'include',
 									body: JSON.stringify({
 										bin: {
 											[binWithMovie[0]]: binWithMovie[1].filter(
@@ -149,6 +152,7 @@ function MovieList({
 							signal,
 							method: "PATCH",
 							headers: { "Content-Type": "application/json" },
+							credentials: 'include',
 							body: JSON.stringify({
 								name: user.name,
 								sex: user.sex,

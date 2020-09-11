@@ -41,6 +41,7 @@ function Login() {
 			const response = await fetch(server + `users/validate`, {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
+				credentials: 'include',
 				body: JSON.stringify({
 					username,
 					password,
@@ -52,7 +53,6 @@ function Login() {
 				return;
 			} else {
 				dispatch(updateUser(username));
-				sessionStorage.setItem('username', username);
 				setError(null);
 			}
 		} catch (e) {

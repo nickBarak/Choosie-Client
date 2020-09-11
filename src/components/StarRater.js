@@ -11,8 +11,8 @@ function StarRater() {
 		setStarRating(rating);
 		try {
 			fetch(server + "search", {
-				mode: "cors",
 				method: "POST",
+				credentials: 'include',
 				headers: {
 					"Content-Type":
 						"application/json",

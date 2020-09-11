@@ -20,12 +20,13 @@ export const updateUser = username => {
 	return dispatch => {
 		if (!username) {
 			dispatch(createUpdateUserFailure(null));
+			// fetch(server + `destroy-session`)
+			// 	.catch(e => console.log(e));
 			return;
 		}
 		dispatch(createUpdateUserLaunch());
 		fetch(server + `users/${username}`, {
-			// mode: 'cors',
-			// credentials: true
+			credentials: 'include'
 		})
 			.then(res => res.json())
 			.then(res => {

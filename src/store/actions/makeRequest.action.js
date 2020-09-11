@@ -27,10 +27,9 @@ export const makeRequest = (
 		dispatch(createMakeRequestLaunch());
 		fetch(server + `${route}${querystring ? querystring : ""}`, {
 			...options,
-			mode: "cors",
+			credentials: 'include',
 			headers: {
-				"Content-Type": "application/json",
-				// 'Accept': 'application/json'
+				"Content-Type": "application/json"
 			},
 		})
 			.then(res => res.json())

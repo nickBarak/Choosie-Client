@@ -25,7 +25,7 @@ function Movie({ location: { searchValue, page, back, scrollY } }) {
 	function saveMovie() {
 		setSaving(true);
 		fetch(server + `movies?user=${user.username}`, {
-			mode: "cors",
+			credentials: 'include',
 			method: user.save_history.includes(movie.id) ? "PUT" : "POST",
 			headers: { "Content-Type": "application/json" },
 			body: JSON.stringify({
@@ -69,7 +69,7 @@ function Movie({ location: { searchValue, page, back, scrollY } }) {
 						res = await fetch(
 							server + `movies?user=${user.username}`,
 							{
-								mode: "cors",
+								credentials: 'include',
 								signal,
 								method: "DELETE",
 								headers: {
@@ -88,7 +88,7 @@ function Movie({ location: { searchValue, page, back, scrollY } }) {
 							res = await fetch(
 								server + `users/${user.username}/bins`,
 								{
-									mode: "cors",
+									credentials: 'include',
 									signal,
 									method: "PATCH",
 									headers: {

@@ -38,7 +38,8 @@ const searchPrototype = (SEARCH_LAUNCH, SEARCH_SUCCESS, SEARCH_FAILURE, route) =
 			server +
 				`search/${route}?user=${username}&search=${query}&page=${page}${
 					movies ? `&movies=${movies}` : ""
-				}`
+				}`,
+			{ credentials: 'include' }
 		)
 			.then(res => res.json())
 			.then(res => {

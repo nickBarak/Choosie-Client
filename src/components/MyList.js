@@ -62,6 +62,7 @@ export default function MyList() {
 				{
 					headers: { "Content-Type": "application/json" },
 					method: "POST",
+					credentials: 'include',
 					body: JSON.stringify({ bin: { [binName]: [] } }),
 				}
 			);
@@ -90,6 +91,7 @@ export default function MyList() {
 				res = await fetch(server + `movies?user=${user.username}`, {
 					method: "PUT",
 					headers: { "Content-Type": "application/json" },
+					credentials: 'include',
 					body: JSON.stringify({
 						movieID: Number(id),
 						inRecent: true,
@@ -101,6 +103,7 @@ export default function MyList() {
 			res = await fetch(server + `users/${user.username}/bins`, {
 				method: "PATCH",
 				headers: { "Content-Type": "application/json" },
+				credentials: 'include',
 				body: JSON.stringify({
 					bin: {
 						[e.target.textContent]: [

@@ -327,7 +327,7 @@ function Query({ location }) {
 																"start?user=" +
 																user.username,
 															{
-																mode: "cors",
+																credentials: 'include',
 																method: "POST",
 																headers: {
 																	"Content-Type":
@@ -497,8 +497,8 @@ function Query({ location }) {
 																	"start?user=" +
 																	user.username,
 																{
-																	mode:
-																		"cors",
+																	credentials:
+																		'include',
 																	method:
 																		"POST",
 																	headers: {

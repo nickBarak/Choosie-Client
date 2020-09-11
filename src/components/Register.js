@@ -82,7 +82,8 @@ function Register() {
 		}
 		(async _ => {
 			const response = await fetch(
-				server + "users/check?user=" + children[0].children[0].value
+				server + "users/check?user=" + children[0].children[0].value,
+				{ credentials: 'include' }
 			);
 			const json = await response.json();
 			if (json.length) {
@@ -113,9 +114,11 @@ function Register() {
 			setRegistrationError("Invalid email address");
 			return;
 		}
+		dispatch( updateUser(null) );
 		fetch(server + "users", {
 			method: "POST",
 			headers: { "Content-Type": "application/json" },
+			credentials: 'include',
 			body: JSON.stringify({
 				...info,
 				name: children[0].children[0].value
@@ -148,7 +151,6 @@ function Register() {
 			.then(res => res.json())
 			.then(({ username }) => {
 				dispatch(updateUser(username));
-				sessionStorage.setItem('username', username)
 				transitionPage(history, "/");
 			})
 			.catch(e => setGeneralError("Something went wrong"));
@@ -164,9 +166,11 @@ function Register() {
 			password = e.target.children[1].children[1].children[0].value;
 		if (!username && !password) return;
 		try {
+			dispatch( updateUser(null) );
 			const response = await fetch(server + `users/validate`, {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
+				credentials: 'include',
 				body: JSON.stringify({
 					username,
 					password,
@@ -178,7 +182,6 @@ function Register() {
 				return;
 			} else {
 				dispatch(updateUser(username));
-				sessionStorage.setItem('username', username);
 				setLoginError(null);
 				transitionPage(history, "/");
 			}

@@ -31,6 +31,7 @@ function BinManager({ movies, displaying, setDisplaying }) {
 				{
 					method,
 					headers: { "Content-Type": "application/json" },
+					credentials: 'include',
 					body: JSON.stringify({ bin }),
 				}
 			);
@@ -112,7 +113,7 @@ function BinManager({ movies, displaying, setDisplaying }) {
 				  );
 			user &&
 				fetch(server + `users/${user.username}/bins`, {
-					mode: "cors",
+					credentials: 'include',
 					method: "PATCH",
 					headers: {
 						"Content-Type":

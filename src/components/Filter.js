@@ -140,7 +140,7 @@ function Filter({ displayList, dispatchDisplayList }) {
 									);
 								}}
 							/>
-							higher/later
+							higher
 						</label>
 						<label style={{ marginLeft: ".35rem" }}>
 							<input
@@ -167,7 +167,7 @@ function Filter({ displayList, dispatchDisplayList }) {
 									);
 								}}
 							/>
-							lower/earlier
+							lower
 						</label>
 						<label style={{ marginLeft: ".35rem" }}>
 							<input

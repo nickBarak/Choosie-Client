@@ -92,9 +92,9 @@ function Login() {
 						}}
 					>
 						<button
-							onClick={async _ => {
-								await destroySession();
+							onClick={_=> {
 								setOpen(false);
+								destroySession();
 							}}
 							style={{
 								color: "white",

@@ -4,11 +4,13 @@ import HistoryContext from "../store/contexts/History.context";
 import { updateUser } from "../store/actions/updateUser.action";
 import { useDispatch, useSelector } from "react-redux";
 import { destroySession, transitionPage } from "../Functions";
+import { useLocation } from 'react-router-dom';
 
 function Login() {
 	const dispatch = useDispatch();
 	const user = useSelector(store => store.user.result);
 	const history = useContext(HistoryContext);
+	const location = useLocation();
 	const [open, setOpen] = useState(false);
 	const [error, setError] = useState(null);
 	const loginForm = useRef(null);
@@ -94,7 +96,8 @@ function Login() {
 						<button
 							onClick={_=> {
 								setOpen(false);
-								destroySession();
+								destroySession()
+									.then(_=> open && location.reload());
 							}}
 							style={{
 								color: "white",

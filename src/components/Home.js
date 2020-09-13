@@ -19,7 +19,7 @@ function Home() {
 	useEffect(_ => {
 		document.getElementById("root").style.opacity = 1;
 		
-		// dispatch( updateUser(true) )
+		dispatch( updateUser(true) )
 	}, []);
 
 	const onSearch = async e => {

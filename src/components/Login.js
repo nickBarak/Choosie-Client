@@ -38,6 +38,7 @@ function Login() {
 			return;
 		}
 		try {
+			dispatch( updateUser(null) );
 			const response = await fetch(server + `users/validate`, {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },

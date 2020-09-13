@@ -22,7 +22,7 @@ export const updateUser = username => {
 			console.log('Destroying session...');
 			dispatch(createUpdateUserFailure(null));
 			fetch(server + `destroy-session`, { credentials: 'include' })
-				.then(res => console.log('Session destroyed'))
+				.then(_=> console.log('Session destroyed'))
 				.catch(e => console.log(e));
 			return;
 		}

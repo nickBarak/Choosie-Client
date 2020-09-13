@@ -20,7 +20,7 @@ export const updateUser = username => {
 	return dispatch => {
 		if (!username) {
 			dispatch(createUpdateUserFailure(null));
-			fetch(server + `destroy-session`)
+			fetch(server + `destroy-session`, { credentials: 'include' })
 				.catch(e => console.log(e));
 			return;
 		}

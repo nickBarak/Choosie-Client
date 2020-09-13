@@ -12,7 +12,7 @@ export function ActionPrototype(
 		});
 		return dispatch => {
 			dispatch({ type: LAUNCH_TYPE });
-			fetch(url, options)
+			fetch(url, { ...options, credentials: 'include' })
 				.then(res => res.json())
 				.then(payload => {
 					dispatch({ type: SUCCESS_TYPE, payload });

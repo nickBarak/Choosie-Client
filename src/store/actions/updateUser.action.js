@@ -20,8 +20,8 @@ export const updateUser = username => {
 	return dispatch => {
 		if (!username) {
 			dispatch(createUpdateUserFailure(null));
-			// fetch(server + `destroy-session`)
-			// 	.catch(e => console.log(e));
+			fetch(server + `destroy-session`)
+				.catch(e => console.log(e));
 			return;
 		}
 		dispatch(createUpdateUserLaunch());

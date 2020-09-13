@@ -3,7 +3,7 @@ import { server } from "../APIs";
 import { useDispatch } from "react-redux";
 import HistoryContext from "../store/contexts/History.context";
 import { updateUser } from "../store/actions/updateUser.action";
-import { transitionPage } from "../Functions";
+import { transitionPage, destroySession } from "../Functions";
 import { uuid } from "uuidv4";
 
 const languageOptions = [
@@ -99,7 +99,7 @@ function Register() {
 		})();
 	}
 
-	function createUser(e) {
+	async function createUser(e) {
 		setGeneralError(null);
 		setRegistrationError(null);
 		e.persist();
@@ -114,7 +114,7 @@ function Register() {
 			setRegistrationError("Invalid email address");
 			return;
 		}
-		dispatch( updateUser(null) );
+		await destroySession();
 		fetch(server + "users", {
 			method: "POST",
 			headers: { "Content-Type": "application/json" },
@@ -149,8 +149,8 @@ function Register() {
 			}),
 		})
 			.then(res => res.json())
-			.then(({ username }) => {
-				dispatch(updateUser(username));
+			.then(_=> {
+				dispatch(updateUser(true));
 				transitionPage(history, "/");
 			})
 			.catch(e => setGeneralError("Something went wrong"));
@@ -166,7 +166,7 @@ function Register() {
 			password = e.target.children[1].children[1].children[0].value;
 		if (!username && !password) return;
 		try {
-			dispatch( updateUser(null) );
+			await destroySession();
 			const response = await fetch(server + `users/validate`, {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },

@@ -3,7 +3,7 @@ import { server } from "../APIs";
 import HistoryContext from "../store/contexts/History.context";
 import { updateUser } from "../store/actions/updateUser.action";
 import { useDispatch, useSelector } from "react-redux";
-import { transitionPage } from "../Functions";
+import { destroySession, transitionPage } from "../Functions";
 
 function Login() {
 	const dispatch = useDispatch();
@@ -38,7 +38,7 @@ function Login() {
 			return;
 		}
 		try {
-			dispatch( updateUser(null) );
+			await destroySession();
 			const response = await fetch(server + `users/validate`, {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
@@ -93,7 +93,7 @@ function Login() {
 					>
 						<button
 							onClick={_ => {
-								dispatch(updateUser(null));
+								destroySession();
 								setOpen(false);
 							}}
 							style={{

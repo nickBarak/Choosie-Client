@@ -1,3 +1,5 @@
+import { server } from './APIs';
+
 const root = document.getElementById('root');
 
 export function transitionPage(history, route) {
@@ -41,4 +43,9 @@ export function slideDisplayRow(timeout=0, down=true, mode=0) {
                 document.getElementById('display-row').style.transform = `translateX(0)`;
         }
     }, timeout);
+}
+
+export async function destroySession() {
+    return fetch(server + 'destroy-session', { credentials: 'include' })
+        .catch(e => console.log(e));
 }

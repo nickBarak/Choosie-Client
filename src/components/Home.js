@@ -18,8 +18,7 @@ function Home() {
 	/* Authenticates user if cached */
 	useEffect(_ => {
 		document.getElementById("root").style.opacity = 1;
-		console.log('Home dispatching update user');
-		dispatch( updateUser('user') );
+		dispatch( updateUser(true) );
 	}, []);
 
 	const onSearch = async e => {

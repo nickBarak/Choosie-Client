@@ -97,7 +97,7 @@ function Login() {
 							onClick={_=> {
 								setOpen(false);
 								destroySession()
-									.then(_=> open && location.reload());
+									.then(_=> console.log(open) || location.reload());
 							}}
 							style={{
 								color: "white",

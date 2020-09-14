@@ -92,11 +92,11 @@ function Login() {
 						}}
 					>
 						<button
-							onClick={_=> {
-								destroySession().then(_=> {
+							onClick={async _=> {
+								try {
+									await fetch(server + 'destroy-session', { credentials: 'include' });
 									setOpen(false);
-									history.push('/');
-								});
+								} catch (e) { console.log(e) }
 							}}
 							style={{
 								color: "white",

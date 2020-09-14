@@ -94,6 +94,7 @@ function Login() {
 						<button
 							onClick={_=> {
 								setOpen(false);
+								history.push('/');
 							}}
 							style={{
 								color: "white",

@@ -96,6 +96,7 @@ function Login() {
 								try {
 									await fetch(server + 'destroy-session', { credentials: 'include' });
 									setOpen(false);
+									window.location.reload();
 								} catch (e) { console.log(e) }
 							}}
 							style={{

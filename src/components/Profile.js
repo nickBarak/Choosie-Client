@@ -116,36 +116,34 @@ function Profile() {
 				show_description_on_hover: showDescriptionOnHover,
 				recent_save_history: clearing ? [] : user.recent_save_history,
 			};
-		if (e) {
-			try {
-				/* Make sure current user data in browser is updated after changes on server */
-				new Promise(
-					resolve =>
-						dispatch(
-							makeRequest(`users/${user.username}`, "", {
-								signal,
-								method: "PATCH",
-								headers: { "Content-Type": "application/json" },
-								credentials: 'include',
-								body: JSON.stringify(editedInfo),
-							})
-						) || resolve()
-				).then(_ => {
-					dispatch(updateUser(user.username));
-					setMessage("Info updated successfully");
-					e.target.style.transform = "scale(0)";
-					e.target.style.maxHeight = 0;
-					e.target.parentElement.parentElement.parentElement.parentElement.children[0].style.transform =
-						e.target.parentElement.parentElement.parentElement
-							.children[2].children[0].children[2].style
-							.maxHeight === "100%"
-							? "translate(-6.5rem, 2rem)"
-							: "translate(0)";
-				});
-			} catch (e) {
-				setEditInfoError("Error editing info");
-				console.log(e);
-			}
+		try {
+			/* Make sure current user data in browser is updated after changes on server */
+			new Promise(
+				resolve =>
+					dispatch(
+						makeRequest(`users/${user.username}`, "", {
+							signal,
+							method: "PATCH",
+							headers: { "Content-Type": "application/json" },
+							credentials: 'include',
+							body: JSON.stringify(editedInfo),
+						})
+					) || resolve()
+			).then(_ => {
+				dispatch(updateUser(user.username));
+				setMessage("Info updated successfully");
+				e.target.style.transform = "scale(0)";
+				e.target.style.maxHeight = 0;
+				e.target.parentElement.parentElement.parentElement.parentElement.children[0].style.transform =
+					e.target.parentElement.parentElement.parentElement
+						.children[2].children[0].children[2].style
+						.maxHeight === "100%"
+						? "translate(-6.5rem, 2rem)"
+						: "translate(0)";
+			});
+		} catch (e) {
+			setEditInfoError("Error editing info");
+			console.log(e);
 		}
 	}
 

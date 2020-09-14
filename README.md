@@ -1,5 +1,7 @@
 **Choosie**
 
+Live URL: https://choosie.us
+
 This application offers a truly 'app-like' experience and was designed with the concept of a mobile app in mind. Characteristic of this ambition are its smooth transitions, visually soft components and simplistic interface. The navigation system is designed such that a user can easily transition to almost any part of the application from every part of the application - excluding a few auxillary routes, which have access to the home page alone.
 
 The app opens to a search bar and three buttons labeled 'My List,' 'Start' and 'Popular.' Clicking the 'Start' button will initiate a questionnaire which will be used to ultimately offer a guided recommendation of movies. The first and second phases of the questionnaire ask about genres, and the four shown in the first phase will always be the most commonly selected genres for a user if he or she is logged in. A navigation bar will also be visible with options to return home or visit the 'My List' and 'Popular' pages. After answering all of the questions, a list of recommended movies will be displayed with pagination options above and below as well as a star-rating component for feedback. Clicking on the image or text of one of the results will open a movie page where its information can be observed. A 'Back' option will appear in the navigation bar which will return the user to the result list and restore the recommended movies and page value at the time of visiting the movie page.

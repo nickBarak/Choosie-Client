@@ -1,6 +1,7 @@
 **Choosie**
 
 Live URL: https://choosie.us
+Server Repository: https://github.com/nickBarak/Choosie-Server
 
 This application offers a truly 'app-like' experience and was designed with the concept of a mobile app in mind. Characteristic of this ambition are its smooth transitions, visually soft components and simplistic interface. The navigation system is designed such that a user can easily transition to almost any part of the application from every part of the application - excluding a few auxillary routes, which have access to the home page alone.
 
